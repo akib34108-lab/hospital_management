@@ -1,4 +1,5 @@
 <?php require_once "component/header.php"; ?>
+<!-- sidebar -->
 <?php require_once "component/sidebar.php"; ?>
 
         <div class="page-wrapper">
