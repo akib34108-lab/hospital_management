@@ -2,8 +2,8 @@
     <div class="main-wrapper">
         <div class="header">
 			<div class="header-left">
-				<a href="index-2.html" class="logo">
-					<img src="<?= $base_url; ?>assets/assets/img/logo.png" width="35" height="35" alt=""> <span>Preclinic</span>
+				<a href="<?= $base_url; ?>dashboard.php" class="logo">
+					<img src="<?= $base_url; ?>assets/assets/img/logo.png" width="35" height="35" alt=""> <span >Preclinic</span>
 				</a>
 			</div>
 			<a id="toggle_btn" href="javascript:void(0);"><i class="fa fa-bars"></i></a>
@@ -86,17 +86,14 @@
                 </li>
                 <li class="nav-item dropdown has-arrow">
                     <a href="#" class="dropdown-toggle nav-link user-link" data-toggle="dropdown">
-                        <span class="user-img">
-							<img class="rounded-circle" src="assets/assets/img/user.jpg" width="24" alt="Admin">
-							<span class="status online"></span>
-						</span>
-						<span>Admin</span>
+                        <span class="auth-name"><?= $_SESSION['user_name']; ?></span>
+                      <!--  <span class="d-block auth-role"><?= $_SESSION['user_role']; ?></span>  -->
                     </a>
 					<div class="dropdown-menu">
 						<a class="dropdown-item" href="profile.html">My Profile</a>
 						<a class="dropdown-item" href="edit-profile.html">Edit Profile</a>
 						<a class="dropdown-item" href="settings.html">Settings</a>
-						<a class="dropdown-item" onclick="return confirm('Are you sure want to log out?')" href="logout.php">Logout</a>
+						<a class="dropdown-item" onclick="return confirm('Are you sure want to log out?')" href="<?= $base_url; ?>logout.php">Logout</a>
 					</div>
                 </li>
             </ul>
@@ -106,7 +103,7 @@
                     <a class="dropdown-item" href="profile.html">My Profile</a>
                     <a class="dropdown-item" href="edit-profile.html">Edit Profile</a>
                     <a class="dropdown-item" href="settings.html">Settings</a>
-                    <a class="dropdown-item" onclick="return confirm('Are you sure want to log out?')" href="logout.php">Logout</a>
+                    <a class="dropdown-item" onclick="return confirm('Are you sure want to log out?')" href="<?= $base_url; ?>logout.php">Logout</a>
                 </div>
             </div>
         </div>
@@ -116,7 +113,7 @@
                     <ul>
                         <li class="menu-title">Main</li>
                         <li class="active">
-                            <a href="index-2.html"><i class="fa fa-dashboard"></i> <span>Dashboard</span></a>
+                            <a href="<?= $base_url; ?>dashboard.php"><i class="fa fa-dashboard"></i> <span>Dashboard</span></a>
                         </li>
 						<li>
                             <a href="assets/doctors.php"><i class="fa fa-user-md"></i> <span>Doctors</span></a>
@@ -131,7 +128,7 @@
                             <a href="schedule.html"><i class="fa fa-calendar-check-o"></i> <span>Doctor Schedule</span></a>
                         </li>
                         <li>
-                            <a href="departments.html"><i class="fa fa-hospital-o"></i> <span>Departments</span></a>
+                            <a href="<?= $base_url; ?>departments/departments.php"><i class="fa fa-hospital-o"></i> <span>Departments</span></a>
                         </li>
 						<li class="submenu">
 							<a href="#"><i class="fa fa-user"></i> <span> Employees </span> <span class="menu-arrow"></span></a>

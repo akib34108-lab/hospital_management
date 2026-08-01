@@ -589,5 +589,6 @@
                 </div>
             </div>
         </div>
+    </div>
     
 <?php require_once "component/footer.php"; ?>

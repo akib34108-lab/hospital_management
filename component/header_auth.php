@@ -1,5 +1,5 @@
 <?php
-    require_once "component/connection.php";
+    require_once "connection.php";
     if(isset($_SESSION['is_logged_in']) && $_SESSION['is_logged_in']){
         echo "<script>window.location='{$base_url}dashboard.php'</script>";
         exit;
