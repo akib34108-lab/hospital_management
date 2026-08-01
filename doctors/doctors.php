@@ -1,10 +1,3 @@
-<?php
-$conn = mysqli_connect("localhost", "root", "", "hospital_management");
-$result = mysqli_query($conn, "SELECT * FROM doctors");
-?>
-
-
-
 <!DOCTYPE html>
 <html lang="en">
 
@@ -329,37 +322,24 @@ $result = mysqli_query($conn, "SELECT * FROM doctors");
                             </div>
                         </div>
                     </div>
-                    <?php 
-                        if(mysqli_num_rows($result) > 0){
-                       while($row = mysqli_fetch_assoc($result)){ 
-                    ?>
-<div class="col-md-4 col-sm-4 col-lg-3">
-    <div class="profile-widget">
-        <div class="doctor-img">
-            <a href="#"><img alt="" src="assets/img/doctor-thumb-07.jpg" class="img-fluid"></a>
-        </div>
-        <div class="dropdown profile-action">
-            <a href="#" class="action-icon dropdown-toggle" data-toggle="dropdown"><i class="fa fa-ellipsis-v"></i></a>
-            <div class="dropdown-menu dropdown-menu-right">
-                <a class="dropdown-item" href="edit-doctor.php?id=<?php echo $row['id']; ?>"><i class="fa fa-pencil m-r-5"></i> Edit</a>
-                <a class="dropdown-item" href="delete-doctor.php?id=<?php echo $row['id']; ?>"><i class="fa fa-trash-o m-r-5"></i> Delete</a>
-            </div>
-        </div>
-        <h4 class="doctor-name text-ellipsis">
-            <a href="#"><?php echo $row['first_name'].' '.$row['last_name']; ?></a>
-        </h4>
-        <div class="doc-prof"><?php echo $row['department']; ?></div>
-        <div class="user-country">
-            <i class="fa fa-envelope"></i> <?php echo $row['email']; ?>
-        </div>
-    </div>
-</div>
-<?php 
-    } 
-} else { 
-    echo "<div class='col-12'><p>Ekhono kono doctor add kora hoynai</p></div>"; 
-} 
-?>
+                    <div class="col-md-4 col-sm-4  col-lg-3">
+                        <div class="profile-widget">
+                            <div class="doctor-img">
+                                <a class="avatar" href="profile.html"><img alt="" src="assets/img/doctor-thumb-07.jpg"></a>
+                            </div>
+                            <div class="dropdown profile-action">
+                                <a href="#" class="action-icon dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i class="fa fa-ellipsis-v"></i></a>
+                                <div class="dropdown-menu dropdown-menu-right">
+                                    <a class="dropdown-item" href="edit-doctor.html"><i class="fa fa-pencil m-r-5"></i> Edit</a>
+                                    <a class="dropdown-item" href="#" data-toggle="modal" data-target="#delete_doctor"><i class="fa fa-trash-o m-r-5"></i> Delete</a>
+                                </div>
+                            </div>
+                            <h4 class="doctor-name text-ellipsis"><a href="profile.html">Marie Wells</a></h4>
+                            <div class="doc-prof">Psychiatrist</div>
+                            <div class="user-country">
+                                <i class="fa fa-map-marker"></i> United States, San Francisco
+                            </div>
+                        </div>
                     </div>
                     <div class="col-md-4 col-sm-4  col-lg-3">
                         <div class="profile-widget">
