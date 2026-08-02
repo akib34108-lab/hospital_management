@@ -1,5 +1,5 @@
 <?php 
-    require_once "component/header_auth.php"; 
+    require_once "component/header_auth.php";
 ?>
     <div class="main-wrapper account-wrapper">
         <div class="account-page">
