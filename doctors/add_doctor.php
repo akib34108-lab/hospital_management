@@ -1,101 +1,193 @@
 <?php require_once "../component/header.php"; ?>
-<!-- Sidebar Start -->
+<!-- sidebar -->
 <?php require_once "../component/sidebar.php"; ?>
-<!-- Sidebar End -->
- <div class="page-wrapper">
+
+
+    
+        <div class="page-wrapper">
             <div class="content">
                 <div class="row">
-                    <div class="col-sm-5 col-5">
-                        <h4 class="page-title">Doctors</h4>
-                    </div>
-                    <div class="col-sm-7 col-7 text-right m-b-30">
-                        <a href="add_doctor.php" class="btn btn-primary btn-rounded"><i class="fa fa-plus"></i> Add doctors</a>
+                    <div class="col-lg-8 offset-lg-2">
+                        <h4 class="page-title">Add Doctor</h4>
                     </div>
                 </div>
                 <div class="row">
-                    <div class="col-md-12">
-                        <div class="table-responsive">
-                            <table class="table table-striped custom-table mb-0 datatable">
-                                <thead>
-                                    <tr>
-                                        <th>id</th>
-                                        <th>Department id</th>
-                                        <th>Designation id</th>
-                                        <th>Shift id</th>
-                                        <th>name</th>
-                                        <th>gender</th>
-                                        <th>Specialization</th>
-                                        <th>qualification</th>
-                                        <th>experience</th>
-                                        <th>phone</th>
-                                        <th>email</th>
-                                        <th>address</th>
-                                        <th>status</th>
-                                        <th class="text-right">Action</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <?php
-                                        // Fetch department from the database
-                                        if(isset($_GET['page']) && is_numeric($_GET['page'])){
-                                            $page = (int)$_GET['page'];
-                                        } else {
-                                            $page = 1;
-                                        }
-                                        $doctors = $crud->common_select("doctors",'*',[],'AND','id','ASC',10,($page-1)*10);
-                                        
-                                        if($doctors['status']){
-                                        foreach ($doctors['data'] as $doctor) { ?>
-                                        <td><?= $doctor->id ?></td>
-                                        <td><?= $doctor->department_id ?></td>
-                                        <td><?= $doctor->designation_id ?></td>
-                                        <td><?= $doctor->shift_id ?></td>
-                                        <td><?= $doctor->name ?></td>
-                                        <td><?= $doctor->gender ?></td>
-                                        <td><?= $doctor->specialization ?></td>
-                                        <td><?= $doctor->qualification ?></td>
-                                        <td><?= $doctor->experience ?></td>
-                                        <td><?= $doctor->phone ?></td>
-                                        <td><?= $doctor->email ?></td>
-                                        <td><?= $doctor->address ?></td>
-                                        <td><?= $doctor->status ?></td>
+                    <div class="col-lg-8 offset-lg-2">
+                        <form action="<?= $base_url; ?>doctors/store_doctor.php" method="POST" enctype="multipart/form-data" class="p-4">
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <div class="form-group">
+                                        <label>Doctor Name <span class="text-danger">*</span></label>
+                                        <input class="form-control" type="text" name="name">
+                                    </div>
+                                </div>
+                                
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label>Email <span class="text-danger">*</span></label>
+                                        <input class="form-control" type="email" name="email">
+                                    </div>
+                                </div>
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label>Password</label>
+                                        <input class="form-control" type="password">
+                                    </div>
+                                </div>
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label>Confirm Password</label>
+                                        <input class="form-control" type="password">
+                                    </div>
+                                </div>
+								<div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label>Date of Birth</label>
+                                        <div class="cal-icon">
+                                            <input type="text" class="form-control datetimepicker">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-6">
+									<div class="form-group gender-select">
+										<label class="gen-label">Gender:</label>
+										<div class="form-check-inline">
+											<label class="form-check-label">
+												<input type="radio" name="gender" class="form-check-input" value="1">Male
+											</label>
+										</div>
+										<div class="form-check-inline">
+											<label class="form-check-label">
+												<input type="radio" name="gender" class="form-check-input" value="2">Female
+											</label>
+										</div>
+									</div>
+                                </div>
+								<div class="col-sm-12">
+									<div class="row">
+										<div class="col-sm-12">
+											<div class="form-group">
+												<label>Address</label>
+												<input type="text" class="form-control " name="address">
+											</div>
+										</div>
+										<div class="col-sm-6 col-md-6 col-lg-3">
+											<div class="form-group">
+												<label>Country</label>
+												<select class="form-control select">
+													<option>USA</option>
+													<option>United Kingdom</option>
+												</select>
+											</div>
+										</div>
+										<div class="col-sm-6 col-md-6 col-lg-3">
+											<div class="form-group">
+												<label>City</label>
+												<input type="text" class="form-control">
+											</div>
+										</div>
+										<div class="col-sm-6 col-md-6 col-lg-3">
+											<div class="form-group">
+												<label>State/Province</label>
+												<select class="form-control select">
+													<option>California</option>
+													<option>Alaska</option>
+													<option>Alabama</option>
+												</select>
+											</div>
+										</div>
+										<div class="col-sm-6 col-md-6 col-lg-3">
+											<div class="form-group">
+												<label>Postal Code</label>
+												<input type="text" class="form-control">
+											</div>
+										</div>
+									</div>
+								</div>
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label>Phone</label>
+                                        <input class="form-control" type="text" name="phone" placeholder="Ex: 01711111111" >
+                                    </div>
+                                </div>
+                                <div class="col-sm-6">
+									<div class="form-group">
+										<label>Avatar</label>
+										<div class="profile-upload">
+											<div class="upload-img">
+												<img alt="" src="assets/img/user.jpg">
+											</div>
+											<div class="upload-input">
+												<input type="file" class="form-control">
+											</div>
+										</div>
+									</div>
+                                </div>
+                            </div>
+							<div class="form-group">
+                                <label>Specialization</label>
+                                <textarea class="form-control" rows="3" cols="30" name="specialization"></textarea>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label>Qualification</label>
+                                    <input class="form-control" type="text" name="qualification" placeholder="Ex: MBBS, FCPS, BDS">
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label>Experience <span>(Years)</span></label>
+                                    <input class="form-control" type="number" name="experience" placeholder="Ex: 8">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>Department</label>
+                                <select name="department_id" class="form-control">
+                                    <option value="1">Cardiology</option>
+                                    <option value="2">Neurology</option>
+                                </select>
+                            </div>
 
-                                        
-                                        <td class="text-center">
-                                            <a href="<?= $base_url ?>doctors/edit_doctor.php?id=<?= $doctor->id ?>" class="btn btn-sm btn-primary mb-2 mb-lg-0 me-0 me-lg-2">Edit</a>
-                                            <a href="<?= $base_url ?>doctors/delete_doctor.php?id=<?= $doctor->id ?>" class="btn btn-sm btn-danger">Delete</a>
-                                        </td>
-                                    </tr>
-                                            <?php } } ?>
-                                </tbody>
-                            </table>
-                        </div>
-                        <div class="pb-3 ps-3 mt-3 d-flex justify-content-center justify-content-md-between justify-content-lg-between flex-wrap flex-md-nowrap">
-                <nav aria-label="Page navigation" class="mb-3 mb-md-0 mb-lg-0">
-                  <?php
-                      $total_records = $crud->number_of_records("departments");
-                      $records_per_page = 10;
-                      $total_pages = ceil($total_records / $records_per_page);
-                  ?>
-                  <ul class="pagination">
-                    <li class="page-item">
-                      <a class="page-link" href="#" aria-label="Previous">Previous</a>
-                    </li>
-                    <?php for ($i = 1; $i <= $total_pages; $i++) { ?>
-                      <li class="page-item <?= ($i == $page) ? 'active' : '' ?>"><a class="page-link" href="<?= $base_url ?>departments/departments.php?page=<?= $i ?>"><?= $i ?></a></li>
-                    <?php } ?>
-                    
-                    <li class="page-item">
-                      <a class="page-link" href="#" aria-label="Next">Next</a>
-                    </li>
-                  </ul>
-              </nav>
+                            <div class="form-group">
+                                <label>Designation</label>
+                                <select name="designation_id" class="form-control">
+                                    <option value="1">Senior Doctor</option>
+                                    <option value="2">Junior Doctor</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Shift</label>
+                                <select name="shift_id" class="form-control">
+                                    <option value="1">Morning</option>
+                                    <option value="2">Evening</option>
+                                </select>
+                            </div>
+
+                            
+                            <div class="form-group">
+                                <label class="display-block">Status</label>
+								<div class="form-check form-check-inline">
+									<input class="form-check-input" type="radio" name="status" id="doctor_active" value="Active" checked>
+									<label class="form-check-label" for="doctor_active">
+									Active
+									</label>
+								</div>
+								<div class="form-check form-check-inline">
+									<input class="form-check-input" type="radio" name="status" id="doctor_inactive" value="Inactive">
+									<label class="form-check-label" for="doctor_inactive">
+									Inactive
+									</label>
+								</div>
+                            </div>
+                            <div class="m-t-20 text-center">
+                                <button class="btn btn-primary submit-btn">Create Doctor</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
             </div>
-        </div>
-    </div>
-</div>
-            <div class="notification-box">
+			<div class="notification-box">
                 <div class="msg-sidebar notifications msg-noti">
                     <div class="topnav-dropdown-header">
                         <span>Messages</span>
@@ -305,19 +397,5 @@
                 </div>
             </div>
         </div>
-		<div id="delete_doctor" class="modal fade delete-modal" role="dialog">
-			<div class="modal-dialog modal-dialog-centered">
-				<div class="modal-content">
-					<div class="modal-body text-center">
-						<img src="../assets/img/sent.png" alt="" width="50" height="46">
-						<h3>Are you sure want to delete this Doctor?</h3>
-						<div class="m-t-20"> <a href="#" class="btn btn-white" data-dismiss="modal">Close</a>
-							<button type="submit" class="btn btn-danger">Delete</button>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
     </div>
-    
-<?php require_once "../component/footer.php" ?>      
+    <?php require_once "../component/footer.php"; ?>
