@@ -23,7 +23,8 @@
                 </div>
                 <div class="row">
                     <div class="col-lg-8 offset-lg-2">
-                        <form action="<?= $base_url; ?>departments/update_department.php" method="POST" class="p-4">
+                        <form action="<?= $base_url; ?>departments/update_department.php?id=<?= $id ?>" method="POST" class="p-4">
+                            
 							<div class="form-group">
 								<label for="department_name">Department Name</label>
 								<input class="form-control" type="text" id="department_name" name="department_name" value="<?= $department->department_name ?>" required>
