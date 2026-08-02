@@ -187,4 +187,3 @@ class crud_class{
         $this->conn->close();
     }
 }
-
