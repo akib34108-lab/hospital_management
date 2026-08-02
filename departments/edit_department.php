@@ -1,87 +1,61 @@
 <?php require_once "../component/header.php"; ?>
 <!-- sidebar -->
-<?php require_once "../component/sidebar.php"; ?>
+<?php require_once "../component/sidebar.php"; 
+
+  $id = $_GET['id'];
+  $department = $crud->common_select("departments", "*", ['id' => $id]);
+  if (!$department['status'] || empty($department['data'])) {
+    $_SESSION['message'] = array('danger','Error', 'Department not found.');
+    echo "<script>window.location.href = '".$base_url."departments/departments.php';</script>";
+    exit;
+  }
+
+  $department = $department['data'][0];
+
+?>
 
         <div class="page-wrapper">
             <div class="content">
                 <div class="row">
-                    <div class="col-sm-5 col-5">
-                        <h4 class="page-title">Departments</h4>
-                    </div>
-                    <div class="col-sm-7 col-7 text-right m-b-30">
-                        <a href="add_department.php" class="btn btn-primary btn-rounded"><i class="fa fa-plus"></i> Add Department</a>
+                    <div class="col-lg-8 offset-lg-2">
+                        <h4 class="page-title">Edit Department</h4>
                     </div>
                 </div>
                 <div class="row">
-                    <div class="col-md-12">
-                        <div class="table-responsive">
-                            <table class="table table-striped custom-table mb-0 datatable">
-                                <thead>
-                                    <tr>
-                                        <th>ID</th>
-                                        <th>Department Name</th>
-                                        <th>Description</th>
-                                        <th>Status</th>
-                                        <th class="text-right">Action</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <?php
-                                        // Fetch department from the database
-                                        if(isset($_GET['page']) && is_numeric($_GET['page'])){
-                                            $page = (int)$_GET['page'];
-                                        } else {
-                                            $page = 1;
-                                        }
-                                        $departments = $crud->common_select("departments",'*',[],'AND','id','ASC',10,($page-1)*10);
-                                        
-                                        if($departments['status']){
-                                        foreach ($departments['data'] as $department) { ?>
-                                        <td><?= $department->id ?></td>
-                                        <td><?= $department->department_name ?></td>
-                                        <td><?= $department->description ?></td>
-                                        <td>
-                                            <?php if ($department->status == '1') { ?>
-                                            <span class="badge bg-success">Active</span>
-                                            <?php } else { ?>
-                                            <span class="badge bg-danger">Inactive</span>
-                                            <?php } ?>
-                                        </td>
-                                        <td class="text-center">
-                                            <a href="<?= $base_url ?>departments/edit_department.php?id=<?= $department->id ?>" class="btn btn-sm btn-primary mb-2 mb-lg-0 me-0 me-lg-2">Edit</a>
-                                            <a onclick="return confirm('Are you sure you want to delete this department?');" href="<?= $base_url ?>departments/delete_department.php?id=<?= $department->id ?>" class="btn btn-sm btn-danger">Delete</a>
-                                        </td>
-                                    </tr>
-                                            <?php } } ?>
-                                </tbody>
-                            </table>
-                        </div>
-                        <div class="pb-3 ps-3 mt-3 d-flex justify-content-center justify-content-md-between justify-content-lg-between flex-wrap flex-md-nowrap">
-                <nav aria-label="Page navigation" class="mb-3 mb-md-0 mb-lg-0">
-                  <?php
-                      $total_records = $crud->number_of_records("departments");
-                      $records_per_page = 10;
-                      $total_pages = ceil($total_records / $records_per_page);
-                  ?>
-                  <ul class="pagination">
-                    <li class="page-item">
-                      <a class="page-link" href="#" aria-label="Previous">Previous</a>
-                    </li>
-                    <?php for ($i = 1; $i <= $total_pages; $i++) { ?>
-                      <li class="page-item <?= ($i == $page) ? 'active' : '' ?>"><a class="page-link" href="<?= $base_url ?>departments/departments.php?page=<?= $i ?>"><?= $i ?></a></li>
-                    <?php } ?>
-                    
-                    <li class="page-item">
-                      <a class="page-link" href="#" aria-label="Next">Next</a>
-                    </li>
-                  </ul>
-              </nav>
+                    <div class="col-lg-8 offset-lg-2">
+                        <form action="<?= $base_url; ?>departments/update_department.php?id=<?= $id ?>" method="POST" class="p-4">
+                            
+							<div class="form-group">
+								<label for="department_name">Department Name</label>
+								<input class="form-control" type="text" id="department_name" name="department_name" value="<?= $department->department_name ?>" required>
+							</div>
+                            <div class="form-group">
+                                <label for="description">Description</label>
+                                <textarea cols="30" rows="4" class="form-control" id="description" name="description"><?= $department->description ?></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label class="display-block">Department Status</label>
+								<div class="form-check form-check-inline">
+									<input class="form-check-input" type="radio" name="status" id="product_active" value="1" <?= $department->status == 1 ? 'checked' : '' ?>>
+									<label class="form-check-label" for="product_active">
+									Active
+									</label>
+								</div>
+								<div class="form-check form-check-inline">
+									<input class="form-check-input" type="radio" name="status" id="product_inactive" value="0" <?= $department->status == 0 ? 'checked' : '' ?>>
+									<label class="form-check-label" for="product_inactive">
+									Inactive
+									</label>
+								</div>
+                            </div>
+                            <div class="m-t-20 text-center">
+                                <button class="btn btn-primary submit-btn">Update Department</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
             </div>
-        </div>
-    </div>
-</div>
-            <div class="notification-box">
+			<div class="notification-box">
                 <div class="msg-sidebar notifications msg-noti">
                     <div class="topnav-dropdown-header">
                         <span>Messages</span>
@@ -291,18 +265,5 @@
                 </div>
             </div>
         </div>
-		<div id="delete_department" class="modal fade delete-modal" role="dialog">
-			<div class="modal-dialog modal-dialog-centered">
-				<div class="modal-content">
-					<div class="modal-body text-center">
-						<img src="assets/img/sent.png" alt="" width="50" height="46">
-						<h3>Are you sure want to delete this Department?</h3>
-						<div class="m-t-20"> <a href="#" class="btn btn-white" data-dismiss="modal">Close</a>
-							<button type="submit" class="btn btn-danger">Delete</button>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
     </div>
 <?php require_once "../component/footer.php"; ?>
