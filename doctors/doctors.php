@@ -2,241 +2,96 @@
 <!-- Sidebar Start -->
 <?php require_once "../component/sidebar.php"; ?>
 <!-- Sidebar End -->
-    <div class="main-wrapper">
-        <div class="header">
-			<div class="header-left">
-				<a href="index-2.html" class="logo">
-					<img src="../assets/img/logo.png" width="35" height="35" alt=""> <span>Preclinic</span>
-				</a>
-			</div>
-			<a id="toggle_btn" href="javascript:void(0);"><i class="fa fa-bars"></i></a>
-            <a id="mobile_btn" class="mobile_btn float-left" href="#sidebar"><i class="fa fa-bars"></i></a>
-            <ul class="nav user-menu float-right">
-                <li class="nav-item dropdown d-none d-sm-block">
-                    <a href="#" class="dropdown-toggle nav-link" data-toggle="dropdown"><i class="fa fa-bell-o"></i> <span class="badge badge-pill bg-danger float-right">3</span></a>
-                    <div class="dropdown-menu notifications">
-                        <div class="topnav-dropdown-header">
-                            <span>Notifications</span>
-                        </div>
-                        <div class="drop-scroll">
-                            <ul class="notification-list">
-                                <li class="notification-message">
-                                    <a href="activities.html">
-                                        <div class="media">
-											<span class="avatar">
-												<img alt="John Doe" src="../assets/img/user.jpg" class="img-fluid">
-											</span>
-											<div class="media-body">
-												<p class="noti-details"><span class="noti-title">John Doe</span> added new task <span class="noti-title">Patient appointment booking</span></p>
-												<p class="noti-time"><span class="notification-time">4 mins ago</span></p>
-											</div>
-                                        </div>
-                                    </a>
-                                </li>
-                                <li class="notification-message">
-                                    <a href="activities.html">
-                                        <div class="media">
-											<span class="avatar">V</span>
-											<div class="media-body">
-												<p class="noti-details"><span class="noti-title">Tarah Shropshire</span> changed the task name <span class="noti-title">Appointment booking with payment gateway</span></p>
-												<p class="noti-time"><span class="notification-time">6 mins ago</span></p>
-											</div>
-                                        </div>
-                                    </a>
-                                </li>
-                                <li class="notification-message">
-                                    <a href="activities.html">
-                                        <div class="media">
-											<span class="avatar">L</span>
-											<div class="media-body">
-												<p class="noti-details"><span class="noti-title">Misty Tison</span> added <span class="noti-title">Domenic Houston</span> and <span class="noti-title">Claire Mapes</span> to project <span class="noti-title">Doctor available module</span></p>
-												<p class="noti-time"><span class="notification-time">8 mins ago</span></p>
-											</div>
-                                        </div>
-                                    </a>
-                                </li>
-                                <li class="notification-message">
-                                    <a href="activities.html">
-                                        <div class="media">
-											<span class="avatar">G</span>
-											<div class="media-body">
-												<p class="noti-details"><span class="noti-title">Rolland Webber</span> completed task <span class="noti-title">Patient and Doctor video conferencing</span></p>
-												<p class="noti-time"><span class="notification-time">12 mins ago</span></p>
-											</div>
-                                        </div>
-                                    </a>
-                                </li>
-                                <li class="notification-message">
-                                    <a href="activities.html">
-                                        <div class="media">
-											<span class="avatar">V</span>
-											<div class="media-body">
-												<p class="noti-details"><span class="noti-title">Bernardo Galaviz</span> added new task <span class="noti-title">Private chat module</span></p>
-												<p class="noti-time"><span class="notification-time">2 days ago</span></p>
-											</div>
-                                        </div>
-                                    </a>
-                                </li>
-                            </ul>
-                        </div>
-                        <div class="topnav-dropdown-footer">
-                            <a href="activities.html">View all Notifications</a>
-                        </div>
-                    </div>
-                </li>
-                <li class="nav-item dropdown d-none d-sm-block">
-                    <a href="javascript:void(0);" id="open_msg_box" class="hasnotifications nav-link"><i class="fa fa-comment-o"></i> <span class="badge badge-pill bg-danger float-right">8</span></a>
-                </li>
-                <li class="nav-item dropdown has-arrow">
-                    <a href="#" class="dropdown-toggle nav-link user-link" data-toggle="dropdown">
-                        <span class="user-img"><img class="rounded-circle" src="../assets/img/user.jpg" width="40" alt="Admin">
-							<span class="status online"></span></span>
-                        <span>Admin</span>
-                    </a>
-					<div class="dropdown-menu">
-						<a class="dropdown-item" href="profile.html">My Profile</a>
-						<a class="dropdown-item" href="edit-profile.html">Edit Profile</a>
-						<a class="dropdown-item" href="settings.html">Settings</a>
-						<a class="dropdown-item" href="login.html">Logout</a>
-					</div>
-                </li>
-            </ul>
-            <div class="dropdown mobile-user-menu float-right">
-                <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i class="fa fa-ellipsis-v"></i></a>
-                <div class="dropdown-menu dropdown-menu-right">
-                    <a class="dropdown-item" href="profile.html">My Profile</a>
-                    <a class="dropdown-item" href="edit-profile.html">Edit Profile</a>
-                    <a class="dropdown-item" href="settings.html">Settings</a>
-                    <a class="dropdown-item" href="login.html">Logout</a>
-                </div>
-            </div>
-        </div>
-        
-        <div class="page-wrapper">
+ <div class="page-wrapper">
             <div class="content">
                 <div class="row">
-                    <div class="col-sm-4 col-3">
+                    <div class="col-sm-5 col-5">
                         <h4 class="page-title">Doctors</h4>
                     </div>
-                    <div class="col-sm-8 col-9 text-right m-b-20">
-                        <a href="add-doctor.html" class="btn btn-primary btn-rounded float-right"><i class="fa fa-plus"></i> Add Doctor</a>
+                    <div class="col-sm-7 col-7 text-right m-b-30">
+                        <a href="add-department.php" class="btn btn-primary btn-rounded"><i class="fa fa-plus"></i> Add doctors</a>
                     </div>
                 </div>
-				<div class="row doctor-grid">
-                    <div class="col-md-4 col-sm-4  col-lg-3">
-                        <div class="profile-widget">
-                            <div class="doctor-img">
-                                <a class="avatar" href="profile.html"><img alt="" src="../assets/img/doctor-thumb-03.jpg"></a>
-                            </div>
-                            <div class="dropdown profile-action">
-                                <a href="#" class="action-icon dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i class="fa fa-ellipsis-v"></i></a>
-                                <div class="dropdown-menu dropdown-menu-right">
-                                    <a class="dropdown-item" href="edit-doctor.html"><i class="fa fa-pencil m-r-5"></i> Edit</a>
-                                    <a class="dropdown-item" href="#" data-toggle="modal" data-target="#delete_doctor"><i class="fa fa-trash-o m-r-5"></i> Delete</a>
-                                </div>
-                            </div>
-                            <div class="mt-4">
-        <div class="card shadow-sm border-0">
-          <div class="card-body p-0">
-              <div class="table-responsive table-rounded-top">
-                  <table class="table align-middle">
-                      <thead>
-                        <tr>
-                          <th><input type="checkbox" id="select-all" class="custom-checkbox"></th>
-                          <th>Name</th>
-                          <th>Email</th>
-                          <th>Mobile</th>
-                          <th>Education</th>
-                          <th>Status</th>
-                          <th class="text-center"><i class="fas fa-ellipsis-h"></i></th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        <?php
-                        // Fetch trainees from the database
-                        if(isset($_GET['page']) && is_numeric($_GET['page'])){
-                            $page = (int)$_GET['page'];
-                        } else {
-                            $page = 1;
-                        }
-                        $doctors = $crud->common_select("doctors",'*',[],'AND','id','ASC',10,($page-1)*10);
-                        
-                        if($doctors['status']){
-                        foreach ($doctors['data'] as $doctor) { ?>
-                        <tr>
-                          <td><input type="checkbox" class="custom-checkbox row-checkbox"></td>
-                          <td>
-                            <div class="d-flex justify-content-start align-items-center">
-                              <img src="<?= $doctor->image ? '../assets/uploads/trainees/images/' . $doctor->image : '../assets/images/avatar-1.jpg' ?>" class="tbl-img" alt="">
-                              <span class="ms-2"><?= $doctor->full_name ?></span>
-                            </div>
-                          </td>
-                          <td><?= $doctor->email ?></td>
-                          <td><?= $doctor->phone ?></td>
-                          <td><?= $doctor->education ?></td>
-                          <td>
-                            <?php if ($doctor->status == '1') { ?>
-                              <span class="badge bg-success">Active</span>
-                            <?php } else { ?>
-                              <span class="badge bg-danger">Inactive</span>
-                            <?php } ?>
-                          </td>
-                          <td class="text-center">
-                            <a href="<?= $base_url ?>doctors/edit.php?id=<?= $doctor->id ?>" class="btn btn-sm btn-primary mb-2 mb-lg-0 me-0 me-lg-2"><i class="fa-regular fa-pen-to-square"></i></a>
-                            <a href="<?= $base_url ?>doctors/delete.php?id=<?= $doctor->id ?>" class="btn btn-sm btn-danger"><i class="fa-solid fa-trash-can"></i></a>
-                          </td>
-                        </tr>
-                        <?php } } ?>
-                       
-                      </tbody>
-                    </table>
-              </div>
-
-              <div class="pb-3 ps-3 mt-3 d-flex justify-content-center justify-content-md-between justify-content-lg-between flex-wrap flex-md-nowrap">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="table-responsive">
+                            <table class="table table-striped custom-table mb-0 datatable">
+                                <thead>
+                                    <tr>
+                                        <th>id</th>
+                                        <th>Department id</th>
+                                        <th>Designation id</th>
+                                        <th>Shift id</th>
+                                        <th>name</th>
+                                        <th>gender</th>
+                                        <th>Specialization</th>
+                                        <th>qualification</th>
+                                        <th>experience</th>
+                                        <th>phone</th>
+                                        <th>email</th>
+                                        <th>address</th>
+                                        <th class="text-right">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <?php
+                                        // Fetch department from the database
+                                        if(isset($_GET['page']) && is_numeric($_GET['page'])){
+                                            $page = (int)$_GET['page'];
+                                        } else {
+                                            $page = 1;
+                                        }
+                                        $doctors = $crud->common_select("doctors",'*',[],'AND','id','ASC',10,($page-1)*10);
+                                        
+                                        if($doctors['status']){
+                                        foreach ($doctors['data'] as $doctor) { ?>
+                                        <td><?= $doctor->id ?></td>
+                                        <td><?= $doctor->department_id ?></td>
+                                        <td><?= $doctor->designation_id ?></td>
+                                        <td><?= $doctor->shift_id ?></td>
+                                        <td><?= $doctor->name ?></td>
+                                        <td><?= $doctor->gender ?></td>
+                                        <td><?= $doctor->specialization ?></td>
+                                        <td><?= $doctor->qualification ?></td>
+                                        <td><?= $doctor->experience ?></td>
+                                        <td><?= $doctor->phone ?></td>
+                                        <td><?= $doctor->email ?></td>
+                                        <td><?= $doctor->address ?></td>
+                                        
+                                        <td class="text-center">
+                                            <a href="<?= $base_url ?>doctors/edit.php?id=<?= $doctor->id ?>" class="btn btn-sm btn-primary mb-2 mb-lg-0 me-0 me-lg-2">Edit</a>
+                                            <a href="<?= $base_url ?>doctors/delete.php?id=<?= $doctor->id ?>" class="btn btn-sm btn-danger">Delete</a>
+                                        </td>
+                                    </tr>
+                                            <?php } } ?>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="pb-3 ps-3 mt-3 d-flex justify-content-center justify-content-md-between justify-content-lg-between flex-wrap flex-md-nowrap">
                 <nav aria-label="Page navigation" class="mb-3 mb-md-0 mb-lg-0">
                   <?php
-                      $total_records = $crud->number_of_records("doctorss");
+                      $total_records = $crud->number_of_records("departments");
                       $records_per_page = 10;
                       $total_pages = ceil($total_records / $records_per_page);
                   ?>
                   <ul class="pagination">
                     <li class="page-item">
-                      <a class="page-link" href="#" aria-label="Previous"><i class="fa-solid fa-chevron-left text-size-12"></i></a>
+                      <a class="page-link" href="#" aria-label="Previous">Previous</a>
                     </li>
                     <?php for ($i = 1; $i <= $total_pages; $i++) { ?>
-                      <li class="page-item <?= ($i == $page) ? 'active' : '' ?>"><a class="page-link" href="<?= $base_url ?>doctorss/list.php?page=<?= $i ?>"><?= $i ?></a></li>
+                      <li class="page-item <?= ($i == $page) ? 'active' : '' ?>"><a class="page-link" href="<?= $base_url ?>departments/departments.php?page=<?= $i ?>"><?= $i ?></a></li>
                     <?php } ?>
                     
                     <li class="page-item">
-                      <a class="page-link" href="#" aria-label="Next"><i class="fa-solid fa-chevron-right text-size-12"></i></a>
+                      <a class="page-link" href="#" aria-label="Next">Next</a>
                     </li>
                   </ul>
               </nav>
-                  <!-- <div class="d-flex justify-content-end">
-                      <div class="page-selector">
-                        <span>PAGE</span>
-                        <select class="form-select" aria-label="Select page">
-                          <option value="1" selected>1</option>
-                          <option value="2">2</option>
-                          <option value="3">3</option>
-                          <option value="4">4</option>
-                          <option value="5">5</option>
-                        </select>
-                        <span>OF 102</span>
-                      </div>
-                  </div> -->
-              </div>
-      </div> 
-      </div> 
-  </div>
-				<div class="row">
-                    <div class="col-sm-12">
-                        <div class="see-all">
-                            <a class="see-all-btn" href="javascript:void(0);">Load More</a>
-                        </div>
-                    </div>
-                </div>
             </div>
+        </div>
+    </div>
+</div>
             <div class="notification-box">
                 <div class="msg-sidebar notifications msg-noti">
                     <div class="topnav-dropdown-header">
