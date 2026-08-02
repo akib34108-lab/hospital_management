@@ -3,7 +3,7 @@
         <div class="header">
 			<div class="header-left">
 				<a href="<?= $base_url; ?>dashboard.php" class="logo">
-					<img src="<?= $base_url; ?>assets/assets/img/logo.png" width="35" height="35" alt=""> <span >Preclinic</span>
+					<img src="<?= $base_url; ?>assets/assets/img/logo.png" width="35" height="35" alt=""> <span >SHIFA</span>
 				</a>
 			</div>
 			<a id="toggle_btn" href="javascript:void(0);"><i class="fa fa-bars"></i></a>
