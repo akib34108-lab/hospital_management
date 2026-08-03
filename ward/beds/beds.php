@@ -1,15 +1,15 @@
-<?php require_once "../component/header.php"; ?>
+<?php require_once "../../component/header.php"; ?>
 <!-- sidebar -->
-<?php require_once "../component/sidebar.php"; ?>
+<?php require_once "../../component/sidebar.php"; ?>
 
         <div class="page-wrapper">
             <div class="content">
                 <div class="row">
                     <div class="col-sm-5 col-5">
-                        <h4 class="page-title">Shift</h4>
+                        <h4 class="page-title">Beds</h4>
                     </div>
                     <div class="col-sm-7 col-7 text-right m-b-30">
-                        <a href="add_shift.php" class="btn btn-primary btn-rounded"><i class="fa fa-plus"></i> Add Shift</a>
+                        <a href="add_bed.php" class="btn btn-primary btn-rounded"><i class="fa fa-plus"></i> Add Bed</a>
                     </div>
                 </div>
                 <div class="row">
@@ -19,9 +19,8 @@
                                 <thead>
                                     <tr>
                                         <th>ID</th>
-                                        <th>Shift Name</th>
-                                        <th>Shift Start</th>
-                                        <th>Shift End</th>
+                                        <th>Room ID</th>
+                                        <th>Bed Number</th>
                                         <th>Status</th>
                                         <th class="text-right">Action</th>
                                     </tr>
@@ -35,24 +34,23 @@
                                         } else {
                                             $page = 1;
                                         }
-                                        $shift = $crud->common_select("shift",'*',[],'AND','id','ASC',10,($page-1)*10);
+                                        $beds = $crud->common_select("beds",'*',[],'AND','id','ASC',10,($page-1)*10);
                                         
-                                        if($shift['status']){
-                                        foreach ($shift['data'] as $shift) { ?>
-                                        <td><?= $shift->id ?></td>
-                                        <td><?= $shift->shift_name ?></td>
-                                        <td><?= $shift->shift_start ?></td>
-                                        <td><?= $shift->shift_end ?></td>
+                                        if($beds['status']){
+                                        foreach ($beds['data'] as $bed) { ?>
+                                        <td><?= $bed->id ?></td>
+                                        <td><?= $bed->room_id ?></td>
+                                        <td><?= $bed->bed_number ?></td>
                                         <td>
-                                            <?php if ($shift->status == '1') { ?>
+                                            <?php if ($bed->status == '1') { ?>
                                             <span class="badge bg-success">Active</span>
                                             <?php } else { ?>
                                             <span class="badge bg-danger">Inactive</span>
                                             <?php } ?>
                                         </td>
                                         <td class="d-flex justify-content-end">
-                                            <a href="<?= $base_url ?>shift/edit_shift.php?id=<?= $shift->id ?>" class="btn btn-sm btn-primary mb-2 mb-lg-0 me-0 me-lg-2">Edit</a>
-                                            <a onclick="return confirm('Are you sure you want to delete this shift?');" href="<?= $base_url ?>shift/delete_shift.php?id=<?= $shift->id ?>" class="btn btn-sm btn-danger">Delete</a>
+                                            <a href="<?= $base_url ?>ward/beds/edit_bed.php?id=<?= $bed->id ?>" class="btn btn-sm btn-primary mb-2 mb-lg-0 me-0 me-lg-2">Edit</a>
+                                            <a onclick="return confirm('Are you sure you want to delete this bed?');" href="<?= $base_url ?>ward/beds/delete_bed.php?id=<?= $bed->id ?>" class="btn btn-sm btn-danger">Delete</a>
                                         </td>
                                     </tr>
                                             <?php } } ?>
@@ -62,7 +60,7 @@
                         <div class="pb-3 ps-3 mt-3 d-flex justify-content-center justify-content-md-between justify-content-lg-between flex-wrap flex-md-nowrap">
                 <nav aria-label="Page navigation" class="mb-3 mb-md-0 mb-lg-0">
                   <?php
-                      $total_records = $crud->number_of_records("shift");
+                      $total_records = $crud->number_of_records("beds");
                       $records_per_page = 10;
                       $total_pages = ceil($total_records / $records_per_page);
                   ?>
@@ -71,7 +69,7 @@
                       <a class="page-link" href="#" aria-label="Previous">Previous</a>
                     </li>
                     <?php for ($i = 1; $i <= $total_pages; $i++) { ?>
-                      <li class="page-item <?= ($i == $page) ? 'active' : '' ?>"><a class="page-link" href="<?= $base_url ?>shift/shift.php?page=<?= $i ?>"><?= $i ?></a></li>
+                      <li class="page-item <?= ($i == $page) ? 'active' : '' ?>"><a class="page-link" href="<?= $base_url ?>ward/beds/beds.php?page=<?= $i ?>"><?= $i ?></a></li>
                     <?php } ?>
                     
                     <li class="page-item">
@@ -307,4 +305,4 @@
 			</div>
 		</div>
     </div>
-<?php require_once "../component/footer.php"; ?>
+<?php require_once "../../component/footer.php"; ?>

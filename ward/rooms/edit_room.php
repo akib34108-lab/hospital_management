@@ -1,89 +1,72 @@
-<?php require_once "../component/header.php"; ?>
+<?php require_once "../../component/header.php"; ?>
 <!-- sidebar -->
-<?php require_once "../component/sidebar.php"; ?>
+<?php require_once "../../component/sidebar.php"; 
+
+  $id = $_GET['id'];
+  $room = $crud->common_select("rooms", "*", ['id' => $id]);
+  if (!$room['status'] || empty($room['data'])) {
+    $_SESSION['message'] = array('danger','Error', 'Room not found.');
+    echo "<script>window.location.href = '".$base_url."ward/rooms/rooms.php';</script>";
+    exit;
+  }
+
+  $room = $room['data'][0];
+
+?>
 
         <div class="page-wrapper">
             <div class="content">
                 <div class="row">
-                    <div class="col-sm-5 col-5">
-                        <h4 class="page-title">Shift</h4>
-                    </div>
-                    <div class="col-sm-7 col-7 text-right m-b-30">
-                        <a href="add_shift.php" class="btn btn-primary btn-rounded"><i class="fa fa-plus"></i> Add Shift</a>
+                    <div class="col-lg-8 offset-lg-2">
+                        <h4 class="page-title">Edit Room</h4>
                     </div>
                 </div>
                 <div class="row">
-                    <div class="col-md-12">
-                        <div class="table-responsive">
-                            <table class="table table-striped custom-table mb-0 datatable">
-                                <thead>
-                                    <tr>
-                                        <th>ID</th>
-                                        <th>Shift Name</th>
-                                        <th>Shift Start</th>
-                                        <th>Shift End</th>
-                                        <th>Status</th>
-                                        <th class="text-right">Action</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <?php
-                                        // Fetch department from the database
-                                        if(isset($_GET['page']) && is_numeric($_GET['page'])){
-                                            $page = (int)$_GET['page'];
-                                        } else {
-                                            $page = 1;
-                                        }
-                                        $shift = $crud->common_select("shift",'*',[],'AND','id','ASC',10,($page-1)*10);
-                                        
-                                        if($shift['status']){
-                                        foreach ($shift['data'] as $shift) { ?>
-                                        <td><?= $shift->id ?></td>
-                                        <td><?= $shift->shift_name ?></td>
-                                        <td><?= $shift->shift_start ?></td>
-                                        <td><?= $shift->shift_end ?></td>
-                                        <td>
-                                            <?php if ($shift->status == '1') { ?>
-                                            <span class="badge bg-success">Active</span>
-                                            <?php } else { ?>
-                                            <span class="badge bg-danger">Inactive</span>
-                                            <?php } ?>
-                                        </td>
-                                        <td class="d-flex justify-content-end">
-                                            <a href="<?= $base_url ?>shift/edit_shift.php?id=<?= $shift->id ?>" class="btn btn-sm btn-primary mb-2 mb-lg-0 me-0 me-lg-2">Edit</a>
-                                            <a onclick="return confirm('Are you sure you want to delete this shift?');" href="<?= $base_url ?>shift/delete_shift.php?id=<?= $shift->id ?>" class="btn btn-sm btn-danger">Delete</a>
-                                        </td>
-                                    </tr>
-                                            <?php } } ?>
-                                </tbody>
-                            </table>
-                        </div>
-                        <div class="pb-3 ps-3 mt-3 d-flex justify-content-center justify-content-md-between justify-content-lg-between flex-wrap flex-md-nowrap">
-                <nav aria-label="Page navigation" class="mb-3 mb-md-0 mb-lg-0">
-                  <?php
-                      $total_records = $crud->number_of_records("shift");
-                      $records_per_page = 10;
-                      $total_pages = ceil($total_records / $records_per_page);
-                  ?>
-                  <ul class="pagination">
-                    <li class="page-item">
-                      <a class="page-link" href="#" aria-label="Previous">Previous</a>
-                    </li>
-                    <?php for ($i = 1; $i <= $total_pages; $i++) { ?>
-                      <li class="page-item <?= ($i == $page) ? 'active' : '' ?>"><a class="page-link" href="<?= $base_url ?>shift/shift.php?page=<?= $i ?>"><?= $i ?></a></li>
-                    <?php } ?>
-                    
-                    <li class="page-item">
-                      <a class="page-link" href="#" aria-label="Next">Next</a>
-                    </li>
-                  </ul>
-              </nav>
+                    <div class="col-lg-8 offset-lg-2">
+                        <form action="<?= $base_url; ?>ward/rooms/update_room.php?id=<?= $id ?>" method="POST" class="p-4">
+							<div class="form-group">
+								<label for="room_number">Room Number</label>
+								<input class="form-control" type="text" id="room_number" name="room_number" value="<?= $room->room_number; ?>" required>
+							</div>
+							<div class="form-group">
+								<label for="room_type">Room Type</label>
+								<input class="form-control" type="text" id="room_type" name="room_type" value="<?= $room->room_type; ?>" placeholder="General, Cabin, ICU, CCU, VIP" required>
+							</div>
+							<div class="form-group">
+								<label for="floor">Floor</label>
+								<input class="form-control" type="text" id="floor" name="floor" value="<?= $room->floor; ?>" required>
+							</div>
+							<div class="form-group">
+								<label for="capacity">Capacity</label>
+								<input class="form-control" type="text" id="capacity" name="capacity" value="<?= $room->capacity; ?>" placeholder="Number of beds (maximum 2 beds)" required>
+							</div>
+							<div class="form-group">
+								<label for="charge_per_day">Charge Per Day</label>
+								<input class="form-control" type="text" id="charge_per_day" name="charge_per_day" value="<?= $room->charge_per_day; ?>" required>
+							</div>
+                            <div class="form-group">
+                                <label class="display-block">Room Status</label>
+								<div class="form-check form-check-inline">
+									<input class="form-check-input" type="radio" name="status" id="product_maintenance" value="1" <?= $room->status == 1 ? 'checked' : ''; ?>>
+									<label class="form-check-label" for="product_maintenance">
+									Active
+									</label>
+								</div>
+								<div class="form-check form-check-inline">
+									<input class="form-check-input" type="radio" name="status" id="product_inactive" value="0" <?= $room->status == 0 ? 'checked' : ''; ?>>
+									<label class="form-check-label" for="product_inactive">
+									Inactive
+									</label>
+								</div>
+                            </div>
+                            <div class="m-t-20 text-center">
+                                <button class="btn btn-primary submit-btn">Create Room</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
             </div>
-        </div>
-    </div>
-</div>
-            <div class="notification-box">
+			<div class="notification-box">
                 <div class="msg-sidebar notifications msg-noti">
                     <div class="topnav-dropdown-header">
                         <span>Messages</span>
@@ -293,18 +276,5 @@
                 </div>
             </div>
         </div>
-		<div id="delete_department" class="modal fade delete-modal" role="dialog">
-			<div class="modal-dialog modal-dialog-centered">
-				<div class="modal-content">
-					<div class="modal-body text-center">
-						<img src="assets/img/sent.png" alt="" width="50" height="46">
-						<h3>Are you sure want to delete this Department?</h3>
-						<div class="m-t-20"> <a href="#" class="btn btn-white" data-dismiss="modal">Close</a>
-							<button type="submit" class="btn btn-danger">Delete</button>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
     </div>
-<?php require_once "../component/footer.php"; ?>
+<?php require_once "../../component/footer.php"; ?>

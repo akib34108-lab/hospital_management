@@ -127,6 +127,14 @@
                         <li>
                             <a href="schedule.html"><i class="fa fa-calendar-check-o"></i> <span>Doctor Schedule</span></a>
                         </li>
+                        <li class="submenu">
+							<a href="#"><i class="fa fa-bed"></i> <span> Ward </span> <span class="menu-arrow"></span></a>
+							<ul style="display: none;">
+								<li><a href="<?= $base_url; ?>ward/rooms/rooms.php">Rooms</a></li>
+								<li><a href="<?= $base_url; ?>ward/beds/beds.php">Beds</a></li>
+								<li><a href="<?= $base_url; ?>ward/patients_addmission/admitted_patient_list.php">Patient Admission</a></li>
+							</ul>
+						</li>
                         <li>
                             <a href="<?= $base_url; ?>departments/departments.php"><i class="fa fa-hospital-o"></i> <span>Departments</span></a>
                         </li>

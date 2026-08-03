@@ -24,14 +24,17 @@
                 <div class="row">
                     <div class="col-lg-8 offset-lg-2">
                         <form action="<?= $base_url; ?>shift/update_shift.php?id=<?= $id ?>" method="POST" class="p-4">
-                            
 							<div class="form-group">
 								<label for="shift_name">Shift Name</label>
 								<input class="form-control" type="text" id="shift_name" name="shift_name" value="<?= $shift->shift_name ?>" required>
 							</div>
                             <div class="form-group">
-                                <label for="description">Description</label>
-                                <textarea cols="30" rows="4" class="form-control" id="description" name="description"><?= $shift->description ?></textarea>
+                                <label for="shift_start_time">Shift Start</label>
+                                <input class="form-control" type="time" id="shift_start_time" name="shift_start" value="<?= $shift->shift_start ?>" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="shift_end_time">Shift End</label>
+                                <input class="form-control" type="time" id="shift_end_time" name="shift_end" value="<?= $shift->shift_end ?>" required>
                             </div>
                             <div class="form-group">
                                 <label class="display-block">Shift Status</label>
