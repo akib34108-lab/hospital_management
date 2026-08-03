@@ -39,34 +39,24 @@
                                         <input class="form-control" type="email" name="email" value="<?= $doctor->email ?>" required>
                                     </div>
                                 </div>
-                                <div class="col-sm-6">
-                                    <div class="form-group">
-                                        <label>Password</label>
-                                        <input class="form-control" type="password" name="password" placeholder="">
-                                    </div>
-                                </div>
-                                <div class="col-sm-6">
-                                    <div class="form-group">
-                                        <label>Confirm Password</label>
-                                        <input class="form-control" type="password" name="confirm password" placeholder="" >
-                                    </div>
-                                </div>
+                                
+                                
 								
                                 <div class="col-sm-6">
-									<div class="form-group gender-select">
-										<label class="gen-label">Gender:</label>
-										<div class="form-check-inline">
-											<label class="form-check-label">
-												<input type="radio" name="gender" class="form-check-input" value="1">Male
-											</label>
-										</div>
-										<div class="form-check-inline">
-											<label class="form-check-label">
-												<input type="radio" name="gender" class="form-check-input" value="2">Female
-											</label>
-										</div>
-									</div>
+                                <div class="form-group gender-select">
+                                    <label class="gen-label">Gender: *</label>
+                                    <div class="form-check-inline">
+                                        <label class="form-check-label">
+                                            <input type="radio" name="gender" class="form-check-input" value="1" <?php echo ($doctor->gender == 1) ? 'checked' : ''; ?> required> Male
+                                        </label>
+                                    </div>
+                                    <div class="form-check-inline">
+                                        <label class="form-check-label">
+                                            <input type="radio" name="gender" class="form-check-input" value="2" <?php echo ($doctor->gender == 2) ? 'checked' : ''; ?> required> Female
+                                        </label>
+                                    </div>
                                 </div>
+                            </div>
 								<div class="col-sm-12">
 									<div class="row">
 										<div class="col-sm-12">
@@ -86,7 +76,7 @@
                             </div>
 							<div class="form-group">
                                 <label>Specialization</label>
-                                <textarea class="form-control" rows="3" cols="30" name="specialization" value="<?= $doctor->Specialization ?></textarea>
+                                <textarea class="form-control" rows="3" cols="30" name="specialization"><?php echo $doctor->specialization; ?></textarea>
                                 
                             </div>
                             <div class="col-sm-6">

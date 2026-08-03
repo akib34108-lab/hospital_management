@@ -42,19 +42,19 @@
                                 </div>
 								
                                 <div class="col-sm-6">
-									<div class="form-group gender-select">
-										<label class="gen-label">Gender:</label>
-										<div class="form-check-inline">
-											<label class="form-check-label">
-												<input type="radio" name="gender" class="form-check-input" value="1">Male
-											</label>
-										</div>
-										<div class="form-check-inline">
-											<label class="form-check-label">
-												<input type="radio" name="gender" class="form-check-input" value="2">Female
-											</label>
-										</div>
-									</div>
+                                    <div class="form-group gender-select">
+                                        <label class="gen-label">Gender: *</label>
+                                        <div class="form-check-inline">
+                                            <label class="form-check-label">
+                                                <input type="radio" name="gender" class="form-check-input" value="1" <?php echo (isset($doctor) && $doctor->gender == 1) ? 'checked' : ''; ?> required> Male
+                                            </label>
+                                        </div>
+                                        <div class="form-check-inline">
+                                            <label class="form-check-label">
+                                                <input type="radio" name="gender" class="form-check-input" value="2" <?php echo (isset($doctor) && $doctor->gender == 2) ? 'checked' : ''; ?> required> Female
+                                            </label>
+                                        </div>
+                                    </div>
                                 </div>
 								<div class="col-sm-12">
 									<div class="row">
