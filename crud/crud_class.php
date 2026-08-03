@@ -88,10 +88,7 @@ class crud_class{
         ];
 
         //* find table name from query */
-        $table = "";
-        if(preg_match('/FROM\s+([^\s]+)/i', $sql, $matches)) {
-            $table = $matches[1];
-        }
+        $table = $this->getMainTable($sql);
 
         /* check if query has WHERE clause */
         if(stripos($sql, 'WHERE') !== false){
@@ -122,6 +119,32 @@ class crud_class{
             $result["message"] = "No records found";
             return $result;
         }
+    }
+
+    function getMainTable($sql)
+    {
+        $level = 0;
+        $length = strlen($sql);
+
+        for ($i = 0; $i < $length; $i++) {
+
+            if ($sql[$i] == '(') {
+                $level++;
+            } elseif ($sql[$i] == ')') {
+                $level--;
+            }
+
+            if ($level == 0 && strtoupper(substr($sql, $i, 5)) == 'FROM ') {
+
+                $rest = trim(substr($sql, $i + 5));
+
+                if (preg_match('/^`?([a-zA-Z0-9_]+)`?/i', $rest, $matches)) {
+                    return $matches[1];
+                }
+            }
+        }
+
+        return "";
     }
 
 
