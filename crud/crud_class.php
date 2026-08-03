@@ -6,7 +6,7 @@ class crud_class{
     private $username = "root";
     private $password = "";
     private $database = "shifa";
-    private $conn;
+    public $conn;
 
     public function __construct(){
         $this->conn = new mysqli($this->host, $this->username, $this->password, $this->database);
@@ -14,8 +14,6 @@ class crud_class{
             die("Connection failed: " . $this->conn->connect_error);
         }
     }
-
-
 
     public function common_select($table, $columns = "*", $where = [],$where_condition = "AND", $order_by = "",
         $sort_order = "ASC",$limit = "",$offset = ""){
@@ -30,14 +28,18 @@ class crud_class{
         if(!empty($where)){
             $where_clauses = [];
             foreach($where as $column => $value){
-                $where_clauses[] = "$column = '" . $this->conn->real_escape_string($value) . "'";
+                $where_clauses[] = "$table" . "." . "$column = '" . $this->conn->real_escape_string($value) . "'";
                 //$where_clauses[] = "id='1'"
                 //$where_clauses[] = "name='kamal'"
             }
 
             $sql .= " WHERE " . implode(" $where_condition ", $where_clauses);
-            // "SELECT * FROM users WHERE id='1' AND name='kamal'"
+            $sql .= " AND deleted_at IS NULL";
+            // "SELECT * FROM users WHERE id='1' AND name='kamal'" and deleted_at IS NULL
+        }else{
+            $sql .= " WHERE deleted_at IS NULL";
         }
+        
 
         if(!empty($order_by)){
             $sql .= " ORDER BY $order_by $sort_order";
@@ -78,14 +80,37 @@ class crud_class{
         }
     }
 
-    public function common_query($query){
+    public function common_query($sql,$limit = "",$offset = ""){
         $result=[
             "status"=>false,
             "data"=>[],
             "message"=>""
         ];
 
-        $rs = $this->conn->query($query);
+        //* find table name from query */
+        $table = "";
+        if(preg_match('/FROM\s+([^\s]+)/i', $sql, $matches)) {
+            $table = $matches[1];
+        }
+
+        /* check if query has WHERE clause */
+        if(stripos($sql, 'WHERE') !== false){
+            $sql .= " AND $table.deleted_at IS NULL";
+        }else{
+            $sql .= " WHERE $table.deleted_at IS NULL";
+        }
+
+        if(!empty($limit)){
+            $sql .= " LIMIT $limit";
+            if(!empty($offset)){
+                $sql .= " OFFSET $offset";
+            }
+
+            // "SELECT * FROM users WHERE id='1' AND name='kamal' ORDER BY name ASC LIMIT 10 OFFSET 5"
+        }
+
+        $rs = $this->conn->query($sql);
+
         if($rs->num_rows > 0){
             $result["status"] = true;
             $result["message"] = "Records found";
@@ -110,6 +135,7 @@ class crud_class{
         $columns = implode(", ", array_keys($data));
         $values = implode("', '", array_map([$this->conn, 'real_escape_string'], array_values($data)));
         $sql = "INSERT INTO $table ($columns) VALUES ('$values')";
+        //echo $sql; // Debugging line to check the generated SQL query
         if($this->conn->query($sql)){
             $result["status"] = true;
             $result["data"] = $this->conn->insert_id;
@@ -187,3 +213,4 @@ class crud_class{
         $this->conn->close();
     }
 }
+

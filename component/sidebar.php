@@ -139,6 +139,12 @@
 								<li><a href="attendance.html">Attendance</a></li>
 							</ul>
 						</li>
+                        <li>
+                            <a href="<?= $base_url; ?>designation/designation.php"><i class="fa fa-id-badge"></i> <span>Designation</span></a>
+                        </li>
+                        <li>
+                            <a href="<?= $base_url; ?>shift/shift.php"><i class="fa fa-clock-o"></i> <span>Shift</span></a>
+                        </li>
 						<li class="submenu">
 							<a href="#"><i class="fa fa-money"></i> <span> Accounts </span> <span class="menu-arrow"></span></a>
 							<ul style="display: none;">
