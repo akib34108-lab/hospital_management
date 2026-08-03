@@ -9,7 +9,7 @@
                         <h4 class="page-title">Doctors</h4>
                     </div>
                     <div class="col-sm-7 col-7 text-right m-b-30">
-                        <a href="add_doctor.php" class="btn btn-primary btn-rounded"><i class="fa fa-plus"></i> Add doctor</a>
+                        <a href="add_doctor.php" class="btn btn-primary btn-rounded"><i class="fa fa-plus"></i> Add Doctor</a>
                     </div>
                 </div>
                 <div class="row">
@@ -70,7 +70,7 @@
                                         
                                         <td class="text-center">
                                             <a href="<?= $base_url ?>doctors/edit_doctor.php?id=<?= $doctor->id ?>" class="btn btn-sm btn-primary mb-2 mb-lg-0 me-0 me-lg-2">Edit</a>
-                                            <a href="<?= $base_url ?>doctors/delete_doctor.php?id=<?= $doctor->id ?>" class="btn btn-sm btn-danger">Delete</a>
+                                            <a onclick="return confirm('Are you sure you want to delete this doctor?')" href="<?= $base_url ?>doctors/delete_doctor.php?id=<?= $doctor->id ?>" class="btn btn-sm btn-danger">Delete</a>
                                         </td>
                                     </tr>
                                             <?php } } ?>
