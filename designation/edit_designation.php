@@ -1,136 +1,55 @@
 <?php require_once "../component/header.php"; ?>
 <!-- sidebar -->
-<?php require_once "../component/sidebar.php"; ?>
+<?php require_once "../component/sidebar.php"; 
 
+  $id = $_GET['id'];
+  $designation = $crud->common_select("designation", "*", ['id' => $id]);
+  if (!$designation['status'] || empty($designation['data'])) {
+    $_SESSION['message'] = array('danger','Error', 'Designation not found.');
+    echo "<script>window.location.href = '".$base_url."designation/designation.php';</script>";
+    exit;
+  }
 
-    
+  $designation = $designation['data'][0];
+
+?>
+
         <div class="page-wrapper">
             <div class="content">
                 <div class="row">
                     <div class="col-lg-8 offset-lg-2">
-                        <h4 class="page-title">Add Doctor</h4>
+                        <h4 class="page-title">Edit Designation</h4>
                     </div>
                 </div>
                 <div class="row">
                     <div class="col-lg-8 offset-lg-2">
-                        <form action="<?= $base_url; ?>doctors/store_doctor.php" method="POST" enctype="multipart/form-data" class="p-4">
-                            <div class="row">
-                                <div class="col-sm-12">
-                                    <div class="form-group">
-                                        <label>Doctor Name <span class="text-danger">*</span></label>
-                                        <input class="form-control" type="text" name="name">
-                                    </div>
-                                </div>
-                                
-                                <div class="col-sm-6">
-                                    <div class="form-group">
-                                        <label>Email <span class="text-danger">*</span></label>
-                                        <input class="form-control" type="email" name="email">
-                                    </div>
-                                </div>
-                                <div class="col-sm-6">
-                                    <div class="form-group">
-                                        <label>Password</label>
-                                        <input class="form-control" type="password">
-                                    </div>
-                                </div>
-                                <div class="col-sm-6">
-                                    <div class="form-group">
-                                        <label>Confirm Password</label>
-                                        <input class="form-control" type="password">
-                                    </div>
-                                </div>
-								
-                                <div class="col-sm-6">
-									<div class="form-group gender-select">
-										<label class="gen-label">Gender:</label>
-										<div class="form-check-inline">
-											<label class="form-check-label">
-												<input type="radio" name="gender" class="form-check-input" value="1">Male
-											</label>
-										</div>
-										<div class="form-check-inline">
-											<label class="form-check-label">
-												<input type="radio" name="gender" class="form-check-input" value="2">Female
-											</label>
-										</div>
-									</div>
-                                </div>
-								<div class="col-sm-12">
-									<div class="row">
-										<div class="col-sm-12">
-											<div class="form-group">
-												<label>Address</label>
-												<input type="text" class="form-control " name="address">
-											</div>
-										</div>
-										
-                                <div class="col-sm-6">
-                                    <div class="form-group">
-                                        <label>Phone</label>
-                                        <input class="form-control" type="text" name="phone" placeholder="Ex: 01711111111" >
-                                    </div>
-                                </div>
-                                
-                            </div>
-							<div class="form-group">
-                                <label>Specialization</label>
-                                <textarea class="form-control" rows="3" cols="30" name="specialization"></textarea>
-                            </div>
-                            <div class="col-sm-6">
-                                <div class="form-group">
-                                    <label>Qualification</label>
-                                    <input class="form-control" type="text" name="qualification" placeholder="Ex: MBBS, FCPS, BDS">
-                                </div>
-                            </div>
-                            <div class="col-sm-6">
-                                <div class="form-group">
-                                    <label>Experience <span>(Years)</span></label>
-                                    <input class="form-control" type="number" name="experience" placeholder="Ex: 8">
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label>Department</label>
-                                <select name="department_id" class="form-control">
-                                    <option value="1">Cardiology</option>
-                                    <option value="2">Neurology</option>
-                                </select>
-                            </div>
-
-                            <div class="form-group">
-                                <label>Designation</label>
-                                <select name="designation_id" class="form-control">
-                                    <option value="1">Senior Doctor</option>
-                                    <option value="2">Junior Doctor</option>
-                                </select>
-                            </div>
-
-                            <div class="form-group">
-                                <label>Shift</label>
-                                <select name="shift_id" class="form-control">
-                                    <option value="1">Morning</option>
-                                    <option value="2">Evening</option>
-                                </select>
-                            </div>
-
+                        <form action="<?= $base_url; ?>designation/update_designation.php?id=<?= $id ?>" method="POST" class="p-4">
                             
+							<div class="form-group">
+								<label for="designation_name">Designation Name</label>
+								<input class="form-control" type="text" id="designation_name" name="designation_name" value="<?= $designation->designation_name ?>" required>
+							</div>
                             <div class="form-group">
-                                <label class="display-block">Status</label>
+                                <label for="description">Description</label>
+                                <textarea cols="30" rows="4" class="form-control" id="description" name="description"><?= $designation->description ?></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label class="display-block">Designation Status</label>
 								<div class="form-check form-check-inline">
-									<input class="form-check-input" type="radio" name="status" id="doctor_active" value="Active" checked>
-									<label class="form-check-label" for="doctor_active">
+									<input class="form-check-input" type="radio" name="status" id="product_active" value="1" <?= $designation->status == 1 ? 'checked' : '' ?>>
+									<label class="form-check-label" for="product_active">
 									Active
 									</label>
 								</div>
 								<div class="form-check form-check-inline">
-									<input class="form-check-input" type="radio" name="status" id="doctor_inactive" value="Inactive">
-									<label class="form-check-label" for="doctor_inactive">
+									<input class="form-check-input" type="radio" name="status" id="product_inactive" value="0" <?= $designation->status == 0 ? 'checked' : '' ?>>
+									<label class="form-check-label" for="product_inactive">
 									Inactive
 									</label>
 								</div>
                             </div>
                             <div class="m-t-20 text-center">
-                                <button class="btn btn-primary submit-btn">Create Doctor</button>
+                                <button class="btn btn-primary submit-btn">Update Designation</button>
                             </div>
                         </form>
                     </div>
@@ -347,4 +266,4 @@
             </div>
         </div>
     </div>
-    <?php require_once "../component/footer.php"; ?>
+<?php require_once "../component/footer.php"; ?>

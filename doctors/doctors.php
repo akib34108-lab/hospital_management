@@ -9,7 +9,7 @@
                         <h4 class="page-title">Doctors</h4>
                     </div>
                     <div class="col-sm-7 col-7 text-right m-b-30">
-                        <a href="add_doctor.php" class="btn btn-primary btn-rounded"><i class="fa fa-plus"></i> Add doctors</a>
+                        <a href="add_doctor.php" class="btn btn-primary btn-rounded"><i class="fa fa-plus"></i> Add doctor</a>
                     </div>
                 </div>
                 <div class="row">
@@ -18,19 +18,19 @@
                             <table class="table table-striped custom-table mb-0 datatable">
                                 <thead>
                                     <tr>
-                                        <th>id</th>
-                                        <th>Department id</th>
-                                        <th>Designation id</th>
-                                        <th>Shift id</th>
-                                        <th>name</th>
-                                        <th>gender</th>
+                                        <th>ID</th>
+                                        <th>Department ID</th>
+                                        <th>Designation ID</th>
+                                        <th>Shift ID</th>
+                                        <th>Name</th>
+                                        <th>Gender</th>
                                         <th>Specialization</th>
-                                        <th>qualification</th>
-                                        <th>experience</th>
-                                        <th>phone</th>
-                                        <th>email</th>
-                                        <th>address</th>
-                                        <th>status</th>
+                                        <th>Qualification</th>
+                                        <th>Experience</th>
+                                        <th>Phone</th>
+                                        <th>Email</th>
+                                        <th>Address</th>
+                                        <th>Status</th>
                                         <th class="text-right">Action</th>
                                     </tr>
                                 </thead>
@@ -43,12 +43,12 @@
                                         } else {
                                             $page = 1;
                                         }
-                                        $doctors = $crud->common_select("doctors",'*',[],'AND','id','ASC',10,($page-1)*10);
+                                        $doctors = $crud->common_query("select doctors.*, departments.department_name from doctors inner join departments on doctors.department_id=departments.id",10,($page-1)*10);
                                         
                                         if($doctors['status']){
                                         foreach ($doctors['data'] as $doctor) { ?>
                                         <td><?= $doctor->id ?></td>
-                                        <td><?= $doctor->department_id ?></td>
+                                        <td><?= $doctor->department_name ?></td>
                                         <td><?= $doctor->designation_id ?></td>
                                         <td><?= $doctor->shift_id ?></td>
                                         <td><?= $doctor->name ?></td>
@@ -59,7 +59,13 @@
                                         <td><?= $doctor->phone ?></td>
                                         <td><?= $doctor->email ?></td>
                                         <td><?= $doctor->address ?></td>
-                                        <td><?= $doctor->status ?></td>
+                                        <td>
+                                            <?php if ($doctor->status == '1') { ?>
+                                            <span class="badge bg-success">Active</span>
+                                            <?php } else { ?>
+                                            <span class="badge bg-danger">Inactive</span>
+                                            <?php } ?>
+                                        </td>
 
                                         
                                         <td class="text-center">
@@ -74,7 +80,7 @@
                         <div class="pb-3 ps-3 mt-3 d-flex justify-content-center justify-content-md-between justify-content-lg-between flex-wrap flex-md-nowrap">
                 <nav aria-label="Page navigation" class="mb-3 mb-md-0 mb-lg-0">
                   <?php
-                      $total_records = $crud->number_of_records("departments");
+                      $total_records = $crud->number_of_records("doctors");
                       $records_per_page = 10;
                       $total_pages = ceil($total_records / $records_per_page);
                   ?>
@@ -83,7 +89,7 @@
                       <a class="page-link" href="#" aria-label="Previous">Previous</a>
                     </li>
                     <?php for ($i = 1; $i <= $total_pages; $i++) { ?>
-                      <li class="page-item <?= ($i == $page) ? 'active' : '' ?>"><a class="page-link" href="<?= $base_url ?>departments/departments.php?page=<?= $i ?>"><?= $i ?></a></li>
+                      <li class="page-item <?= ($i == $page) ? 'active' : '' ?>"><a class="page-link" href="<?= $base_url ?>doctors/doctors.php?page=<?= $i ?>"><?= $i ?></a></li>
                     <?php } ?>
                     
                     <li class="page-item">
