@@ -1,15 +1,15 @@
 <?php require_once "../component/header.php"; ?>
-<!-- Sidebar Start -->
+<!-- sidebar -->
 <?php require_once "../component/sidebar.php"; ?>
-<!-- Sidebar End -->
- <div class="page-wrapper">
+
+        <div class="page-wrapper">
             <div class="content">
                 <div class="row">
                     <div class="col-sm-5 col-5">
-                        <h4 class="page-title">Doctors</h4>
+                        <h4 class="page-title">Shift</h4>
                     </div>
                     <div class="col-sm-7 col-7 text-right m-b-30">
-                        <a href="add_doctor.php" class="btn btn-primary btn-rounded"><i class="fa fa-plus"></i> Add doctor</a>
+                        <a href="add_shift.php" class="btn btn-primary btn-rounded"><i class="fa fa-plus"></i> Add Shift</a>
                     </div>
                 </div>
                 <div class="row">
@@ -19,17 +19,9 @@
                                 <thead>
                                     <tr>
                                         <th>ID</th>
-                                        <th>Department ID</th>
-                                        <th>Designation ID</th>
-                                        <th>Shift ID</th>
-                                        <th>Name</th>
-                                        <th>Gender</th>
-                                        <th>Specialization</th>
-                                        <th>Qualification</th>
-                                        <th>Experience</th>
-                                        <th>Phone</th>
-                                        <th>Email</th>
-                                        <th>Address</th>
+                                        <th>Shift Name</th>
+                                        <th>Shift Start Time</th>
+                                        <th>Shift End Time</th>
                                         <th>Status</th>
                                         <th class="text-right">Action</th>
                                     </tr>
@@ -43,34 +35,24 @@
                                         } else {
                                             $page = 1;
                                         }
-                                        $doctors = $crud->common_query("select doctors.*, departments.department_name from doctors inner join departments on doctors.department_id=departments.id",10,($page-1)*10);
+                                        $shift = $crud->common_select("shift",'*',[],'AND','id','ASC',10,($page-1)*10);
                                         
-                                        if($doctors['status']){
-                                        foreach ($doctors['data'] as $doctor) { ?>
-                                        <td><?= $doctor->id ?></td>
-                                        <td><?= $doctor->department_name ?></td>
-                                        <td><?= $doctor->designation_id ?></td>
-                                        <td><?= $doctor->shift_id ?></td>
-                                        <td><?= $doctor->name ?></td>
-                                        <td><?= $doctor->gender ?></td>
-                                        <td><?= $doctor->specialization ?></td>
-                                        <td><?= $doctor->qualification ?></td>
-                                        <td><?= $doctor->experience ?></td>
-                                        <td><?= $doctor->phone ?></td>
-                                        <td><?= $doctor->email ?></td>
-                                        <td><?= $doctor->address ?></td>
+                                        if($shift['status']){
+                                        foreach ($shift['data'] as $shift) { ?>
+                                        <td><?= $shift->id ?></td>
+                                        <td><?= $shift->shift_name ?></td>
+                                        <td><?= $shift->shift_start_time ?></td>
+                                        <td><?= $shift->shift_end_time ?></td>
                                         <td>
-                                            <?php if ($doctor->status == '1') { ?>
+                                            <?php if ($shift->status == '1') { ?>
                                             <span class="badge bg-success">Active</span>
                                             <?php } else { ?>
                                             <span class="badge bg-danger">Inactive</span>
                                             <?php } ?>
                                         </td>
-
-                                        
-                                        <td class="text-center">
-                                            <a href="<?= $base_url ?>doctors/edit_doctor.php?id=<?= $doctor->id ?>" class="btn btn-sm btn-primary mb-2 mb-lg-0 me-0 me-lg-2">Edit</a>
-                                            <a href="<?= $base_url ?>doctors/delete_doctor.php?id=<?= $doctor->id ?>" class="btn btn-sm btn-danger">Delete</a>
+                                        <td class="d-flex justify-content-end">
+                                            <a href="<?= $base_url ?>shift/edit_shift.php?id=<?= $shift->id ?>" class="btn btn-sm btn-primary mb-2 mb-lg-0 me-0 me-lg-2">Edit</a>
+                                            <a onclick="return confirm('Are you sure you want to delete this shift?');" href="<?= $base_url ?>shift/delete_shift.php?id=<?= $shift->id ?>" class="btn btn-sm btn-danger">Delete</a>
                                         </td>
                                     </tr>
                                             <?php } } ?>
@@ -80,7 +62,7 @@
                         <div class="pb-3 ps-3 mt-3 d-flex justify-content-center justify-content-md-between justify-content-lg-between flex-wrap flex-md-nowrap">
                 <nav aria-label="Page navigation" class="mb-3 mb-md-0 mb-lg-0">
                   <?php
-                      $total_records = $crud->number_of_records("doctors");
+                      $total_records = $crud->number_of_records("shift");
                       $records_per_page = 10;
                       $total_pages = ceil($total_records / $records_per_page);
                   ?>
@@ -89,7 +71,7 @@
                       <a class="page-link" href="#" aria-label="Previous">Previous</a>
                     </li>
                     <?php for ($i = 1; $i <= $total_pages; $i++) { ?>
-                      <li class="page-item <?= ($i == $page) ? 'active' : '' ?>"><a class="page-link" href="<?= $base_url ?>doctors/doctors.php?page=<?= $i ?>"><?= $i ?></a></li>
+                      <li class="page-item <?= ($i == $page) ? 'active' : '' ?>"><a class="page-link" href="<?= $base_url ?>shift/shift.php?page=<?= $i ?>"><?= $i ?></a></li>
                     <?php } ?>
                     
                     <li class="page-item">
@@ -311,12 +293,12 @@
                 </div>
             </div>
         </div>
-		<div id="delete_doctor" class="modal fade delete-modal" role="dialog">
+		<div id="delete_department" class="modal fade delete-modal" role="dialog">
 			<div class="modal-dialog modal-dialog-centered">
 				<div class="modal-content">
 					<div class="modal-body text-center">
-						<img src="../assets/img/sent.png" alt="" width="50" height="46">
-						<h3>Are you sure want to delete this Doctor?</h3>
+						<img src="assets/img/sent.png" alt="" width="50" height="46">
+						<h3>Are you sure want to delete this Department?</h3>
 						<div class="m-t-20"> <a href="#" class="btn btn-white" data-dismiss="modal">Close</a>
 							<button type="submit" class="btn btn-danger">Delete</button>
 						</div>
@@ -325,5 +307,4 @@
 			</div>
 		</div>
     </div>
-    
-<?php require_once "../component/footer.php" ?>      
+<?php require_once "../component/footer.php"; ?>

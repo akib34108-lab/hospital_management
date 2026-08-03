@@ -1,107 +1,52 @@
 <?php require_once "../component/header.php"; ?>
-<!-- Sidebar Start -->
+<!-- sidebar -->
 <?php require_once "../component/sidebar.php"; ?>
-<!-- Sidebar End -->
- <div class="page-wrapper">
+
+        <div class="page-wrapper">
             <div class="content">
                 <div class="row">
-                    <div class="col-sm-5 col-5">
-                        <h4 class="page-title">Doctors</h4>
-                    </div>
-                    <div class="col-sm-7 col-7 text-right m-b-30">
-                        <a href="add_doctor.php" class="btn btn-primary btn-rounded"><i class="fa fa-plus"></i> Add doctor</a>
+                    <div class="col-lg-8 offset-lg-2">
+                        <h4 class="page-title">Add Shift</h4>
                     </div>
                 </div>
                 <div class="row">
-                    <div class="col-md-12">
-                        <div class="table-responsive">
-                            <table class="table table-striped custom-table mb-0 datatable">
-                                <thead>
-                                    <tr>
-                                        <th>ID</th>
-                                        <th>Department ID</th>
-                                        <th>Designation ID</th>
-                                        <th>Shift ID</th>
-                                        <th>Name</th>
-                                        <th>Gender</th>
-                                        <th>Specialization</th>
-                                        <th>Qualification</th>
-                                        <th>Experience</th>
-                                        <th>Phone</th>
-                                        <th>Email</th>
-                                        <th>Address</th>
-                                        <th>Status</th>
-                                        <th class="text-right">Action</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <?php
-                                        // Fetch department from the database
-                                        if(isset($_GET['page']) && is_numeric($_GET['page'])){
-                                            $page = (int)$_GET['page'];
-                                        } else {
-                                            $page = 1;
-                                        }
-                                        $doctors = $crud->common_query("select doctors.*, departments.department_name from doctors inner join departments on doctors.department_id=departments.id",10,($page-1)*10);
-                                        
-                                        if($doctors['status']){
-                                        foreach ($doctors['data'] as $doctor) { ?>
-                                        <td><?= $doctor->id ?></td>
-                                        <td><?= $doctor->department_name ?></td>
-                                        <td><?= $doctor->designation_id ?></td>
-                                        <td><?= $doctor->shift_id ?></td>
-                                        <td><?= $doctor->name ?></td>
-                                        <td><?= $doctor->gender ?></td>
-                                        <td><?= $doctor->specialization ?></td>
-                                        <td><?= $doctor->qualification ?></td>
-                                        <td><?= $doctor->experience ?></td>
-                                        <td><?= $doctor->phone ?></td>
-                                        <td><?= $doctor->email ?></td>
-                                        <td><?= $doctor->address ?></td>
-                                        <td>
-                                            <?php if ($doctor->status == '1') { ?>
-                                            <span class="badge bg-success">Active</span>
-                                            <?php } else { ?>
-                                            <span class="badge bg-danger">Inactive</span>
-                                            <?php } ?>
-                                        </td>
-
-                                        
-                                        <td class="text-center">
-                                            <a href="<?= $base_url ?>doctors/edit_doctor.php?id=<?= $doctor->id ?>" class="btn btn-sm btn-primary mb-2 mb-lg-0 me-0 me-lg-2">Edit</a>
-                                            <a href="<?= $base_url ?>doctors/delete_doctor.php?id=<?= $doctor->id ?>" class="btn btn-sm btn-danger">Delete</a>
-                                        </td>
-                                    </tr>
-                                            <?php } } ?>
-                                </tbody>
-                            </table>
-                        </div>
-                        <div class="pb-3 ps-3 mt-3 d-flex justify-content-center justify-content-md-between justify-content-lg-between flex-wrap flex-md-nowrap">
-                <nav aria-label="Page navigation" class="mb-3 mb-md-0 mb-lg-0">
-                  <?php
-                      $total_records = $crud->number_of_records("doctors");
-                      $records_per_page = 10;
-                      $total_pages = ceil($total_records / $records_per_page);
-                  ?>
-                  <ul class="pagination">
-                    <li class="page-item">
-                      <a class="page-link" href="#" aria-label="Previous">Previous</a>
-                    </li>
-                    <?php for ($i = 1; $i <= $total_pages; $i++) { ?>
-                      <li class="page-item <?= ($i == $page) ? 'active' : '' ?>"><a class="page-link" href="<?= $base_url ?>doctors/doctors.php?page=<?= $i ?>"><?= $i ?></a></li>
-                    <?php } ?>
-                    
-                    <li class="page-item">
-                      <a class="page-link" href="#" aria-label="Next">Next</a>
-                    </li>
-                  </ul>
-              </nav>
+                    <div class="col-lg-8 offset-lg-2">
+                        <form action="<?= $base_url; ?>shift/store_shift.php" method="POST" class="p-4">
+							<div class="form-group">
+								<label for="shift_name">Shift Name</label>
+								<input class="form-control" type="text" id="shift_name" name="shift_name" required>
+							</div>
+                            <div class="form-group">
+                                <label for="shift_start_time">Shift Start</label>
+                                <input class="form-control" type="time" id="shift_start_time" name="shift_start" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="shift_end_time">Shift End</label>
+                                <input class="form-control" type="time" id="shift_end_time" name="shift_end" required>
+                            </div>
+                            <div class="form-group">
+                                <label class="display-block">Shift Status</label>
+								<div class="form-check form-check-inline">
+									<input class="form-check-input" type="radio" name="status" id="product_active" value="1" checked>
+									<label class="form-check-label" for="product_active">
+									Active
+									</label>
+								</div>
+								<div class="form-check form-check-inline">
+									<input class="form-check-input" type="radio" name="status" id="product_inactive" value="0">
+									<label class="form-check-label" for="product_inactive">
+									Inactive
+									</label>
+								</div>
+                            </div>
+                            <div class="m-t-20 text-center">
+                                <button class="btn btn-primary submit-btn">Create Shift</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
             </div>
-        </div>
-    </div>
-</div>
-            <div class="notification-box">
+			<div class="notification-box">
                 <div class="msg-sidebar notifications msg-noti">
                     <div class="topnav-dropdown-header">
                         <span>Messages</span>
@@ -311,19 +256,5 @@
                 </div>
             </div>
         </div>
-		<div id="delete_doctor" class="modal fade delete-modal" role="dialog">
-			<div class="modal-dialog modal-dialog-centered">
-				<div class="modal-content">
-					<div class="modal-body text-center">
-						<img src="../assets/img/sent.png" alt="" width="50" height="46">
-						<h3>Are you sure want to delete this Doctor?</h3>
-						<div class="m-t-20"> <a href="#" class="btn btn-white" data-dismiss="modal">Close</a>
-							<button type="submit" class="btn btn-danger">Delete</button>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
     </div>
-    
-<?php require_once "../component/footer.php" ?>      
+<?php require_once "../component/footer.php"; ?>
