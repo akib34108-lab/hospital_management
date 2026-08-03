@@ -9,7 +9,7 @@
                         <h4 class="page-title">Doctors</h4>
                     </div>
                     <div class="col-sm-7 col-7 text-right m-b-30">
-                        <a href="add_doctor.php" class="btn btn-primary btn-rounded"><i class="fa fa-plus"></i> Add doctors</a>
+                        <a href="add_doctor.php" class="btn btn-primary btn-rounded"><i class="fa fa-plus"></i> Add doctor</a>
                     </div>
                 </div>
                 <div class="row">
@@ -18,19 +18,19 @@
                             <table class="table table-striped custom-table mb-0 datatable">
                                 <thead>
                                     <tr>
-                                        <th>id</th>
-                                        <th>Department id</th>
-                                        <th>Designation id</th>
-                                        <th>Shift id</th>
-                                        <th>name</th>
-                                        <th>gender</th>
+                                        <th>ID</th>
+                                        <th>Department ID</th>
+                                        <th>Designation ID</th>
+                                        <th>Shift ID</th>
+                                        <th>Name</th>
+                                        <th>Gender</th>
                                         <th>Specialization</th>
-                                        <th>qualification</th>
-                                        <th>experience</th>
-                                        <th>phone</th>
-                                        <th>email</th>
-                                        <th>address</th>
-                                        <th>status</th>
+                                        <th>Qualification</th>
+                                        <th>Experience</th>
+                                        <th>Phone</th>
+                                        <th>Email</th>
+                                        <th>Address</th>
+                                        <th>Status</th>
                                         <th class="text-right">Action</th>
                                     </tr>
                                 </thead>
@@ -59,7 +59,13 @@
                                         <td><?= $doctor->phone ?></td>
                                         <td><?= $doctor->email ?></td>
                                         <td><?= $doctor->address ?></td>
-                                        <td><?= $doctor->status ?></td>
+                                        <td>
+                                            <?php if ($doctor->status == '1') { ?>
+                                            <span class="badge bg-success">Active</span>
+                                            <?php } else { ?>
+                                            <span class="badge bg-danger">Inactive</span>
+                                            <?php } ?>
+                                        </td>
 
                                         
                                         <td class="text-center">

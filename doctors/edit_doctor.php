@@ -29,36 +29,29 @@
                                 <div class="col-sm-12">
                                     <div class="form-group">
                                         <label>Doctor Name <span class="text-danger">*</span></label>
-                                        <input class="form-control" type="text" name="name">
+                                        <input class="form-control" type="text" name="name" value="<?= $doctor->name ?>" required>
                                     </div>
                                 </div>
                                 
                                 <div class="col-sm-6">
                                     <div class="form-group">
                                         <label>Email <span class="text-danger">*</span></label>
-                                        <input class="form-control" type="email" name="email">
+                                        <input class="form-control" type="email" name="email" value="<?= $doctor->email ?>" required>
                                     </div>
                                 </div>
                                 <div class="col-sm-6">
                                     <div class="form-group">
                                         <label>Password</label>
-                                        <input class="form-control" type="password">
+                                        <input class="form-control" type="password" name="password" placeholder="">
                                     </div>
                                 </div>
                                 <div class="col-sm-6">
                                     <div class="form-group">
                                         <label>Confirm Password</label>
-                                        <input class="form-control" type="password">
+                                        <input class="form-control" type="password" name="confirm password" placeholder="" >
                                     </div>
                                 </div>
-								<div class="col-sm-6">
-                                    <div class="form-group">
-                                        <label>Date of Birth</label>
-                                        <div class="cal-icon">
-                                            <input type="text" class="form-control datetimepicker">
-                                        </div>
-                                    </div>
-                                </div>
+								
                                 <div class="col-sm-6">
 									<div class="form-group gender-select">
 										<label class="gen-label">Gender:</label>
@@ -79,76 +72,33 @@
 										<div class="col-sm-12">
 											<div class="form-group">
 												<label>Address</label>
-												<input type="text" class="form-control " name="address">
+												<input type="text" class="form-control " name="address" value="<?= $doctor->address ?>" required>
 											</div>
 										</div>
-										<div class="col-sm-6 col-md-6 col-lg-3">
-											<div class="form-group">
-												<label>Country</label>
-												<select class="form-control select">
-													<option>USA</option>
-													<option>United Kingdom</option>
-												</select>
-											</div>
-										</div>
-										<div class="col-sm-6 col-md-6 col-lg-3">
-											<div class="form-group">
-												<label>City</label>
-												<input type="text" class="form-control">
-											</div>
-										</div>
-										<div class="col-sm-6 col-md-6 col-lg-3">
-											<div class="form-group">
-												<label>State/Province</label>
-												<select class="form-control select">
-													<option>California</option>
-													<option>Alaska</option>
-													<option>Alabama</option>
-												</select>
-											</div>
-										</div>
-										<div class="col-sm-6 col-md-6 col-lg-3">
-											<div class="form-group">
-												<label>Postal Code</label>
-												<input type="text" class="form-control">
-											</div>
-										</div>
-									</div>
-								</div>
+										
                                 <div class="col-sm-6">
                                     <div class="form-group">
                                         <label>Phone</label>
-                                        <input class="form-control" type="text" name="phone" placeholder="Ex: 01711111111" >
+                                        <input class="form-control" type="text" name="phone" placeholder="Ex: 01711111111" value="<?= $doctor->phone ?>" required >
                                     </div>
                                 </div>
-                                <div class="col-sm-6">
-									<div class="form-group">
-										<label>Avatar</label>
-										<div class="profile-upload">
-											<div class="upload-img">
-												<img alt="" src="assets/img/user.jpg">
-											</div>
-											<div class="upload-input">
-												<input type="file" class="form-control">
-											</div>
-										</div>
-									</div>
-                                </div>
+                                
                             </div>
 							<div class="form-group">
                                 <label>Specialization</label>
-                                <textarea class="form-control" rows="3" cols="30" name="specialization"></textarea>
+                                <textarea class="form-control" rows="3" cols="30" name="specialization" value="<?= $doctor->Specialization ?></textarea>
+                                
                             </div>
                             <div class="col-sm-6">
                                 <div class="form-group">
                                     <label>Qualification</label>
-                                    <input class="form-control" type="text" name="qualification" placeholder="Ex: MBBS, FCPS, BDS">
+                                    <input class="form-control" type="text" name="qualification" placeholder="Ex: MBBS, FCPS, BDS" value="<?= $doctor->qualification ?>" required>
                                 </div>
                             </div>
                             <div class="col-sm-6">
                                 <div class="form-group">
                                     <label>Experience <span>(Years)</span></label>
-                                    <input class="form-control" type="number" name="experience" placeholder="Ex: 8">
+                                    <input class="form-control" type="number" name="experience" placeholder="Ex: 8" value="<?= $doctor->experience ?>" required>
                                 </div>
                             </div>
                             <div class="form-group">
@@ -156,6 +106,7 @@
                                 <select name="department_id" class="form-control">
                                     <option value="1">Cardiology</option>
                                     <option value="2">Neurology</option>
+                                    <option value="3">psychologist</option>
                                 </select>
                             </div>
 
@@ -177,16 +128,16 @@
 
                             
                             <div class="form-group">
-                                <label class="display-block">Status</label>
+                                <label class="display-block">Doctor Status</label>
 								<div class="form-check form-check-inline">
-									<input class="form-check-input" type="radio" name="status" id="doctor_active" value="Active" checked>
-									<label class="form-check-label" for="doctor_active">
+									<input class="form-check-input" type="radio" name="status" id="doctor_active" value="1" <?= $doctor->status == 1 ? 'checked' : '' ?>>
+									<label class="form-check-label" for="product_active">
 									Active
 									</label>
 								</div>
 								<div class="form-check form-check-inline">
-									<input class="form-check-input" type="radio" name="status" id="doctor_inactive" value="Inactive">
-									<label class="form-check-label" for="doctor_inactive">
+									<input class="form-check-input" type="radio" name="status" id="doctor_inactive" value="0" <?= $doctor->status == 0 ? 'checked' : '' ?>>
+									<label class="form-check-label" for="product_inactive">
 									Inactive
 									</label>
 								</div>

@@ -40,14 +40,7 @@
                                         <input class="form-control" type="password">
                                     </div>
                                 </div>
-								<div class="col-sm-6">
-                                    <div class="form-group">
-                                        <label>Date of Birth</label>
-                                        <div class="cal-icon">
-                                            <input type="text" class="form-control datetimepicker">
-                                        </div>
-                                    </div>
-                                </div>
+								
                                 <div class="col-sm-6">
 									<div class="form-group gender-select">
 										<label class="gen-label">Gender:</label>
@@ -71,58 +64,14 @@
 												<input type="text" class="form-control " name="address">
 											</div>
 										</div>
-										<div class="col-sm-6 col-md-6 col-lg-3">
-											<div class="form-group">
-												<label>Country</label>
-												<select class="form-control select">
-													<option>USA</option>
-													<option>United Kingdom</option>
-												</select>
-											</div>
-										</div>
-										<div class="col-sm-6 col-md-6 col-lg-3">
-											<div class="form-group">
-												<label>City</label>
-												<input type="text" class="form-control">
-											</div>
-										</div>
-										<div class="col-sm-6 col-md-6 col-lg-3">
-											<div class="form-group">
-												<label>State/Province</label>
-												<select class="form-control select">
-													<option>California</option>
-													<option>Alaska</option>
-													<option>Alabama</option>
-												</select>
-											</div>
-										</div>
-										<div class="col-sm-6 col-md-6 col-lg-3">
-											<div class="form-group">
-												<label>Postal Code</label>
-												<input type="text" class="form-control">
-											</div>
-										</div>
-									</div>
-								</div>
+										
                                 <div class="col-sm-6">
                                     <div class="form-group">
                                         <label>Phone</label>
                                         <input class="form-control" type="text" name="phone" placeholder="Ex: 01711111111" >
                                     </div>
                                 </div>
-                                <div class="col-sm-6">
-									<div class="form-group">
-										<label>Avatar</label>
-										<div class="profile-upload">
-											<div class="upload-img">
-												<img alt="" src="assets/img/user.jpg">
-											</div>
-											<div class="upload-input">
-												<input type="file" class="form-control">
-											</div>
-										</div>
-									</div>
-                                </div>
+                                
                             </div>
 							<div class="form-group">
                                 <label>Specialization</label>
