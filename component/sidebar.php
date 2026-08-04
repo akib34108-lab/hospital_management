@@ -127,6 +127,9 @@
                         <li>
                             <a href="schedule.html"><i class="fa fa-calendar-check-o"></i> <span>Doctor Schedule</span></a>
                         </li>
+                        <li>
+                            <a href="schedule.html"><i class="fa fa-file-text-o"></i> <span>Prescriptions</span></a>
+                        </li>
                         <li class="submenu">
 							<a href="#"><i class="fa fa-bed"></i> <span> Ward </span> <span class="menu-arrow"></span></a>
 							<ul style="display: none;">
