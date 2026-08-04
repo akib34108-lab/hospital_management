@@ -55,8 +55,8 @@
                                         <td><?= $patient->emergency_contact ?></td>
                                         
                                         <td class="text-center">
-                                            <a href="<?= $base_url ?>patient/edit.php?id=<?= $patient->id ?>" class="btn btn-sm btn-primary mb-2 mb-lg-0 me-0 me-lg-2">Edit</a>
-                                            <a href="<?= $base_url ?>patients/delete.php?id=<?= $patient->id ?>" class="btn btn-sm btn-danger">Delete</a>
+                                            <a href="<?= $base_url ?>patients/patient_edit.php?id=<?= $patient->id ?>" class="btn btn-sm btn-primary mb-2 mb-lg-0 me-0 me-lg-2">Edit</a>
+                                            <a href="<?= $base_url ?>patients/patient_delete.php?id=<?= $patient->id ?>" class="btn btn-sm btn-danger">Delete</a>
                                         </td>
                                     </tr>
                                             <?php } } ?>

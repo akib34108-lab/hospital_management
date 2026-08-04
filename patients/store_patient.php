@@ -8,5 +8,5 @@
             $_SESSION['message'] = array('danger','Error', $result['message']);
         }
 
-        echo "<script>window.location.href = '".$base_url."patients/add-patient.php';</script>";
+        echo "<script>window.location.href = '".$base_url."patients/patients.php';</script>";
     
