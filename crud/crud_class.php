@@ -80,46 +80,70 @@ class crud_class{
         }
     }
 
-    public function common_query($sql,$limit = "",$offset = ""){
-        $result=[
-            "status"=>false,
-            "data"=>[],
-            "message"=>""
-        ];
+    public function common_query($sql, $limit = "", $offset = "")
+{
+    $result = [
+        "status" => false,
+        "data" => [],
+        "message" => ""
+    ];
 
-        //* find table name from query */
-        $table = $this->getMainTable($sql);
+    // Get main table
+    $table = $this->getMainTable($sql);
 
-        /* check if query has WHERE clause */
-        if(stripos($sql, 'WHERE') !== false){
-            $sql .= " AND $table.deleted_at IS NULL";
-        }else{
-            $sql .= " WHERE $table.deleted_at IS NULL";
-        }
+    if (!empty($table)) {
 
-        if(!empty($limit)){
-            $sql .= " LIMIT $limit";
-            if(!empty($offset)){
-                $sql .= " OFFSET $offset";
+        $condition = "$table.deleted_at IS NULL";
+
+        // Find ORDER BY, GROUP BY or LIMIT
+        if (preg_match('/\b(ORDER\s+BY|GROUP\s+BY|LIMIT)\b/i', $sql, $matches, PREG_OFFSET_CAPTURE)) {
+
+            $keywordPos = $matches[0][1];
+
+            $before = substr($sql, 0, $keywordPos);
+            $after  = substr($sql, $keywordPos);
+
+            if (stripos($before, 'WHERE') !== false) {
+                $sql = $before . " AND $condition " . $after;
+            } else {
+                $sql = $before . " WHERE $condition " . $after;
             }
 
-            // "SELECT * FROM users WHERE id='1' AND name='kamal' ORDER BY name ASC LIMIT 10 OFFSET 5"
-        }
-
-        $rs = $this->conn->query($sql);
-
-        if($rs->num_rows > 0){
-            $result["status"] = true;
-            $result["message"] = "Records found";
-            while($row = $rs->fetch_object()){
-                $result["data"][] = $row;
-            }
-            return $result; 
         } else {
-            $result["message"] = "No records found";
-            return $result;
+
+            if (stripos($sql, 'WHERE') !== false) {
+                $sql .= " AND $condition";
+            } else {
+                $sql .= " WHERE $condition";
+            }
+
         }
     }
+
+    if (!empty($limit)) {
+        $sql .= " LIMIT " . (int)$limit;
+
+        if (!empty($offset)) {
+            $sql .= " OFFSET " . (int)$offset;
+        }
+    }
+
+    $rs = $this->conn->query($sql);
+
+    if ($rs && $rs->num_rows > 0) {
+        $result["status"] = true;
+        $result["message"] = "Records found";
+
+        while ($row = $rs->fetch_object()) {
+            $result["data"][] = $row;
+        }
+    } else {
+        $result["message"] = "No records found";
+    }
+
+    return $result;
+}
+
 
     function getMainTable($sql)
     {

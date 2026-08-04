@@ -22,26 +22,26 @@
                                 </div>
                                 <div class="col-sm-6">
                                 <div class="form-group gender-select">
-                                <label class="gen-label">Gender:</label>
+                                    <label class="gen-label">Gender:</label>
 
-                                <div class="form-check-inline">
-                                    <label class="form-check-label">
-                                        <input type="radio" name="gender" class="form-check-input" value="Male">Male
-                                    </label>
-                                </div>
+                                    <div class="form-check-inline">
+                                        <label class="form-check-label">
+                                            <input type="radio" name="gender" class="form-check-input" value="Male">Male
+                                        </label>
+                                    </div>
 
-                                <div class="form-check-inline">
-                                    <label class="form-check-label">
-                                        <input type="radio" name="gender" class="form-check-input" value="Female">Female
-                                    </label>
-                                </div>
+                                    <div class="form-check-inline">
+                                        <label class="form-check-label">
+                                            <input type="radio" name="gender" class="form-check-input" value="Female">Female
+                                        </label>
+                                    </div>
 
-                                <div class="form-check-inline">
-                                    <label class="form-check-label">
-                                        <input type="radio" name="gender" class="form-check-input" value="Others">Others
-                                    </label>
+                                    <div class="form-check-inline">
+                                        <label class="form-check-label">
+                                            <input type="radio" name="gender" class="form-check-input" value="Others">Others
+                                        </label>
+                                    </div>
                                 </div>
-                            </div>
                         </div>
                        <div class="col-sm-3">
                         <div class="form-group">
