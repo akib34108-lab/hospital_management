@@ -39,15 +39,14 @@
                                         } else {
                                             $page = 1;
                                         }
-
-                                        $patient_admissions = $crud->common_query("select patient_admissions.*, patients.name as patient_name, doctors.name as doctor_name from patient_admissions inner join patients on patient_admissions.patient_id=patients.id inner join doctors on patient_admissions.doctor_id=doctors.id",10,($page-1)*10);
-
+                                        $patient_admissions = $crud->common_select("patient_admissions",'*',[],'AND','id','ASC',10,($page-1)*10);
+                                        
                                         if($patient_admissions['status']){
                                         foreach ($patient_admissions['data'] as $admission) { ?>
                                         <td><?= $admission->id ?></td>
                                         <td><?= $admission->admission_no ?></td>
-                                        <td><?= $admission->patient_name ?></td>
-                                        <td><?= $admission->doctor_name ?></td>
+                                        <td><?= $admission->patient_id ?></td>
+                                        <td><?= $admission->doctor_id ?></td>
                                         <td><?= $admission->room_id ?></td>
                                         <td><?= $admission->bed_id ?></td>
                                         <td><?= $admission->admission_date ?></td>

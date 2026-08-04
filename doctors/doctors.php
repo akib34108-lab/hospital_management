@@ -43,14 +43,14 @@
                                         } else {
                                             $page = 1;
                                         }
-                                        $doctors = $crud->common_query("select doctors.*, departments.department_name from doctors inner join departments on doctors.department_id=departments.id",10,($page-1)*10);
+                                        $doctors = $crud->common_query("select doctors.*, departments.department_name, designation.designation_name, shift.shift_name from doctors inner join departments on doctors.department_id=departments.id inner join designation on doctors.designation_id=designation.id inner join shift on doctors.shift_id=shift.id",10,($page-1)*10);
                                         
                                         if($doctors['status']){
                                         foreach ($doctors['data'] as $doctor) { ?>
                                         <td><?= $doctor->id ?></td>
                                         <td><?= $doctor->department_name ?></td>
-                                        <td><?= $doctor->designation_id ?></td>
-                                        <td><?= $doctor->shift_id ?></td>
+                                        <td><?= $doctor->designation_name ?></td>
+                                        <td><?= $doctor->shift_name ?></td>
                                         <td><?= $doctor->name ?></td>
                                         <td><?= $doctor->gender ?></td>
                                         <td><?= $doctor->specialization ?></td>

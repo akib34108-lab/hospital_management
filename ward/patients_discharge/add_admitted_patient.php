@@ -5,94 +5,68 @@
         <div class="page-wrapper">
             <div class="content">
                 <div class="row">
-                    <div class="col-sm-5 col-5">
-                        <h4 class="page-title">Admitted Patients</h4>
-                    </div>
-                    <div class="col-sm-7 col-7 text-right m-b-30">
-                        <a href="<?= $base_url ?>ward/patients_addmission/add_admitted_patient.php" class="btn btn-primary btn-rounded"><i class="fa fa-plus"></i> Add Admitted Patient</a>
+                    <div class="col-lg-8 offset-lg-2">
+                        <h4 class="page-title">Add Admitted Patient</h4>
                     </div>
                 </div>
                 <div class="row">
-                    <div class="col-md-12">
-                        <div class="table-responsive">
-                            <table class="table table-striped custom-table mb-0 datatable">
-                                <thead>
-                                    <tr>
-                                        <th>ID</th>
-                                        <th>Admission Number</th>
-                                        <th>Patient ID</th> <!--patient id is not needed in the table, it can be converted to patient name -->
-                                        <th>Doctor ID</th> <!--doctor id is not needed in the table, it can be converted to doctor name --> 
-                                        <th>Room</th>
-                                        <th>Bed</th>
-                                        <th>Admit Date</th>
-                                        <th>Admit Time</th>
-                                        <th>Status</th>
-                                        <th class="text-right">Action</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <?php
-                                        // Fetch department from the database
-                                        if(isset($_GET['page']) && is_numeric($_GET['page'])){
-                                            $page = (int)$_GET['page'];
-                                        } else {
-                                            $page = 1;
-                                        }
-
-                                        $patient_admissions = $crud->common_query("select patient_admissions.*, patients.name as patient_name, doctors.name as doctor_name from patient_admissions inner join patients on patient_admissions.patient_id=patients.id inner join doctors on patient_admissions.doctor_id=doctors.id",10,($page-1)*10);
-
-                                        if($patient_admissions['status']){
-                                        foreach ($patient_admissions['data'] as $admission) { ?>
-                                        <td><?= $admission->id ?></td>
-                                        <td><?= $admission->admission_no ?></td>
-                                        <td><?= $admission->patient_name ?></td>
-                                        <td><?= $admission->doctor_name ?></td>
-                                        <td><?= $admission->room_id ?></td>
-                                        <td><?= $admission->bed_id ?></td>
-                                        <td><?= $admission->admission_date ?></td>
-                                        <td><?= $admission->admission_time ?></td>
-                                        <td>
-                                            <?php if ($admission->status == '1') { ?>
-                                            <span class="badge bg-success">Active</span>
-                                            <?php } else { ?>
-                                            <span class="badge bg-danger">Inactive</span>
-                                            <?php } ?>
-                                        </td>
-                                        <td class="d-flex justify-content-end">
-                                            <a href="<?= $base_url ?>ward/patients_addmission/edit_admitted_patient.php?id=<?= $admission->id ?>" class="btn btn-sm btn-primary mb-2 mb-lg-0 me-0 me-lg-2">Edit</a>
-                                            <a onclick="return confirm('Are you sure you want to delete this patient admission?');" href="<?= $base_url ?>ward/patients_addmission/delete_admitted_patient.php?id=<?= $admission->id ?>" class="btn btn-sm btn-danger">Delete</a>
-                                        </td>
-                                    </tr>
-                                            <?php } } ?>
-                                </tbody>
-                            </table>
-                        </div>
-                        <div class="pb-3 ps-3 mt-3 d-flex justify-content-center justify-content-md-between justify-content-lg-between flex-wrap flex-md-nowrap">
-                <nav aria-label="Page navigation" class="mb-3 mb-md-0 mb-lg-0">
-                  <?php
-                      $total_records = $crud->number_of_records("patient_admissions");
-                      $records_per_page = 10;
-                      $total_pages = ceil($total_records / $records_per_page);
-                  ?>
-                  <ul class="pagination">
-                    <li class="page-item">
-                      <a class="page-link" href="#" aria-label="Previous">Previous</a>
-                    </li>
-                    <?php for ($i = 1; $i <= $total_pages; $i++) { ?>
-                      <li class="page-item <?= ($i == $page) ? 'active' : '' ?>"><a class="page-link" href="<?= $base_url ?>ward/patients_addmission/admitted_patient_list.php?page=<?= $i ?>"><?= $i ?></a></li>
-                    <?php } ?>
-                    
-                    <li class="page-item">
-                      <a class="page-link" href="#" aria-label="Next">Next</a>
-                    </li>
-                  </ul>
-              </nav>
+                    <div class="col-lg-8 offset-lg-2">
+                        <form action="<?= $base_url; ?>ward/patients_addmission/store_admitted_patient.php" method="POST" class="p-4">
+							<div class="form-group">
+								<label for="admission_number">Admission Number</label>
+								<input class="form-control" type="text" id="admission_number" name="admission_no" required>
+							</div>
+							<div class="form-group">
+								<label for="patient_id">Patient</label>
+								<input class="form-control" type="text" id="patient_id" name="patient_id" required>
+							</div>
+							<div class="form-group">
+								<label for="doctor_id">Doctor</label>
+								<input class="form-control" type="text" id="doctor_id" name="doctor_id" required>
+							</div>
+							<div class="form-group">
+								<label for="room_id">Room</label>
+								<input class="form-control" type="text" id="room_id" name="room_id" required>
+							</div>
+							<div class="form-group">
+								<label for="bed_id">Bed</label>
+								<input class="form-control" type="text" id="bed_id" name="bed_id" required>
+							</div>
+							<div class="form-group">
+								<label for="admission_date">Admission Date</label>
+								<input class="form-control" type="date" id="admission_date" name="admission_date" required>
+							</div>
+							<div class="form-group">
+								<label for="admission_time">Admission Time</label>
+								<input class="form-control" type="time" id="admission_time" name="admission_time" required>
+							</div>
+							<div class="form-group">
+								<label for="reason">Reason for Admission</label>
+								<input class="form-control" type="text" id="reason" name="reason" required>
+							</div>
+                            <div class="form-group">
+                                <label class="display-block">Admission Status</label>
+								<div class="form-check form-check-inline">
+									<input class="form-check-input" type="radio" name="status" id="product_active" value="1" checked>
+									<label class="form-check-label" for="product_active">
+									Active
+									</label>
+								</div>
+								<div class="form-check form-check-inline">
+									<input class="form-check-input" type="radio" name="status" id="product_inactive" value="0">
+									<label class="form-check-label" for="product_inactive">
+									Inactive
+									</label>
+								</div>
+                            </div>
+                            <div class="m-t-20 text-center">
+                                <button class="btn btn-primary submit-btn">Add Admitted Patient</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
             </div>
-        </div>
-    </div>
-</div>
-            <div class="notification-box">
+			<div class="notification-box">
                 <div class="msg-sidebar notifications msg-noti">
                     <div class="topnav-dropdown-header">
                         <span>Messages</span>
@@ -302,18 +276,5 @@
                 </div>
             </div>
         </div>
-		<div id="delete_department" class="modal fade delete-modal" role="dialog">
-			<div class="modal-dialog modal-dialog-centered">
-				<div class="modal-content">
-					<div class="modal-body text-center">
-						<img src="assets/img/sent.png" alt="" width="50" height="46">
-						<h3>Are you sure want to delete this Department?</h3>
-						<div class="m-t-20"> <a href="#" class="btn btn-white" data-dismiss="modal">Close</a>
-							<button type="submit" class="btn btn-danger">Delete</button>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
     </div>
 <?php require_once "../../component/footer.php"; ?>
