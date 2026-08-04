@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 5.2.1
+-- version 5.2.0
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Aug 03, 2026 at 05:17 PM
--- Server version: 10.4.32-MariaDB
--- PHP Version: 8.2.12
+-- Generation Time: Aug 04, 2026 at 09:10 AM
+-- Server version: 10.4.27-MariaDB
+-- PHP Version: 8.2.0
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -20,6 +20,32 @@ SET time_zone = "+00:00";
 --
 -- Database: `shifa`
 --
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `beds`
+--
+
+CREATE TABLE `beds` (
+  `id` int(11) NOT NULL,
+  `room_id` int(11) DEFAULT NULL,
+  `bed_number` varchar(40) DEFAULT NULL,
+  `is_occupied` int(11) NOT NULL DEFAULT 0 COMMENT '0 available 1 occupied',
+  `status` int(2) DEFAULT NULL COMMENT '0=inactive, 1=active',
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  `deleted_at` datetime DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `beds`
+--
+
+INSERT INTO `beds` (`id`, `room_id`, `bed_number`, `is_occupied`, `status`, `created_at`, `updated_at`, `deleted_at`) VALUES
+(3, 1, '1', 0, 1, NULL, NULL, NULL),
+(4, 2, '1', 1, 1, NULL, NULL, NULL),
+(5, 2, '2', 0, 1, NULL, NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -131,7 +157,41 @@ CREATE TABLE `patients` (
 
 INSERT INTO `patients` (`id`, `name`, `gender`, `age`, `blood_group`, `phone`, `email`, `address`, `emergency_contact`, `created_at`, `updated_at`, `deleted_at`, `created_by`, `updated_by`) VALUES
 (1, 'Azad Hossain', 1, 25, 1, '01712345678', 'azad@gmail.com', 'Feni, Bangladesh', '01812345678', '2026-08-02 04:35:22', '2026-08-02 04:35:22', NULL, 1, 1),
-(2, 'Akib', 1, 25, 1, '0153321562', 'akib@gmail.com', 'kdlk, Bangladesh', '01812345678', '2026-08-02 05:24:16', '2026-08-02 05:24:16', NULL, 1, 1);
+(2, 'Akib', 1, 25, 1, '0153321562', 'akib@gmail.com', 'kdlk, Bangladesh', '01812345678', '2026-08-02 05:24:16', '2026-08-02 05:24:16', NULL, 1, 1),
+(3, 'sdfg', 0, 56, 0, '0105', 'jamal@yahoo.com', '2no Gate', '012353', '2026-08-04 06:46:36', '2026-08-04 06:46:36', NULL, NULL, NULL),
+(4, 'Azad Hossain', 1, 55, 0, '01712345678', 'azad@gmail.com', 'Feni, Bangladesh', '01812345678', '2026-08-04 06:46:45', '2026-08-04 06:46:45', NULL, NULL, NULL),
+(5, 'Kamal Uddin', 1, 56, NULL, '01712345679', NULL, NULL, NULL, '2026-08-04 07:01:41', '2026-08-04 07:01:41', NULL, NULL, NULL);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `patient_admissions`
+--
+
+CREATE TABLE `patient_admissions` (
+  `id` int(11) NOT NULL,
+  `admission_no` varchar(30) DEFAULT NULL,
+  `patient_id` int(11) DEFAULT NULL,
+  `doctor_id` int(11) DEFAULT NULL,
+  `room_id` int(11) DEFAULT NULL,
+  `bed_id` int(11) DEFAULT NULL,
+  `admission_date` date DEFAULT NULL,
+  `admission_time` time DEFAULT NULL,
+  `discharge_date` date DEFAULT NULL,
+  `discharge_time` time DEFAULT NULL,
+  `reason` varchar(255) DEFAULT NULL,
+  `status` int(2) DEFAULT NULL COMMENT '0=inactive, 1=active',
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  `deleted_at` datetime DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `patient_admissions`
+--
+
+INSERT INTO `patient_admissions` (`id`, `admission_no`, `patient_id`, `doctor_id`, `room_id`, `bed_id`, `admission_date`, `admission_time`, `discharge_date`, `discharge_time`, `reason`, `status`, `created_at`, `updated_at`, `deleted_at`) VALUES
+(1, 'ADM-0001', 5, 2, 2, 4, '2026-08-04', NULL, NULL, NULL, 'fdsasd', NULL, NULL, NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -156,6 +216,33 @@ CREATE TABLE `roles` (
 INSERT INTO `roles` (`id`, `role_name`, `access`, `status`, `created_at`, `updated_at`, `deleted_at`) VALUES
 (1, 'Super Admin', 'Full access to all system features', 1, '2026-07-25 05:51:10', '2026-07-25 05:51:10', NULL),
 (2, 'Admin', 'Manage users, settings, and reports', 1, '2026-07-25 05:51:10', '2026-07-25 05:51:10', NULL);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `rooms`
+--
+
+CREATE TABLE `rooms` (
+  `id` int(11) NOT NULL,
+  `room_number` varchar(40) DEFAULT NULL,
+  `room_type` varchar(40) DEFAULT NULL,
+  `floor` varchar(40) DEFAULT NULL,
+  `capacity` int(11) DEFAULT NULL,
+  `charge_per_day` double(10,2) DEFAULT NULL,
+  `status` int(2) DEFAULT NULL COMMENT '0=inactive, 1=active',
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  `deleted_at` datetime DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `rooms`
+--
+
+INSERT INTO `rooms` (`id`, `room_number`, `room_type`, `floor`, `capacity`, `charge_per_day`, `status`, `created_at`, `updated_at`, `deleted_at`) VALUES
+(1, '101', 'Cabin', '1st', 2, 1500.72, 1, NULL, NULL, NULL),
+(2, '102', 'VIP', '1st', 1, 1500.72, 1, NULL, NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -215,6 +302,13 @@ INSERT INTO `users` (`id`, `full_name`, `email`, `phone`, `password`, `role_id`,
 --
 
 --
+-- Indexes for table `beds`
+--
+ALTER TABLE `beds`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `room_id` (`room_id`);
+
+--
 -- Indexes for table `departments`
 --
 ALTER TABLE `departments`
@@ -240,11 +334,23 @@ ALTER TABLE `patients`
   ADD PRIMARY KEY (`id`);
 
 --
+-- Indexes for table `patient_admissions`
+--
+ALTER TABLE `patient_admissions`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- Indexes for table `roles`
 --
 ALTER TABLE `roles`
   ADD PRIMARY KEY (`id`),
   ADD UNIQUE KEY `role_name` (`role_name`);
+
+--
+-- Indexes for table `rooms`
+--
+ALTER TABLE `rooms`
+  ADD PRIMARY KEY (`id`);
 
 --
 -- Indexes for table `shift`
@@ -264,6 +370,12 @@ ALTER TABLE `users`
 --
 
 --
+-- AUTO_INCREMENT for table `beds`
+--
+ALTER TABLE `beds`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+
+--
 -- AUTO_INCREMENT for table `departments`
 --
 ALTER TABLE `departments`
@@ -279,7 +391,13 @@ ALTER TABLE `designation`
 -- AUTO_INCREMENT for table `patients`
 --
 ALTER TABLE `patients`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+
+--
+-- AUTO_INCREMENT for table `patient_admissions`
+--
+ALTER TABLE `patient_admissions`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `roles`
@@ -288,20 +406,32 @@ ALTER TABLE `roles`
   MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
+-- AUTO_INCREMENT for table `rooms`
+--
+ALTER TABLE `rooms`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+
+--
 -- AUTO_INCREMENT for table `shift`
 --
 ALTER TABLE `shift`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- Constraints for dumped tables
 --
+
+--
+-- Constraints for table `beds`
+--
+ALTER TABLE `beds`
+  ADD CONSTRAINT `beds_ibfk_1` FOREIGN KEY (`room_id`) REFERENCES `rooms` (`id`);
 
 --
 -- Constraints for table `doctors`
