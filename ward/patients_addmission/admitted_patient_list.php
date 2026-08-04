@@ -25,6 +25,7 @@
                                         <th>Room</th>
                                         <th>Bed</th>
                                         <th>Admit Date</th>
+                                        <th>Admit Time</th>
                                         <th>Status</th>
                                         <th class="text-right">Action</th>
                                     </tr>
@@ -43,12 +44,13 @@
                                         if($patient_admissions['status']){
                                         foreach ($patient_admissions['data'] as $admission) { ?>
                                         <td><?= $admission->id ?></td>
-                                        <td><?= $admission->admission_number ?></td>
+                                        <td><?= $admission->admission_no ?></td>
                                         <td><?= $admission->patient_id ?></td>
                                         <td><?= $admission->doctor_id ?></td>
                                         <td><?= $admission->room_id ?></td>
                                         <td><?= $admission->bed_id ?></td>
-                                        <td><?= $admission->admit_date ?></td>
+                                        <td><?= $admission->admission_date ?></td>
+                                        <td><?= $admission->admission_time ?></td>
                                         <td>
                                             <?php if ($admission->status == '1') { ?>
                                             <span class="badge bg-success">Active</span>
@@ -57,8 +59,8 @@
                                             <?php } ?>
                                         </td>
                                         <td class="d-flex justify-content-end">
-                                            <a href="<?= $base_url ?>ward/rooms/edit_room.php?id=<?= $room->id ?>" class="btn btn-sm btn-primary mb-2 mb-lg-0 me-0 me-lg-2">Edit</a>
-                                            <a onclick="return confirm('Are you sure you want to delete this room?');" href="<?= $base_url ?>ward/rooms/delete_room.php?id=<?= $room->id ?>" class="btn btn-sm btn-danger">Delete</a>
+                                            <a href="<?= $base_url ?>ward/patients_addmission/edit_admitted_patient.php?id=<?= $admission->id ?>" class="btn btn-sm btn-primary mb-2 mb-lg-0 me-0 me-lg-2">Edit</a>
+                                            <a onclick="return confirm('Are you sure you want to delete this patient admission?');" href="<?= $base_url ?>ward/patients_addmission/delete_admitted_patient.php?id=<?= $admission->id ?>" class="btn btn-sm btn-danger">Delete</a>
                                         </td>
                                     </tr>
                                             <?php } } ?>

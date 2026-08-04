@@ -3,14 +3,14 @@
 <?php require_once "../../component/sidebar.php"; 
 
   $id = $_GET['id'];
-  $room = $crud->common_select("rooms", "*", ['id' => $id]);
-  if (!$room['status'] || empty($room['data'])) {
-    $_SESSION['message'] = array('danger','Error', 'Room not found.');
-    echo "<script>window.location.href = '".$base_url."ward/rooms/rooms.php';</script>";
+  $patient_admission = $crud->common_select("patient_admissions", "*", ['id' => $id]);
+  if (!$patient_admission['status'] || empty($patient_admission['data'])) {
+    $_SESSION['message'] = array('danger','Error', 'Patient admission not found.');
+    echo "<script>window.location.href = '".$base_url."ward/patients_addmission/admitted_patient_list.php';</script>";
     exit;
   }
 
-  $room = $room['data'][0];
+  $patient_admission = $patient_admission['data'][0];
 
 ?>
 
@@ -18,49 +18,61 @@
             <div class="content">
                 <div class="row">
                     <div class="col-lg-8 offset-lg-2">
-                        <h4 class="page-title">Edit Room</h4>
+                        <h4 class="page-title">Edit Patient Admission</h4>
                     </div>
                 </div>
                 <div class="row">
                     <div class="col-lg-8 offset-lg-2">
-                        <form action="<?= $base_url; ?>ward/rooms/update_room.php?id=<?= $id ?>" method="POST" class="p-4">
+                        <form action="<?= $base_url; ?>ward/patients_addmission/update_admitted_patient.php?id=<?= $id ?>" method="POST" class="p-4">
 							<div class="form-group">
-								<label for="room_number">Room Number</label>
-								<input class="form-control" type="text" id="room_number" name="room_number" value="<?= $room->room_number; ?>" required>
+								<label for="admission_number">Admission Number</label>
+								<input class="form-control" type="text" id="admission_number" name="admission_no" value="<?= $patient_admission->admission_no ?>" required>
 							</div>
 							<div class="form-group">
-								<label for="room_type">Room Type</label>
-								<input class="form-control" type="text" id="room_type" name="room_type" value="<?= $room->room_type; ?>" placeholder="General, Cabin, ICU, CCU, VIP" required>
+								<label for="patient_id">Patient</label>
+								<input class="form-control" type="text" id="patient_id" name="patient_id" value="<?= $patient_admission->patient_id ?>" required>
 							</div>
 							<div class="form-group">
-								<label for="floor">Floor</label>
-								<input class="form-control" type="text" id="floor" name="floor" value="<?= $room->floor; ?>" required>
+								<label for="doctor_id">Doctor</label>
+								<input class="form-control" type="text" id="doctor_id" name="doctor_id" value="<?= $patient_admission->doctor_id ?>" required>
 							</div>
 							<div class="form-group">
-								<label for="capacity">Capacity</label>
-								<input class="form-control" type="text" id="capacity" name="capacity" value="<?= $room->capacity; ?>" placeholder="Number of beds (maximum 2 beds)" required>
+								<label for="room_id">Room</label>
+								<input class="form-control" type="text" id="room_id" name="room_id" value="<?= $patient_admission->room_id ?>" required>
 							</div>
 							<div class="form-group">
-								<label for="charge_per_day">Charge Per Day</label>
-								<input class="form-control" type="text" id="charge_per_day" name="charge_per_day" value="<?= $room->charge_per_day; ?>" required>
+								<label for="bed_id">Bed</label>
+								<input class="form-control" type="text" id="bed_id" name="bed_id" value="<?= $patient_admission->bed_id ?>" required>
+							</div>
+							<div class="form-group">
+								<label for="admission_date">Admission Date</label>
+								<input class="form-control" type="date" id="admission_date" name="admission_date" value="<?= $patient_admission->admission_date ?>" required>
+							</div>
+							<div class="form-group">
+								<label for="admission_time">Admission Time</label>
+								<input class="form-control" type="time" id="admission_time" name="admission_time" value="<?= $patient_admission->admission_time ?>" required>
+							</div>
+							<div class="form-group">
+								<label for="reason">Reason for Admission</label>
+								<input class="form-control" type="text" id="reason" name="reason" value="<?= $patient_admission->reason ?>" required>
 							</div>
                             <div class="form-group">
-                                <label class="display-block">Room Status</label>
+                                <label class="display-block">Admission Status</label>
 								<div class="form-check form-check-inline">
-									<input class="form-check-input" type="radio" name="status" id="product_maintenance" value="1" <?= $room->status == 1 ? 'checked' : ''; ?>>
-									<label class="form-check-label" for="product_maintenance">
+									<input class="form-check-input" type="radio" name="status" id="product_active" value="1" <?= ($patient_admission->status == '1') ? 'checked' : '' ?>>
+									<label class="form-check-label" for="product_active">
 									Active
 									</label>
 								</div>
 								<div class="form-check form-check-inline">
-									<input class="form-check-input" type="radio" name="status" id="product_inactive" value="0" <?= $room->status == 0 ? 'checked' : ''; ?>>
+									<input class="form-check-input" type="radio" name="status" id="product_inactive" value="0" <?= ($patient_admission->status == '0') ? 'checked' : '' ?>>
 									<label class="form-check-label" for="product_inactive">
 									Inactive
 									</label>
 								</div>
                             </div>
                             <div class="m-t-20 text-center">
-                                <button class="btn btn-primary submit-btn">Create Room</button>
+                                <button class="btn btn-primary submit-btn">Update Admitted Patient</button>
                             </div>
                         </form>
                     </div>

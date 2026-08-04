@@ -14,7 +14,7 @@
                         <form action="<?= $base_url; ?>ward/patients_addmission/store_admitted_patient.php" method="POST" class="p-4">
 							<div class="form-group">
 								<label for="admission_number">Admission Number</label>
-								<input class="form-control" type="text" id="admission_number" name="admission_number" required>
+								<input class="form-control" type="text" id="admission_number" name="admission_no" required>
 							</div>
 							<div class="form-group">
 								<label for="patient_id">Patient</label>
