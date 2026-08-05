@@ -80,33 +80,32 @@ if($_SERVER['REQUEST_METHOD'] == 'POST'){
                     </div>
 
                     <div class="row">
-                        <div class="col-md-4">
+                        <div class="col-md-6">
                             <div class="form-group">
                                 <label>Start Time <span class="text-danger">*</span></label>
-                                <div class='input-group date' id='datetimepicker3'>
-                                    <input type="text" class="form-control" name="start_time" required />
-                                    <span class="input-group-addon"><span class="fa fa-clock-o"></span></span>
-                                </div>
+                                
+                                    <input type="time" class="form-control" name="start_time" required />
+                                    
+                                
                             </div>
                         </div>
-                        <div class="col-md-4">
+                        <div class="col-md-6">
                             <div class="form-group">
                                 <label>End Time <span class="text-danger">*</span></label>
-                                <div class='input-group date' id='datetimepicker4'>
-                                    <input type="text" class="form-control" name="end_time" required />
-                                    <span class="input-group-addon"><span class="fa fa-clock-o"></span></span>
-                                </div>
+                                
+                                <input type="time" class="form-control" name="end_time" required />
+                                    
                             </div>
                         </div>
-                        <div class="col-md-4">
+                        <div class="col-md-6">
                             <div class="form-group">
                                 <label>Appointment Qty <span class="text-danger">*</span></label>
                                 <input type="number" name="appointment_qty" class="form-control" placeholder="10" required />
                             </div>
                         </div>
-                    </div>
-
-                    <div class="form-group">
+                    
+                     <div class="col-md-6">
+                        <div class="form-group">
                                 <label class="display-block"> Status</label>
 								<div class="form-check form-check-inline">
 									<input class="form-check-input" type="radio" name="status" id="product_active" value="1" checked>
@@ -121,7 +120,8 @@ if($_SERVER['REQUEST_METHOD'] == 'POST'){
 									</label>
 								</div>
                             </div>
-
+                        </div>
+                    </div>
                     <div class="m-t-20 text-center">
                         <button type="submit" class="btn btn-primary submit-btn">Create Schedule</button>
                     </div>

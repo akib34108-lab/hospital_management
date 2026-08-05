@@ -42,7 +42,7 @@ if(isset($_GET['toggle']) && isset($_GET['id'])){
 										<th>End Time</th>
                                         <th>Appointment Qty</th>
                                         <th>Status</th>
-										<th class="text-right">Action</th>
+										<th class="text-center">Action</th>
 									</tr>
 								</thead>
 								<tbody>
