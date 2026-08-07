@@ -43,7 +43,7 @@
                                         } else {
                                             $page = 1;
                                         }
-                                        $doctors = $crud->common_query("select doctors.*, departments.department_name, designation.designation_name, shift.shift_name from doctors inner join departments on doctors.department_id=departments.id inner join designation on doctors.designation_id=designation.id inner join shift on doctors.shift_id=shift.id",10,($page-1)*10);
+                                        $doctors = $crud->common_query("select doctors.*, departments.department_name, designation.designation_name, shift.shift_name from doctors left join departments on doctors.department_id=departments.id left join designation on doctors.designation_id=designation.id left join shift on doctors.shift_id=shift.id",10,($page-1)*10);
                                         
                                         if($doctors['status']){
                                         foreach ($doctors['data'] as $doctor) { ?>
