@@ -4,7 +4,7 @@
     $base_url = "http://localhost/shifa/";
     require_once  ($_SERVER['DOCUMENT_ROOT'] . "/shifa/crud/crud_class.php");
     $crud = new crud_class();
-    $conn = $crud->conn; // Eitai main
+    $conn = $crud->conn; 
 ?>
 
 <?php
@@ -77,7 +77,7 @@ if(isset($_GET['id'])){
                             <tbody>
                             <?php
                             $i=1;
-                            // Notun table theke medicine gula tana
+                            
                             $med_sql = "SELECT * FROM prescription_medicines WHERE prescription_id='$pres_id' ORDER BY id ASC";
                             $med_result = mysqli_query($conn, $med_sql);
 
