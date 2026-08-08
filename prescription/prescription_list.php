@@ -49,7 +49,7 @@ $result = $conn->query($sql);
                             <tr>
                                 <td><?php echo $row['id'];?></td>
                                 <td><?php echo $row['patient_name'];?></td>
-                                <td>Dr. <?php echo $row['doctor_name'];?></td>
+                                <td> <?php echo $row['doctor_name'];?></td>
                                 <td><?php echo $row['Obj_date'];?></td>
                                 <td>After <?php echo $row['Next_visit_day'];?> Days</td>
                                 <td class="text-right">
