@@ -19,8 +19,8 @@
                                 <thead>
                                     <tr>
                                         <th>ID</th>
-                                        <th>Department ID</th>
-                                        <th>Designation ID</th>
+                                        <th>Department Name</th>
+                                        <th>Designation Name</th>
                                         <th>Shift ID</th>
                                         <th>Name</th>
                                         <th>Gender</th>
