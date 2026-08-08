@@ -2,6 +2,8 @@
 <!-- Sidebar Start -->
 <?php require_once "../component/sidebar.php"; ?>
 <!-- Sidebar End -->
+
+
         <div class="page-wrapper">
             <div class="content">
                 <div class="row">
