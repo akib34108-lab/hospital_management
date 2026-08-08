@@ -8,7 +8,6 @@ $edit_data = null;
 $edit_items = [];
 
 if($edit_id != ''){
-    
     $edit_data = $conn->query("SELECT * FROM invoices WHERE id='$edit_id'")->fetch_object();
     $edit_items_result = $conn->query("SELECT * FROM invoice_details WHERE invoice_id='$edit_id'");
     while($row = $edit_items_result->fetch_object()){ $edit_items[] = $row; }
@@ -45,7 +44,6 @@ if($edit_id != ''){
                 $last_id = $conn->insert_id;
             }
 
-            
             if(isset($_POST['item_name'])){
                 for($i=0; $i<count($_POST['item_name']); $i++){
                     if(!empty($_POST['item_name'][$i])){
@@ -64,7 +62,6 @@ if($edit_id != ''){
             exit;
         }
 
-        
         if(isset($_GET['delete_id'])){
             $del_id = $_GET['delete_id'];
             $conn->query("DELETE FROM invoice_details WHERE invoice_id='$del_id'");
@@ -72,7 +69,6 @@ if($edit_id != ''){
             echo "<script>alert('Invoice Deleted'); window.location='invoices.php';</script>";
         }
 
-        
         if(isset($_GET['id']) && !empty($_GET['id'])){
             $id = $_GET['id'];
             $inv = $conn->query("SELECT i.*, p.name as patient_name, p.address, p.phone 
@@ -85,7 +81,7 @@ if($edit_id != ''){
             $grand_total = ($inv->sub_amount - $inv->discount) + $tax_tk;
         ?>
         
-        
+        <!-- INVOICE PRINT VIEW -->
         <div class="row">
             <div class="col-sm-12 text-right m-b-20">
                 <button onclick="window.print()" class="btn btn-primary"><i class="fa fa-print"></i> Print</button>
@@ -242,16 +238,106 @@ if($edit_id != ''){
 
                         <div class="form-group row">
                             <div class="col-md-12 text-right">
-                                <button type="submit" name="save" class="btn btn-success btn-lg"><?php echo $edit_id ? 'Update Invoice' : 'Save Invoice'; ?></button> <!-- Button name change -->
+                                <button type="submit" name="save" class="btn btn-success btn-lg"><?php echo $edit_id ? 'Update Invoice' : 'Save Invoice'; ?></button>
                             </div>
                         </div>
                     </form>
+
+                    
+                    <?php 
+                    if($edit_id != ''){ // Sudhu Edit mode e dekhabe
+                        $inv_id = $edit_id;
+                        
+                        
+                        $pay_sql = "SELECT * FROM payments WHERE invoice_id='$inv_id' ORDER BY payment_date DESC";
+                        $pay_result = $conn->query($pay_sql);
+
+                        // Calculation
+                        $total_paid = 0;
+                        if($pay_result->num_rows > 0){
+                            while($p = $pay_result->fetch_object()){
+                                $total_paid += $p->amount;
+                            }
+                        }
+                        
+                        $grand_total_val = $edit_data->sub_amount; 
+                        $tax_tk_val = ($grand_total_val * $edit_data->tax) / 100;
+                        $grand_total_val = ($grand_total_val - $edit_data->discount) + $tax_tk_val;
+                        $due_amount = $grand_total_val - $total_paid;
+                        ?>
+                        
+                        <div class="row" style="margin-top:30px">
+                            <div class="col-md-12">
+                                <div class="card-box">
+                                    <h4 class="card-title text-blue">Payment Details</h4>
+                                    
+                                    <!-- Summary Box -->
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <div class="alert alert-info">
+                                                <b>Grand Total:</b> <?php echo number_format($grand_total_val, 2); ?> TK
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="alert alert-success">
+                                                <b>Total Paid:</b> <?php echo number_format($total_paid, 2); ?> TK
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="alert alert-<?php echo $due_amount > 0 ? 'danger' : 'success'; ?>">
+                                                <b>Due Amount:</b> <?php echo number_format($due_amount, 2); ?> TK
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Payment History Table -->
+                                    <h5 class="m-t-20">Payment History</h5>
+                                    <div class="table-responsive">
+                                        <table class="table table-bordered table-striped">
+                                            <thead class="bg-light">
+                                                <tr>
+                                                    <th>Date</th>
+                                                    <th>Payment Method</th>
+                                                    <th>Transaction ID</th>
+                                                    <th class="text-center">Amount</th>
+                                                    <th class="text-center">Action</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <?php 
+                                                if($pay_result->num_rows > 0){
+                                                    $pay_result->data_seek(0); 
+                                                    while($pay = $pay_result->fetch_object()){ ?>
+                                                    <tr>
+                                                        <td><?php echo date('d M Y', strtotime($pay->payment_date)); ?></td>
+                                                        <td><?php echo $pay->payment_method; ?></td>
+                                                        <td><?php echo $pay->transaction_id; ?></td>
+                                                        <td class="text-center"><b><?php echo number_format($pay->amount, 2); ?></b></td>
+                                                        <td class="text-center">
+                                                            <a href="../payments/payments_list.php?delete=<?php echo $pay->id; ?>" 
+                                                               onclick="return confirm('Delete this payment?')" 
+                                                               class="btn btn-danger btn-xs">
+                                                               <i class="fa fa-trash"></i>
+                                                            </a>
+                                                        </td>
+                                                    </tr>
+                                                <?php } 
+                                                } else {
+                                                    echo "<tr><td colspan='5' class='text-center'>No Payment Found</td></tr>";
+                                                }
+                                                ?>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    <?php } ?>
+                    
                 </div>
             </div>
         </div>
 
-        
-        
         <?php } ?>
     </div>
 </div>
