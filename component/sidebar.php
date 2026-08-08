@@ -122,7 +122,7 @@
                             <a href="<?=$base_url; ?>patients/patients.php"><i class="fa fa-wheelchair"></i> <span>Patients</span></a>
                         </li>
                         <li>
-                            <a href="appointments.html"><i class="fa fa-calendar"></i> <span>Appointments</span></a>
+                            <a href="<?=$base_url; ?>appointment/appointment_list.php"><i class="fa fa-calendar"></i> <span>Appointments</span></a>
                         </li>
                         <li>
                             <a href="<?= $base_url; ?>schedule/schedule.php"><i class="fa fa-calendar-check-o"></i> <span>Doctor Schedule</span></a>
