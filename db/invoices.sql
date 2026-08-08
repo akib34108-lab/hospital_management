@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Aug 08, 2026 at 09:06 AM
+-- Generation Time: Aug 08, 2026 at 06:43 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -38,6 +38,14 @@ CREATE TABLE `invoices` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
+-- Dumping data for table `invoices`
+--
+
+INSERT INTO `invoices` (`id`, `patient_id`, `sub_amount`, `discount`, `tax`, `invoice_date`, `status`) VALUES
+(1, 2, 12240.00, 300.00, 10.00, '2026-08-08', 1),
+(2, 5, 2266.00, 66.00, 10.00, '2026-08-08', 1);
+
+--
 -- Indexes for dumped tables
 --
 
@@ -55,7 +63,7 @@ ALTER TABLE `invoices`
 -- AUTO_INCREMENT for table `invoices`
 --
 ALTER TABLE `invoices`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

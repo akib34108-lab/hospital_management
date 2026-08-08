@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Aug 08, 2026 at 09:07 AM
+-- Generation Time: Aug 08, 2026 at 06:43 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -37,6 +37,16 @@ CREATE TABLE `invoice_details` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
+-- Dumping data for table `invoice_details`
+--
+
+INSERT INTO `invoice_details` (`id`, `invoice_id`, `Name`, `price`, `discount`, `tax`) VALUES
+(4, 1, 'cbc', 2400.00, 20.00, 15.00),
+(5, 1, 'vitamin D', 6000.00, 17.00, 15.00),
+(6, 1, 'Thyroid', 4000.00, 13.00, 15.00),
+(8, 2, 'cbc', 2200.00, 12.00, 15.00);
+
+--
 -- Indexes for dumped tables
 --
 
@@ -54,7 +64,7 @@ ALTER TABLE `invoice_details`
 -- AUTO_INCREMENT for table `invoice_details`
 --
 ALTER TABLE `invoice_details`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
