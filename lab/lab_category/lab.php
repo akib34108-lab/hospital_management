@@ -24,6 +24,7 @@
                                 <th>Test Name</th>
                                 <th>Price</th>
                                 <th>Test Accessor</th>
+                                <th class="text-right">Actions</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -43,6 +44,10 @@
                                         <td><?= $category->test_name ?></td>
                                         <td><?= $category->price ?></td>
                                         <td><?= $category->test_accessor ?></td>
+                                        <td class="text-right">
+                                            <a href="edit_lab.php?id=<?= $category->id ?>" class="btn btn-sm btn-primary text-right">Edit</a>
+                                            <a href="delete_lab.php?id=<?= $category->id ?>" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure you want to delete this lab category?')">Delete</a>
+                                        </td>
                                     </tr>
                                             <?php } } ?>
                         </tbody>
