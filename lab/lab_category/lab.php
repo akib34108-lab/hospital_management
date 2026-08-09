@@ -8,9 +8,6 @@
                 <h4 class="page-title">Lab Category</h4>
             </div>
             <div class="col-sm-8 col-9 text-right m-b-20">
-                <a href="cat_type.php" class="btn btn-primary">
-                    <i class="fa fa-list m-r-5"></i>Category Type List
-                </a>
                 <a href="add_lab.php" class="btn btn-primary">
                     <i class="fa fa-plus"></i> Add Lab Category
                 </a>
@@ -24,10 +21,9 @@
                         <thead>
                             <tr>
                                 <th>ID</th>
-                                <th>Category Code</th>
-                                <th>Category Name</th>
-                                <th>Description</th>
-                                <th class="text-right">Action</th>
+                                <th>Test Name</th>
+                                <th>Price</th>
+                                <th>Test Accessor</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -44,13 +40,9 @@
                                         if($lab_cat['status']){
                                         foreach ($lab_cat['data'] as $category) { ?>
                                         <td><?= $category->id ?></td>
-                                        <td><?= $category->cat_code ?></td>
-                                        <td><?= $category->cat_name ?></td>
-                                        <td><?= $category->description ?></td>
-                                        <td class="text-right">
-                                            <a href="<?= $base_url ?>lab/lab_category/edit_lab.php?id=<?= $category->id ?>" class="btn btn-sm btn-primary mb-2 mb-lg-0 me-0 me-lg-2">Edit</a>
-                                            <a onclick="return confirm('Are you sure you want to delete this lab category?');" href="<?= $base_url ?>lab/lab_category/delete_lab.php?id=<?= $category->id ?>" class="btn btn-sm btn-danger">Delete</a>
-                                        </td>
+                                        <td><?= $category->test_name ?></td>
+                                        <td><?= $category->price ?></td>
+                                        <td><?= $category->test_accessor ?></td>
                                     </tr>
                                             <?php } } ?>
                         </tbody>
