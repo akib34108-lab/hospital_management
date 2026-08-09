@@ -130,13 +130,9 @@
                         <li>
                             <a href="<?=$base_url; ?>prescription/prescription_list.php"><i class="fa fa-file-text-o"></i> <span>Prescriptions</span></a>
                         </li>
-                        <li class="submenu">
-							<a href="#"><i class="fa fa-flask"></i> <span> Lab </span> <span class="menu-arrow"></span></a>
-							<ul style="display: none;">
-								<li><a href="<?= $base_url; ?>lab/lab_category/lab.php">Lab Category</a></li>
-								<li><a href="<?= $base_url; ?>lab/beds/beds.php">Lab Tests</a></li>
-							</ul>
-						</li>
+                        <li>
+                            <a href="<?=$base_url; ?>lab/lab_category/lab.php"><i class="fa fa-flask"></i> <span>Test Lab</span></a>
+                        </li>
                         <li class="submenu">
 							<a href="#"><i class="fa fa-bed"></i> <span> Ward </span> <span class="menu-arrow"></span></a>
 							<ul style="display: none;">

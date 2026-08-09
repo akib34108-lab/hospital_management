@@ -12,17 +12,17 @@
                 <div class="row">
                     <div class="col-lg-8 offset-lg-2">
                         <form action="<?= $base_url; ?>lab/lab_category/store_lab.php" method="POST" class="p-4">
-							<div class="form-group">
-								<label for="cat_code">Category Code</label>
-								<input class="form-control" type="text" id="cat_code" name="cat_code" required>
-							</div>
                             <div class="form-group">
-                                <label for="cat_name">Category Name</label>
-                                <input class="form-control" type="text" id="cat_name" name="cat_name" required>
+                                <label for="test_name">Test Name</label>
+                                <input class="form-control" type="text" id="test_name" name="test_name" required>
                             </div>
                             <div class="form-group">
-                                <label for="description">Description</label>
-                                <input class="form-control" type="text" id="description" name="description" required>
+                                <label for="price">Price</label>
+                                <input class="form-control" type="number" id="price" name="price" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="test_accessor">Test Accessor</label>
+                                <input class="form-control" type="text" id="test_accessor" name="test_accessor" required>
                             </div>
                             <div class="m-t-20 text-center">
                                 <button class="btn btn-primary submit-btn">Create Lab Category</button>
