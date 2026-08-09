@@ -3,9 +3,9 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Aug 08, 2026 at 05:43 PM
+-- Generation Time: Aug 09, 2026 at 05:59 AM
 -- Server version: 10.4.32-MariaDB
--- PHP Version: 8.2.12
+-- PHP Version: 8.0.30
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -148,6 +148,15 @@ CREATE TABLE `invoices` (
   `status` int(11) DEFAULT 1 COMMENT '1=Active, 0=Deleted'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Dumping data for table `invoices`
+--
+
+INSERT INTO `invoices` (`id`, `patient_id`, `sub_amount`, `discount`, `tax`, `invoice_date`, `status`) VALUES
+(1, 2, 12240.00, 300.00, 10.00, '2026-08-08', 1),
+(2, 5, 2266.00, 66.00, 10.00, '2026-08-08', 1),
+(3, 2, 2208.00, 1000.00, 800.00, '2026-08-09', 1);
+
 -- --------------------------------------------------------
 
 --
@@ -163,6 +172,17 @@ CREATE TABLE `invoice_details` (
   `tax` decimal(10,2) DEFAULT 0.00
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Dumping data for table `invoice_details`
+--
+
+INSERT INTO `invoice_details` (`id`, `invoice_id`, `Name`, `price`, `discount`, `tax`) VALUES
+(4, 1, 'cbc', 2400.00, 20.00, 15.00),
+(5, 1, 'vitamin D', 6000.00, 17.00, 15.00),
+(6, 1, 'Thyroid', 4000.00, 13.00, 15.00),
+(8, 2, 'cbc', 2200.00, 12.00, 15.00),
+(9, 3, 'CBC', 2400.00, 15.00, 7.00);
+
 -- --------------------------------------------------------
 
 --
@@ -171,8 +191,9 @@ CREATE TABLE `invoice_details` (
 
 CREATE TABLE `lab_category` (
   `id` int(11) NOT NULL,
-  `cat_name` varchar(25) DEFAULT NULL,
-  `cat_code` varchar(40) DEFAULT NULL,
+  `test_name` varchar(25) DEFAULT NULL,
+  `price` varchar(40) DEFAULT NULL,
+  `test_accessor` varchar(40) DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   `deleted_at` datetime DEFAULT NULL
@@ -182,8 +203,9 @@ CREATE TABLE `lab_category` (
 -- Dumping data for table `lab_category`
 --
 
-INSERT INTO `lab_category` (`id`, `cat_name`, `cat_code`, `created_at`, `updated_at`, `deleted_at`) VALUES
-(2, 'gdfg', 'ter', NULL, NULL, NULL);
+INSERT INTO `lab_category` (`id`, `test_name`, `price`, `test_accessor`, `created_at`, `updated_at`, `deleted_at`) VALUES
+(1, 'CBC', '1700', 'Kamal', NULL, NULL, NULL),
+(2, 'Vitamin D test', '6500', 'Kamal', NULL, NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -249,6 +271,29 @@ CREATE TABLE `patient_admissions` (
 
 INSERT INTO `patient_admissions` (`id`, `admission_no`, `patient_id`, `doctor_id`, `room_id`, `bed_id`, `admission_date`, `admission_time`, `discharge_date`, `discharge_time`, `reason`, `status`, `created_at`, `updated_at`, `deleted_at`) VALUES
 (1, 'ADM-0001', 5, 2, 2, 4, '2026-08-04', NULL, NULL, NULL, 'fdsasd', NULL, NULL, NULL, NULL);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `payments`
+--
+
+CREATE TABLE `payments` (
+  `id` int(11) NOT NULL,
+  `invoice_id` int(11) NOT NULL,
+  `amount` decimal(10,2) NOT NULL,
+  `payment_method` varchar(50) NOT NULL,
+  `payment_date` date NOT NULL,
+  `transaction_id` varchar(100) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `payments`
+--
+
+INSERT INTO `payments` (`id`, `invoice_id`, `amount`, `payment_method`, `payment_date`, `transaction_id`) VALUES
+(1, 2, 2000.00, 'bKash', '2026-08-08', '123'),
+(2, 2, 426.60, 'Cash', '2026-08-08', '456');
 
 -- --------------------------------------------------------
 
@@ -500,6 +545,12 @@ ALTER TABLE `patient_admissions`
   ADD PRIMARY KEY (`id`);
 
 --
+-- Indexes for table `payments`
+--
+ALTER TABLE `payments`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- Indexes for table `prescriptions`
 --
 ALTER TABLE `prescriptions`
@@ -535,57 +586,20 @@ ALTER TABLE `schedules`
   ADD KEY `doctor_id` (`doctor_id`);
 
 --
--- Indexes for table `shift`
---
-ALTER TABLE `shift`
-  ADD PRIMARY KEY (`id`);
-
---
--- Indexes for table `users`
---
-ALTER TABLE `users`
-  ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `email` (`email`);
-
---
 -- AUTO_INCREMENT for dumped tables
 --
-
---
--- AUTO_INCREMENT for table `beds`
---
-ALTER TABLE `beds`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
-
---
--- AUTO_INCREMENT for table `departments`
---
-ALTER TABLE `departments`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
-
---
--- AUTO_INCREMENT for table `designation`
---
-ALTER TABLE `designation`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
-
---
--- AUTO_INCREMENT for table `doctors`
---
-ALTER TABLE `doctors`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT for table `invoices`
 --
 ALTER TABLE `invoices`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `invoice_details`
 --
 ALTER TABLE `invoice_details`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT for table `lab_category`
@@ -594,74 +608,10 @@ ALTER TABLE `lab_category`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
--- AUTO_INCREMENT for table `patients`
+-- AUTO_INCREMENT for table `payments`
 --
-ALTER TABLE `patients`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
-
---
--- AUTO_INCREMENT for table `patient_admissions`
---
-ALTER TABLE `patient_admissions`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
-
---
--- AUTO_INCREMENT for table `prescriptions`
---
-ALTER TABLE `prescriptions`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
-
---
--- AUTO_INCREMENT for table `prescription_medicines`
---
-ALTER TABLE `prescription_medicines`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
-
---
--- AUTO_INCREMENT for table `roles`
---
-ALTER TABLE `roles`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
-
---
--- AUTO_INCREMENT for table `rooms`
---
-ALTER TABLE `rooms`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
-
---
--- AUTO_INCREMENT for table `schedules`
---
-ALTER TABLE `schedules`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
-
---
--- AUTO_INCREMENT for table `shift`
---
-ALTER TABLE `shift`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
-
---
--- AUTO_INCREMENT for table `users`
---
-ALTER TABLE `users`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
-
---
--- Constraints for dumped tables
---
-
---
--- Constraints for table `beds`
---
-ALTER TABLE `beds`
-  ADD CONSTRAINT `beds_ibfk_1` FOREIGN KEY (`room_id`) REFERENCES `rooms` (`id`);
-
---
--- Constraints for table `doctors`
---
-ALTER TABLE `doctors`
-  ADD CONSTRAINT `doctors_ibfk_1` FOREIGN KEY (`department_id`) REFERENCES `departments` (`id`);
+ALTER TABLE `payments`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
