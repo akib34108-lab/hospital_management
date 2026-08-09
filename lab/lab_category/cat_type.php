@@ -5,34 +5,21 @@
     <div class="content">
         <div class="row">
             <div class="col-sm-4 col-3">
-                <h4 class="page-title">Lab Category</h4>
-            </div>
-            <div class="col-sm-8 col-9 text-right m-b-20">
-                <a href="cat_type.php" class="btn btn-primary">
-                    <i class="fa fa-list m-r-5"></i>Category Type List
-                </a>
-                <a href="add_lab.php" class="btn btn-primary">
-                    <i class="fa fa-plus"></i> Add Lab Category
-                </a>
+                <h4 class="page-title">Category Type List</h4>
             </div>
         </div>
-
-        <div class="row">
-            <div class="col-md-12">
-                <div class="table-responsive">
-                    <table class="table table-striped custom-table mb-0">
-                        <thead>
-                            <tr>
-                                <th>ID</th>
-                                <th>Category Code</th>
-                                <th>Category Name</th>
-                                <th>Description</th>
-                                <th class="text-right">Action</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                        <?php
+    <div class="row">
+            <div class="col-3 text-center">
+                <h4 class="page-title">Hematology</h4>
+                <table class="table custom-table mb-0">
+                    <thead>
+                        <th>Category Code</th>
+                        <th>Name</th>
+                        <th>Action</th>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <?php
                             // Fetch lab category from the database
                             if(isset($_GET['page']) && is_numeric($_GET['page'])){
                                 $page = (int)$_GET['page'];
@@ -43,17 +30,24 @@
                                         
                                         if($lab_cat['status']){
                                         foreach ($lab_cat['data'] as $category) { ?>
-                                        <td><?= $category->id ?></td>
                                         <td><?= $category->cat_code ?></td>
                                         <td><?= $category->cat_name ?></td>
-                                        <td><?= $category->description ?></td>
-                                        <td class="text-right">
-                                            <a href="<?= $base_url ?>lab/lab_category/edit_lab.php?id=<?= $category->id ?>" class="btn btn-sm btn-primary mb-2 mb-lg-0 me-0 me-lg-2">Edit</a>
-                                            <a onclick="return confirm('Are you sure you want to delete this lab category?');" href="<?= $base_url ?>lab/lab_category/delete_lab.php?id=<?= $category->id ?>" class="btn btn-sm btn-danger">Delete</a>
-                                        </td>
+                                        <td><?= $category->cat_name ?></td>
                                     </tr>
                                             <?php } } ?>
-                        </tbody>
+                    </tbody>
+                </table>
+            </div>
+            <div class="col-3 text-center">
+                <h4 class="page-title">Clinical Chemistry / Bioc</h4>
+            </div>
+            <div class="col-3 text-center">
+                <h4 class="page-title">Lipid Profile</h4>
+            </div>
+            <div class="col-3 text-center">
+                <h4 class="page-title">Endocrinology</h4>
+            </div>
+        </div>
                     </table>
                 </div>
                 <div class="pb-3 pl-3 mt-3 d-flex justify-content-center justify-content-md-between justify-content-lg-between flex-wrap flex-md-nowrap">

@@ -21,7 +21,7 @@
                                         <th>ID</th>
                                         <th>Department Name</th>
                                         <th>Designation Name</th>
-                                        <th>Shift ID</th>
+                                        <th>Shift</th>
                                         <th>Name</th>
                                         <th>Gender</th>
                                         <th>Specialization</th>

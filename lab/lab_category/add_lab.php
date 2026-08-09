@@ -20,6 +20,10 @@
                                 <label for="cat_name">Category Name</label>
                                 <input class="form-control" type="text" id="cat_name" name="cat_name" required>
                             </div>
+                            <div class="form-group">
+                                <label for="description">Description</label>
+                                <input class="form-control" type="text" id="description" name="description" required>
+                            </div>
                             <div class="m-t-20 text-center">
                                 <button class="btn btn-primary submit-btn">Create Lab Category</button>
                             </div>

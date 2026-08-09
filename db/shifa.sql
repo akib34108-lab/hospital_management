@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 5.2.0
+-- version 5.2.1
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Aug 04, 2026 at 09:10 AM
--- Server version: 10.4.27-MariaDB
--- PHP Version: 8.2.0
+-- Generation Time: Aug 08, 2026 at 05:43 PM
+-- Server version: 10.4.32-MariaDB
+-- PHP Version: 8.2.12
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -115,6 +115,7 @@ CREATE TABLE `doctors` (
   `phone` varchar(20) DEFAULT NULL,
   `email` varchar(100) DEFAULT NULL,
   `address` text DEFAULT NULL,
+  `status` int(2) NOT NULL COMMENT '0=inactive,1=active',
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
   `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
   `deleted_at` datetime DEFAULT NULL
@@ -124,9 +125,65 @@ CREATE TABLE `doctors` (
 -- Dumping data for table `doctors`
 --
 
-INSERT INTO `doctors` (`id`, `department_id`, `designation_id`, `shift_id`, `name`, `gender`, `specialization`, `qualification`, `experience`, `phone`, `email`, `address`, `created_at`, `updated_at`, `deleted_at`) VALUES
-(1, 1, 1, 1, 'Dr.Sarah Ahmed', 2, 'BDS', 'FCPS', 8, '01711111111', 'sarah@hospital.com', 'Dhaka', '2026-08-02 04:43:34', '2026-08-02 04:43:34', NULL),
-(2, 2, 2, 2, 'Dr.Rahim Uddin', 1, 'Neurologist', 'MBBS,MD (Neurology)', 12, '01722222222', 'rahim@hospital.com', 'Chattogram', '2026-08-02 06:55:16', '2026-08-02 06:55:16', NULL);
+INSERT INTO `doctors` (`id`, `department_id`, `designation_id`, `shift_id`, `name`, `gender`, `specialization`, `qualification`, `experience`, `phone`, `email`, `address`, `status`, `created_at`, `updated_at`, `deleted_at`) VALUES
+(1, 1, 1, 1, 'Dr.Sarah Ahmed', 2, 'BDS', 'FCPS', 8, '01711111111', 'sarah@hospital.com', 'Dhaka', 0, '2026-08-02 04:43:34', '2026-08-07 15:34:54', NULL),
+(2, 1, 1, 1, 'Dr.Rahim Uddin', 1, 'Neurologist', 'MBBS,MD (Neurology)', 12, '01722222222', 'rahim@hospital.com', 'Chattogram', 1, '2026-08-02 06:55:16', '2026-08-07 15:36:23', NULL),
+(3, 1, 1, 1, 'Dr.Bilal Abbas', 1, 'cardio', 'MRCPS', 6, '019111111112', 'bilal01@gmail.com', 'Muradpur', 0, '2026-08-07 14:55:01', '2026-08-07 15:35:01', NULL),
+(4, 1, 1, 1, 'Dr.shahriar', 1, 'cardio', 'FCPS', 3, '01711111111', 'bilal01@gmail.com', 'Muradpur', 1, '2026-08-07 14:56:05', '2026-08-07 15:35:23', NULL),
+(6, 2, 2, 2, 'Dr.Fyroz', 2, 'cardio', 'MBBS,MD (Neurology)', 12, '01635110533', 'fyroz@gmail.com', 'Mehedibag', 0, '2026-08-07 15:38:05', '2026-08-07 15:38:05', NULL);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `invoices`
+--
+
+CREATE TABLE `invoices` (
+  `id` int(11) NOT NULL,
+  `patient_id` int(11) NOT NULL,
+  `sub_amount` decimal(10,2) DEFAULT 0.00,
+  `discount` decimal(10,2) DEFAULT 0.00,
+  `tax` decimal(10,2) DEFAULT 0.00,
+  `invoice_date` date NOT NULL,
+  `status` int(11) DEFAULT 1 COMMENT '1=Active, 0=Deleted'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `invoice_details`
+--
+
+CREATE TABLE `invoice_details` (
+  `id` int(11) NOT NULL,
+  `invoice_id` int(11) NOT NULL,
+  `Name` varchar(255) NOT NULL COMMENT 'Medicine/Test/Service Name',
+  `price` decimal(10,2) DEFAULT 0.00,
+  `discount` decimal(10,2) DEFAULT 0.00,
+  `tax` decimal(10,2) DEFAULT 0.00
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `lab_category`
+--
+
+CREATE TABLE `lab_category` (
+  `id` int(11) NOT NULL,
+  `cat_name` varchar(25) DEFAULT NULL,
+  `cat_code` varchar(40) DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  `deleted_at` datetime DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `lab_category`
+--
+
+INSERT INTO `lab_category` (`id`, `cat_name`, `cat_code`, `created_at`, `updated_at`, `deleted_at`) VALUES
+(2, 'gdfg', 'ter', NULL, NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -196,6 +253,61 @@ INSERT INTO `patient_admissions` (`id`, `admission_no`, `patient_id`, `doctor_id
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `prescriptions`
+--
+
+CREATE TABLE `prescriptions` (
+  `id` int(11) NOT NULL,
+  `patient_id` int(11) NOT NULL,
+  `doctor_id` int(11) NOT NULL,
+  `Obj_date` date NOT NULL,
+  `Cc` text DEFAULT NULL,
+  `Dx` text DEFAULT NULL,
+  `Inv` text DEFAULT NULL,
+  `medicines` longtext DEFAULT NULL,
+  `additional_notes` text DEFAULT NULL,
+  `Weight` varchar(20) DEFAULT NULL,
+  `Next_visit_day` int(11) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `prescriptions`
+--
+
+INSERT INTO `prescriptions` (`id`, `patient_id`, `doctor_id`, `Obj_date`, `Cc`, `Dx`, `Inv`, `medicines`, `additional_notes`, `Weight`, `Next_visit_day`) VALUES
+(1, 1, 1, '2026-08-04', 'Jor, Matha betha, Kashi', 'Viral Fever', 'CBC, Urine R/E', '[{\"medicationName\":\"Napa Extra 500mg\",\"dosage\":\"1+0+1\",\"frequency\":\"7 days\",\"duration\":\"After Meal\",\"instructions\":\"Pani diye khaben\"},{\"medicationName\":\"Monas 10mg\",\"dosage\":\"0+0+1\",\"frequency\":\"5 days\",\"duration\":\"At Night\",\"instructions\":\"Khawar por\"},{\"medicationName\":\"Fexo 120mg\",\"dosage\":\"1+0+0\",\"frequency\":\"5 days\",\"duration\":\"Before Meal\",\"instructions\":\"\"}]', 'Besi kore pani khan, rest nen. Gorom khabar khaben na.', '65', 15),
+(4, 2, 2, '2026-08-08', 'not healed yet', 'flu', 'serious', NULL, NULL, NULL, 30),
+(5, 3, 4, '2026-08-08', 'headache', 'eye issue', 'cornia test', NULL, NULL, NULL, 20);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `prescription_medicines`
+--
+
+CREATE TABLE `prescription_medicines` (
+  `id` int(11) NOT NULL,
+  `prescription_id` int(11) NOT NULL,
+  `medicine_name` varchar(255) NOT NULL,
+  `dosage` varchar(100) NOT NULL,
+  `frequency` varchar(100) NOT NULL,
+  `duration` varchar(100) NOT NULL,
+  `instructions` varchar(255) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `prescription_medicines`
+--
+
+INSERT INTO `prescription_medicines` (`id`, `prescription_id`, `medicine_name`, `dosage`, `frequency`, `duration`, `instructions`) VALUES
+(2, 4, 'Frenxit', '0+0+1', 'after meal', '30 days', 'regular'),
+(3, 4, 'Adovas Syrup', '1+1+1', 'after meal', '10 days', 'must'),
+(4, 1, 'napa', '0+0+1', 'after meal', '5 days', 'regular'),
+(5, 5, 'napa', '1+0+1', 'after meal', '5 days', 'regular');
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `roles`
 --
 
@@ -243,6 +355,36 @@ CREATE TABLE `rooms` (
 INSERT INTO `rooms` (`id`, `room_number`, `room_type`, `floor`, `capacity`, `charge_per_day`, `status`, `created_at`, `updated_at`, `deleted_at`) VALUES
 (1, '101', 'Cabin', '1st', 2, 1500.72, 1, NULL, NULL, NULL),
 (2, '102', 'VIP', '1st', 1, 1500.72, 1, NULL, NULL, NULL);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `schedules`
+--
+
+CREATE TABLE `schedules` (
+  `id` int(11) NOT NULL,
+  `doctor_id` int(11) NOT NULL,
+  `day_of_week` varchar(20) NOT NULL,
+  `start_time` time NOT NULL,
+  `end_time` time NOT NULL,
+  `appointment_qty` int(11) NOT NULL,
+  `status` enum('Active','Inactive') DEFAULT 'Active',
+  `deleted_at` datetime DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `schedules`
+--
+
+INSERT INTO `schedules` (`id`, `doctor_id`, `day_of_week`, `start_time`, `end_time`, `appointment_qty`, `status`, `deleted_at`) VALUES
+(2, 1, 'Wednesday', '10:00:00', '11:59:00', 15, '', NULL),
+(6, 1, 'Monday', '14:00:00', '16:00:00', 52, '', NULL),
+(7, 1, 'Sunday', '14:00:00', '16:00:00', 52, 'Active', NULL),
+(8, 1, 'Sunday', '17:00:00', '22:00:00', 10, 'Active', NULL),
+(9, 1, 'Sunday', '00:00:00', '22:00:00', 45, '', NULL),
+(10, 2, 'Friday', '15:00:00', '18:00:00', 30, '', NULL),
+(11, 2, 'Thursday', '13:50:00', '15:50:00', 30, '', NULL);
 
 -- --------------------------------------------------------
 
@@ -328,6 +470,24 @@ ALTER TABLE `doctors`
   ADD KEY `department_id` (`department_id`);
 
 --
+-- Indexes for table `invoices`
+--
+ALTER TABLE `invoices`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `invoice_details`
+--
+ALTER TABLE `invoice_details`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `lab_category`
+--
+ALTER TABLE `lab_category`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- Indexes for table `patients`
 --
 ALTER TABLE `patients`
@@ -338,6 +498,21 @@ ALTER TABLE `patients`
 --
 ALTER TABLE `patient_admissions`
   ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `prescriptions`
+--
+ALTER TABLE `prescriptions`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `patient_id` (`patient_id`),
+  ADD KEY `doctor_id` (`doctor_id`);
+
+--
+-- Indexes for table `prescription_medicines`
+--
+ALTER TABLE `prescription_medicines`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `prescription_id` (`prescription_id`);
 
 --
 -- Indexes for table `roles`
@@ -351,6 +526,13 @@ ALTER TABLE `roles`
 --
 ALTER TABLE `rooms`
   ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `schedules`
+--
+ALTER TABLE `schedules`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `doctor_id` (`doctor_id`);
 
 --
 -- Indexes for table `shift`
@@ -388,6 +570,30 @@ ALTER TABLE `designation`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
+-- AUTO_INCREMENT for table `doctors`
+--
+ALTER TABLE `doctors`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+
+--
+-- AUTO_INCREMENT for table `invoices`
+--
+ALTER TABLE `invoices`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `invoice_details`
+--
+ALTER TABLE `invoice_details`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `lab_category`
+--
+ALTER TABLE `lab_category`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+
+--
 -- AUTO_INCREMENT for table `patients`
 --
 ALTER TABLE `patients`
@@ -400,6 +606,18 @@ ALTER TABLE `patient_admissions`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
+-- AUTO_INCREMENT for table `prescriptions`
+--
+ALTER TABLE `prescriptions`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+
+--
+-- AUTO_INCREMENT for table `prescription_medicines`
+--
+ALTER TABLE `prescription_medicines`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+
+--
 -- AUTO_INCREMENT for table `roles`
 --
 ALTER TABLE `roles`
@@ -410,6 +628,12 @@ ALTER TABLE `roles`
 --
 ALTER TABLE `rooms`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+
+--
+-- AUTO_INCREMENT for table `schedules`
+--
+ALTER TABLE `schedules`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
 
 --
 -- AUTO_INCREMENT for table `shift`
