@@ -19,17 +19,10 @@
                                 <thead>
                                     <tr>
                                         <th>ID</th>
+                                        <th>Name</th>
                                         <th>Department Name</th>
                                         <th>Designation Name</th>
                                         <th>Shift</th>
-                                        <th>Name</th>
-                                        <th>Gender</th>
-                                        <th>Specialization</th>
-                                        <th>Qualification</th>
-                                        <th>Experience</th>
-                                        <th>Phone</th>
-                                        <th>Email</th>
-                                        <th>Address</th>
                                         <th>Status</th>
                                         <th class="text-right">Action</th>
                                     </tr>
@@ -48,17 +41,10 @@
                                         if($doctors['status']){
                                         foreach ($doctors['data'] as $doctor) { ?>
                                         <td><?= $doctor->id ?></td>
+                                        <td><?= $doctor->name ?></td>
                                         <td><?= $doctor->department_name ?></td>
                                         <td><?= $doctor->designation_name ?></td>
                                         <td><?= $doctor->shift_name ?></td>
-                                        <td><?= $doctor->name ?></td>
-                                        <td><?= $doctor->gender ?></td>
-                                        <td><?= $doctor->specialization ?></td>
-                                        <td><?= $doctor->qualification ?></td>
-                                        <td><?= $doctor->experience ?></td>
-                                        <td><?= $doctor->phone ?></td>
-                                        <td><?= $doctor->email ?></td>
-                                        <td><?= $doctor->address ?></td>
                                         <td>
                                             <?php if ($doctor->status == '1') { ?>
                                             <span class="badge bg-success">Active</span>
@@ -68,9 +54,8 @@
                                         </td>
 
                                         
-                                        <td class="text-center">
-                                            <a href="<?= $base_url ?>doctors/edit_doctor.php?id=<?= $doctor->id ?>" class="btn btn-sm btn-primary mb-2 mb-lg-0 me-0 me-lg-2">Edit</a>
-                                            <a onclick="return confirm('Are you sure you want to delete this doctor?')" href="<?= $base_url ?>doctors/delete_doctor.php?id=<?= $doctor->id ?>" class="btn btn-sm btn-danger">Delete</a>
+                                        <td class="text-right">
+                                            <a href="<?= $base_url ?>doctors/view_doctor.php?id=<?= $doctor->id ?>">View Profile</a>
                                         </td>
                                     </tr>
                                             <?php } } ?>
