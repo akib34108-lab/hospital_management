@@ -3,9 +3,9 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Aug 09, 2026 at 05:59 AM
+-- Generation Time: Aug 09, 2026 at 09:09 AM
 -- Server version: 10.4.32-MariaDB
--- PHP Version: 8.0.30
+-- PHP Version: 8.2.12
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -70,7 +70,11 @@ CREATE TABLE `departments` (
 INSERT INTO `departments` (`id`, `department_name`, `description`, `status`, `created_at`, `updated_at`, `deleted_at`) VALUES
 (1, 'Dentists', 'Provides diagnosis, treatment, and prevention of oral and dental diseases, including routine checkups, tooth extractions, fillings, root canal treatment, and oral health care.', 1, '2026-08-01 16:43:53', '2026-08-02 16:20:27', NULL),
 (2, 'Neorology', 'Provides diagnosis and treatment of disorders affecting the brain, spinal cord, nerves, and muscles, including stroke, epilepsy, migraines, Parkinson disease, and other neurological conditions.', 1, '2026-08-01 16:45:34', '2026-08-02 15:40:12', NULL),
-(3, 'Cancer Department', 'Provides diagnosis, treatment, and ongoing care for patients with cancer through chemotherapy, immunotherapy, targeted therapy, and coordinated multidisciplinary support.', 1, '2026-08-01 16:46:59', '2026-08-01 16:46:59', NULL);
+(3, 'Oncology', 'Provides diagnosis, treatment, and ongoing care for patients with cancer through chemotherapy, immunotherapy, targeted therapy, and coordinated multidisciplinary support.', 1, '2026-08-01 16:46:59', '2026-08-09 04:20:30', NULL),
+(4, 'Psychology', 'rgrfgrgr', 1, '2026-08-09 04:20:48', '2026-08-09 04:20:48', NULL),
+(5, 'Cardiology', 'hgthjgjkukijolik', 1, '2026-08-09 04:21:03', '2026-08-09 04:21:03', NULL),
+(6, 'Dermatology', 'huygfuyeufr', 1, '2026-08-09 04:21:24', '2026-08-09 04:21:24', NULL),
+(7, 'Ophthalmology', 'ndhfgeytfgjkhdgbvfd', 1, '2026-08-09 04:22:12', '2026-08-09 04:22:12', NULL);
 
 -- --------------------------------------------------------
 
@@ -93,8 +97,10 @@ CREATE TABLE `designation` (
 --
 
 INSERT INTO `designation` (`id`, `designation_name`, `description`, `status`, `created_at`, `updated_at`, `deleted_at`) VALUES
-(1, 'Doctor', 'Medical Officer', 1, NULL, NULL, NULL),
-(2, 'Nurse', 'Staff Nurse', 1, NULL, NULL, NULL);
+(1, 'Senior Doctor', 'Medical Officer', 1, NULL, NULL, NULL),
+(3, 'Junior Doctor', 'fdvdgbvfgb', 1, NULL, NULL, NULL),
+(4, 'Consultant', 'vgbhfvdhgbf', 0, NULL, NULL, NULL),
+(5, 'Surgeon', 'hngfhnjgfhkmh', 1, NULL, NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -144,6 +150,10 @@ CREATE TABLE `invoices` (
   `sub_amount` decimal(10,2) DEFAULT 0.00,
   `discount` decimal(10,2) DEFAULT 0.00,
   `tax` decimal(10,2) DEFAULT 0.00,
+  `paid_amount` decimal(10,2) NOT NULL DEFAULT 0.00,
+  `due_amount` decimal(10,2) NOT NULL DEFAULT 0.00,
+  `payment_status` varchar(50) NOT NULL DEFAULT 'Due',
+  `deleted_at` timestamp NULL DEFAULT NULL,
   `invoice_date` date NOT NULL,
   `status` int(11) DEFAULT 1 COMMENT '1=Active, 0=Deleted'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
@@ -152,10 +162,13 @@ CREATE TABLE `invoices` (
 -- Dumping data for table `invoices`
 --
 
-INSERT INTO `invoices` (`id`, `patient_id`, `sub_amount`, `discount`, `tax`, `invoice_date`, `status`) VALUES
-(1, 2, 12240.00, 300.00, 10.00, '2026-08-08', 1),
-(2, 5, 2266.00, 66.00, 10.00, '2026-08-08', 1),
-(3, 2, 2208.00, 1000.00, 800.00, '2026-08-09', 1);
+INSERT INTO `invoices` (`id`, `patient_id`, `sub_amount`, `discount`, `tax`, `paid_amount`, `due_amount`, `payment_status`, `deleted_at`, `invoice_date`, `status`) VALUES
+(1, 2, 12240.00, 300.00, 10.00, 0.00, 0.00, 'Due', NULL, '2026-08-08', 1),
+(2, 5, 2266.00, 66.00, 10.00, 0.00, 0.00, 'Due', NULL, '2026-08-08', 1),
+(3, 2, 2208.00, 1000.00, 800.00, 0.00, 0.00, 'Due', NULL, '2026-08-09', 1),
+(4, 2, 1700.00, 170.00, 0.00, 0.00, 0.00, 'Due', NULL, '2026-08-09', 1),
+(5, 1, 6500.00, 1300.00, 0.00, 0.00, 0.00, 'Due', NULL, '2026-08-09', 1),
+(6, 2, 1700.00, 170.00, 0.00, 0.00, 0.00, 'Due', NULL, '2026-08-09', 1);
 
 -- --------------------------------------------------------
 
@@ -181,7 +194,10 @@ INSERT INTO `invoice_details` (`id`, `invoice_id`, `Name`, `price`, `discount`, 
 (5, 1, 'vitamin D', 6000.00, 17.00, 15.00),
 (6, 1, 'Thyroid', 4000.00, 13.00, 15.00),
 (8, 2, 'cbc', 2200.00, 12.00, 15.00),
-(9, 3, 'CBC', 2400.00, 15.00, 7.00);
+(9, 3, 'CBC', 2400.00, 15.00, 7.00),
+(10, 0, 'CBC', 1700.00, 5.00, 0.00),
+(11, 0, 'Vitamin D test', 6500.00, 10.00, 0.00),
+(12, 0, 'CBC', 1700.00, 5.00, 0.00);
 
 -- --------------------------------------------------------
 
@@ -191,7 +207,7 @@ INSERT INTO `invoice_details` (`id`, `invoice_id`, `Name`, `price`, `discount`, 
 
 CREATE TABLE `lab_category` (
   `id` int(11) NOT NULL,
-  `test_name` varchar(25) DEFAULT NULL,
+  `test_name` varchar(255) DEFAULT NULL,
   `price` varchar(40) DEFAULT NULL,
   `test_accessor` varchar(40) DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
@@ -204,8 +220,11 @@ CREATE TABLE `lab_category` (
 --
 
 INSERT INTO `lab_category` (`id`, `test_name`, `price`, `test_accessor`, `created_at`, `updated_at`, `deleted_at`) VALUES
-(1, 'CBC', '1700', 'Kamal', NULL, NULL, NULL),
-(2, 'Vitamin D test', '6500', 'Kamal', NULL, NULL, NULL);
+(1, 'CBC', '1700', 'Dr.Kamal', NULL, NULL, NULL),
+(2, 'Vitamin D test', '6500', 'Kamal', NULL, NULL, NULL),
+(3, 'Colonscopy', '7800', 'Jamal', NULL, NULL, NULL),
+(4, 'Endoscopy', '3300', 'Rahim', NULL, NULL, NULL),
+(5, 'Electrocardiogram(ECG)', '2000', 'Rafiq', NULL, NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -222,6 +241,7 @@ CREATE TABLE `patients` (
   `phone` varchar(20) DEFAULT NULL,
   `email` varchar(100) DEFAULT NULL,
   `address` varchar(200) DEFAULT NULL,
+  `discount_percent` decimal(5,2) DEFAULT 0.00,
   `emergency_contact` varchar(20) DEFAULT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
   `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
@@ -234,12 +254,12 @@ CREATE TABLE `patients` (
 -- Dumping data for table `patients`
 --
 
-INSERT INTO `patients` (`id`, `name`, `gender`, `age`, `blood_group`, `phone`, `email`, `address`, `emergency_contact`, `created_at`, `updated_at`, `deleted_at`, `created_by`, `updated_by`) VALUES
-(1, 'Azad Hossain', 1, 25, 1, '01712345678', 'azad@gmail.com', 'Feni, Bangladesh', '01812345678', '2026-08-02 04:35:22', '2026-08-02 04:35:22', NULL, 1, 1),
-(2, 'Akib', 1, 25, 1, '0153321562', 'akib@gmail.com', 'kdlk, Bangladesh', '01812345678', '2026-08-02 05:24:16', '2026-08-02 05:24:16', NULL, 1, 1),
-(3, 'sdfg', 0, 56, 0, '0105', 'jamal@yahoo.com', '2no Gate', '012353', '2026-08-04 06:46:36', '2026-08-04 06:46:36', NULL, NULL, NULL),
-(4, 'Azad Hossain', 1, 55, 0, '01712345678', 'azad@gmail.com', 'Feni, Bangladesh', '01812345678', '2026-08-04 06:46:45', '2026-08-04 06:46:45', NULL, NULL, NULL),
-(5, 'Kamal Uddin', 1, 56, NULL, '01712345679', NULL, NULL, NULL, '2026-08-04 07:01:41', '2026-08-04 07:01:41', NULL, NULL, NULL);
+INSERT INTO `patients` (`id`, `name`, `gender`, `age`, `blood_group`, `phone`, `email`, `address`, `discount_percent`, `emergency_contact`, `created_at`, `updated_at`, `deleted_at`, `created_by`, `updated_by`) VALUES
+(1, 'Azad Hossain', 1, 25, 1, '01712345678', 'azad@gmail.com', 'Feni, Bangladesh', 10.00, '01812345678', '2026-08-02 04:35:22', '2026-08-09 05:53:53', NULL, 1, 1),
+(2, 'Akib', 1, 25, 1, '0153321562', 'akib@gmail.com', 'kdlk, Bangladesh', 5.00, '01812345678', '2026-08-02 05:24:16', '2026-08-09 05:53:53', NULL, 1, 1),
+(3, 'sdfg', 0, 56, 0, '0105', 'jamal@yahoo.com', '2no Gate', 0.00, '012353', '2026-08-04 06:46:36', '2026-08-04 06:46:36', NULL, NULL, NULL),
+(4, 'Azad Hossain', 1, 55, 0, '01712345678', 'azad@gmail.com', 'Feni, Bangladesh', 0.00, '01812345678', '2026-08-04 06:46:45', '2026-08-04 06:46:45', NULL, NULL, NULL),
+(5, 'Kamal Uddin', 1, 56, NULL, '01712345679', NULL, NULL, 0.00, NULL, '2026-08-04 07:01:41', '2026-08-04 07:01:41', NULL, NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -590,22 +610,34 @@ ALTER TABLE `schedules`
 --
 
 --
+-- AUTO_INCREMENT for table `departments`
+--
+ALTER TABLE `departments`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+
+--
+-- AUTO_INCREMENT for table `designation`
+--
+ALTER TABLE `designation`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+
+--
 -- AUTO_INCREMENT for table `invoices`
 --
 ALTER TABLE `invoices`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT for table `invoice_details`
 --
 ALTER TABLE `invoice_details`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
 --
 -- AUTO_INCREMENT for table `lab_category`
 --
 ALTER TABLE `lab_category`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT for table `payments`
