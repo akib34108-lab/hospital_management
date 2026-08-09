@@ -10,3 +10,4 @@
 
         echo "<script>window.location.href = '".$base_url."patients/patients.php';</script>";
     
+?>
