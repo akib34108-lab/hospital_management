@@ -6,6 +6,8 @@
 $edit_id = isset($_GET['edit_id']) ? $conn->real_escape_string($_GET['edit_id']) : '';
 $edit_data = null;
 $edit_items = [];
+$lab_tests = $crud->common_select("lab_category","*")['data'];
+$patients = $crud->common_select("patients","*")['data'];
 
 if($edit_id != ''){
     $edit_data = $conn->query("SELECT * FROM invoices WHERE id='$edit_id'")->fetch_object();
@@ -18,28 +20,25 @@ if($edit_id != ''){
     <div class="content">
         
         <?php 
-        
         if(isset($_POST['save'])){
             $patient_id = $conn->real_escape_string($_POST['patient_id']);
             $invoice_date = $conn->real_escape_string($_POST['invoice_date']);
             $status = 1;
             $invoice_id_post = $conn->real_escape_string($_POST['invoice_id']); 
 
-            $sub_amount = 0;
-            if(isset($_POST['item_total'])) foreach($_POST['item_total'] as $it) $sub_amount += $it;
-            
-            $discount = $conn->real_escape_string($_POST['discount']); 
-            $tax = $conn->real_escape_string($_POST['tax']); // %
+            $sub_amount = $conn->real_escape_string($_POST['sub_amount']);
+            $discount_tk = $conn->real_escape_string($_POST['discount_tk']); 
+            $tax_tk = $conn->real_escape_string($_POST['tax_tk']); 
+            $grand_total = $conn->real_escape_string($_POST['grand_total']);
 
             if($invoice_id_post != ''){ 
-                $sql = "UPDATE `invoices` SET `patient_id`='$patient_id',`sub_amount`='$sub_amount',`discount`='$discount',`tax`='$tax',`invoice_date`='$invoice_date' WHERE id='$invoice_id_post'";
+                $sql = "UPDATE `invoices` SET `patient_id`='$patient_id',`sub_amount`='$sub_amount',`discount`='$discount_tk',`tax`='$tax_tk',`invoice_date`='$invoice_date' WHERE id='$invoice_id_post'";
                 $conn->query($sql);
                 $last_id = $invoice_id_post;
-                
                 $conn->query("DELETE FROM invoice_details WHERE invoice_id='$last_id'");
             } else { 
                 $sql = "INSERT INTO `invoices`(`patient_id`, `sub_amount`, `discount`, `tax`, `invoice_date`, `status`) 
-                        VALUES ('$patient_id','$sub_amount','$discount','$tax','$invoice_date','$status')";
+                        VALUES ('$patient_id','$sub_amount','$discount_tk','$tax_tk','$invoice_date','$status')";
                 $conn->query($sql);
                 $last_id = $conn->insert_id;
             }
@@ -75,14 +74,19 @@ if($edit_id != ''){
                                  FROM invoices i 
                                  LEFT JOIN patients p ON i.patient_id = p.id 
                                  WHERE i.id='$id'")->fetch_object();
-            $items = $conn->query("SELECT * FROM invoice_details WHERE invoice_id='$id'");
+            $items = $conn->query("SELECT * FROM invoice_details WHERE invoice_id='$id' AND deleted_at IS NULL");
             
-            $tax_tk = ($inv->sub_amount * $inv->tax) / 100;
-            $grand_total = ($inv->sub_amount - $inv->discount) + $tax_tk;
+            // PAYMENT HISAB ADD KORLAM
+            $paid_res = $conn->query("SELECT SUM(amount) as total_paid FROM payments WHERE invoice_id='$id'");
+            $paid_row = $paid_res->fetch_object();
+            $total_paid = $paid_row->total_paid ? $paid_row->total_paid : 0;
+            $payable_amount = ($inv->sub_amount - $inv->discount) + $inv->tax;
+            $due = $payable_amount - $total_paid;
+            $grand_total = $payable_amount;
         ?>
         
-        <!-- INVOICE PRINT VIEW -->
-        <div class="row">
+        <!-- PRINT VIEW -->
+        <div class="row no-print">
             <div class="col-sm-12 text-right m-b-20">
                 <button onclick="window.print()" class="btn btn-primary"><i class="fa fa-print"></i> Print</button>
                 <a href="invoices.php" class="btn btn-secondary"><i class="fa fa-arrow-left"></i> Back to List</a>
@@ -99,7 +103,7 @@ if($edit_id != ''){
                         </div>
                         <div class="col-md-6 text-right">
                             <h4 class="text-blue">INVOICE</h4>
-                            <p><b>Invoice No:</b> INV-<?php echo $inv->id; ?><br>
+                            <p><b>Invoice No:</b> INV-<?php echo str_pad($inv->id, 4, '0', STR_PAD_LEFT); ?><br>
                                <b>Date:</b> <?php echo date('d-m-Y', strtotime($inv->invoice_date)); ?></p>
                         </div>
                     </div>
@@ -125,7 +129,7 @@ if($edit_id != ''){
                             <tbody>
                                 <?php $sl=1; while($row = $items->fetch_object()){ 
                                     $dis_tk = ($row->price * $row->discount) / 100;
-                                    $tax_tk_item = ($row->price * $row->tax) / 100;
+                                    $tax_tk_item = (($row->price - $dis_tk) * $row->tax) / 100; // discount er por tax
                                     $item_total = ($row->price - $dis_tk) + $tax_tk_item; 
                                 ?>
                                 <tr>
@@ -143,13 +147,20 @@ if($edit_id != ''){
 
                     <div class="row">
                         <div class="col-md-6 offset-md-6">
-                            <table class="table">
-                                <tr><td>Sub Amount:</td><td class="text-right"><?php echo number_format($inv->sub_amount, 2); ?></td></tr>
+                            <table class="table table-bordered">
+                                <tr><td>Sub Amount:</td><td class="text-right"><?php echo number_format($inv->sub_amount, 2); ?> TK</td></tr>
                                 <tr><td>Discount:</td><td class="text-right"><?php echo number_format($inv->discount, 2); ?> TK</td></tr>
-                                <tr><td>TAX (<?php echo $inv->tax; ?>%):</td><td class="text-right"><?php echo number_format($tax_tk, 2); ?> TK</td></tr>
-                                <tr><td><h4>Grand Total:</h4></td><td class="text-right"><h4><?php echo number_format($grand_total, 2); ?> TK</h4></td></tr>
+                                <tr><td>TAX:</td><td class="text-right"><?php echo number_format($inv->tax, 2); ?> TK</td></tr>
+                                <tr style="background:#f5f5f5;"><td><b>Payable Amount:</b></td><td class="text-right"><b><?php echo number_format($payable_amount, 2); ?> TK</b></td></tr>
+                                <tr><td><b>Total Paid:</b></td><td class="text-right text-success"><b><?php echo number_format($total_paid, 2); ?> TK</b></td></tr>
+                                <tr style="background:#ffecec;"><td><b>Due Amount:</b></td><td class="text-right text-danger"><b><?php echo number_format($due, 2); ?> TK</b></td></tr>
                             </table>
                         </div>
+                    </div>
+
+                    <div class="row" style="margin-top:50px;">
+                        <div class="col-6">____________________ <br> Customer Signature</div>
+                        <div class="col-6 text-right">____________________ <br> Authorized Signature</div>
                     </div>
                 </div>
             </div>
@@ -157,7 +168,7 @@ if($edit_id != ''){
 
         <?php } else { ?>
         
-        
+        <!-- ADD/EDIT FORM -->
         <div class="row">
             <div class="col-md-12">
                 <div class="card-box">
@@ -168,12 +179,11 @@ if($edit_id != ''){
                         <div class="form-group row">
                             <label class="col-form-label col-md-2">Patient *</label>
                             <div class="col-md-4">
-                                <select name="patient_id" class="form-control" required>
+                                <select name="patient_id" id="patient_id" class="form-control" required>
                                     <option value="">-- Select Patient --</option>
-                                    <?php $patients = $crud->common_select("patients","*"); 
-                                    if($patients['status']) foreach ($patients['data'] as $p){ 
+                                    <?php foreach ($patients as $p){ 
                                         $selected = ($edit_data && $edit_data->patient_id == $p->id) ? 'selected' : ''; 
-                                        echo "<option value='".$p->id."' $selected>".$p->name."</option>"; 
+                                        echo "<option value='".$p->id."' data-discount='".$p->discount_percent."' $selected>".$p->name."</option>"; 
                                     } ?>
                                 </select>
                             </div>
@@ -202,7 +212,15 @@ if($edit_id != ''){
                                     <?php if(!empty($edit_items)){ 
                                         foreach($edit_items as $item){ ?>
                                         <tr>
-                                            <td><input type="text" name="item_name[]" value="<?php echo $item->Name; ?>" class="form-control"></td>
+                                            <td>
+                                                <select name="item_name[]" class="form-control calc item_name">
+                                                    <option value="">-- Select Test --</option>
+                                                    <?php foreach($lab_tests as $t){ 
+                                                        $selected = ($item->Name == $t->test_name) ? 'selected' : '';
+                                                        echo "<option value='".$t->test_name."' data-price='".$t->price."' $selected>".$t->test_name."</option>"; 
+                                                    } ?>
+                                                </select>
+                                            </td>
                                             <td><input type="number" name="item_price[]" value="<?php echo $item->price; ?>" class="form-control calc item_price"></td>
                                             <td><input type="number" name="item_discount[]" value="<?php echo $item->discount; ?>" class="form-control calc item_discount"></td>
                                             <td><input type="number" name="item_tax[]" value="<?php echo $item->tax; ?>" class="form-control calc item_tax"></td>
@@ -212,7 +230,14 @@ if($edit_id != ''){
                                         <?php } 
                                     } else {  ?>
                                     <tr>
-                                        <td><input type="text" name="item_name[]" class="form-control" placeholder="Napa, CBC Test"></td>
+                                        <td>
+                                            <select name="item_name[]" class="form-control calc item_name">
+                                                <option value="">-- Select Test --</option>
+                                                <?php foreach($lab_tests as $t){ 
+                                                    echo "<option value='".$t->test_name."' data-price='".$t->price."'>".$t->test_name."</option>"; 
+                                                } ?>
+                                            </select>
+                                        </td>
                                         <td><input type="number" name="item_price[]" class="form-control calc item_price" value="0"></td>
                                         <td><input type="number" name="item_discount[]" value="0" class="form-control calc item_discount"></td>
                                         <td><input type="number" name="item_tax[]" value="0" class="form-control calc item_tax"></td>
@@ -228,10 +253,10 @@ if($edit_id != ''){
                         <div class="row">
                             <div class="col-md-6 offset-md-6">
                                 <table class="table table-bordered">
-                                    <tr><td>Sub Amount</td><td><input type="number" id="sub_amount" name="sub_amount" value="<?php echo $edit_data ? $edit_data->sub_amount : '0'; ?>" class="form-control" readonly></td></tr>
-                                    <tr><td>Discount TK</td><td><input type="number" name="discount" id="discount" value="<?php echo $edit_data ? $edit_data->discount : '0'; ?>" class="form-control calc"></td></tr>
-                                    <tr><td>TAX %</td><td><input type="number" name="tax" id="tax" value="<?php echo $edit_data ? $edit_data->tax : '0'; ?>" class="form-control calc"></td></tr>
-                                    <tr><td><h5>Grand Total</h5></td><td><h5><input type="number" id="grand_total" class="form-control" readonly></h5></td></tr>
+                                    <tr><td>Sub Amount</td><td><input type="number" id="sub_amount" name="sub_amount" class="form-control" readonly></td></tr>
+                                    <tr><td>Discount TK</td><td><input type="number" id="discount_tk" name="discount_tk" class="form-control" readonly></td></tr>
+                                    <tr><td>TAX TK</td><td><input type="number" id="tax_tk" name="tax_tk" class="form-control" readonly></td></tr>
+                                    <tr><td><h5>Grand Total</h5></td><td><h5><input type="number" id="grand_total" name="grand_total" class="form-control" readonly></h5></td></tr>
                                 </table>
                             </div>
                         </div>
@@ -242,98 +267,6 @@ if($edit_id != ''){
                             </div>
                         </div>
                     </form>
-
-                    
-                    <?php 
-                    if($edit_id != ''){ // Sudhu Edit mode e dekhabe
-                        $inv_id = $edit_id;
-                        
-                        
-                        $pay_sql = "SELECT * FROM payments WHERE invoice_id='$inv_id' ORDER BY payment_date DESC";
-                        $pay_result = $conn->query($pay_sql);
-
-                        // Calculation
-                        $total_paid = 0;
-                        if($pay_result->num_rows > 0){
-                            while($p = $pay_result->fetch_object()){
-                                $total_paid += $p->amount;
-                            }
-                        }
-                        
-                        $grand_total_val = $edit_data->sub_amount; 
-                        $tax_tk_val = ($grand_total_val * $edit_data->tax) / 100;
-                        $grand_total_val = ($grand_total_val - $edit_data->discount) + $tax_tk_val;
-                        $due_amount = $grand_total_val - $total_paid;
-                        ?>
-                        
-                        <div class="row" style="margin-top:30px">
-                            <div class="col-md-12">
-                                <div class="card-box">
-                                    <h4 class="card-title text-blue">Payment Details</h4>
-                                    
-                                    <!-- Summary Box -->
-                                    <div class="row">
-                                        <div class="col-md-4">
-                                            <div class="alert alert-info">
-                                                <b>Grand Total:</b> <?php echo number_format($grand_total_val, 2); ?> TK
-                                            </div>
-                                        </div>
-                                        <div class="col-md-4">
-                                            <div class="alert alert-success">
-                                                <b>Total Paid:</b> <?php echo number_format($total_paid, 2); ?> TK
-                                            </div>
-                                        </div>
-                                        <div class="col-md-4">
-                                            <div class="alert alert-<?php echo $due_amount > 0 ? 'danger' : 'success'; ?>">
-                                                <b>Due Amount:</b> <?php echo number_format($due_amount, 2); ?> TK
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <!-- Payment History Table -->
-                                    <h5 class="m-t-20">Payment History</h5>
-                                    <div class="table-responsive">
-                                        <table class="table table-bordered table-striped">
-                                            <thead class="bg-light">
-                                                <tr>
-                                                    <th>Date</th>
-                                                    <th>Payment Method</th>
-                                                    <th>Transaction ID</th>
-                                                    <th class="text-center">Amount</th>
-                                                    <th class="text-center">Action</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                <?php 
-                                                if($pay_result->num_rows > 0){
-                                                    $pay_result->data_seek(0); 
-                                                    while($pay = $pay_result->fetch_object()){ ?>
-                                                    <tr>
-                                                        <td><?php echo date('d M Y', strtotime($pay->payment_date)); ?></td>
-                                                        <td><?php echo $pay->payment_method; ?></td>
-                                                        <td><?php echo $pay->transaction_id; ?></td>
-                                                        <td class="text-center"><b><?php echo number_format($pay->amount, 2); ?></b></td>
-                                                        <td class="text-center">
-                                                            <a href="../payments/payments_list.php?delete=<?php echo $pay->id; ?>" 
-                                                               onclick="return confirm('Delete this payment?')" 
-                                                               class="btn btn-danger btn-xs">
-                                                               <i class="fa fa-trash"></i>
-                                                            </a>
-                                                        </td>
-                                                    </tr>
-                                                <?php } 
-                                                } else {
-                                                    echo "<tr><td colspan='5' class='text-center'>No Payment Found</td></tr>";
-                                                }
-                                                ?>
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    <?php } ?>
-                    
                 </div>
             </div>
         </div>
@@ -345,8 +278,32 @@ if($edit_id != ''){
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
 $(document).ready(function(){
+    
+    $('#patient_id').on('change', function(){
+        let patient_discount = $(this).find(':selected').data('discount') || 0;
+        $('.item_discount').val(patient_discount);
+        calculateTotal();
+    });
+
+    $(window).on('load', function(){
+        let patient_discount = $('#patient_id').find(':selected').data('discount') || 0;
+        if(patient_discount > 0 && $('.item_discount').val() == 0){
+            $('.item_discount').val(patient_discount);
+        }
+        calculateTotal();
+    });
+
+    $(document).on('change', '.item_name', function(){
+        let price = $(this).find(':selected').data('price') || 0;
+        $(this).closest('tr').find('.item_price').val(price);
+        calculateTotal();
+    });
+
     function calculateTotal(){
         let sub_amount = 0;
+        let total_discount_tk = 0;
+        let total_tax_tk = 0;
+
         $("#itemTable tbody tr").each(function(){
             let row = $(this);
             let price = parseFloat(row.find('.item_price').val()) || 0;
@@ -354,29 +311,30 @@ $(document).ready(function(){
             let tax_per = parseFloat(row.find('.item_tax').val()) || 0;
 
             let dis_tk = (price * dis_per) / 100;
-            let tax_tk = (price * tax_per) / 100;
+            let tax_tk = ((price - dis_tk) * tax_per) / 100; // discount er por tax
             
             let total = (price - dis_tk) + tax_tk;
             row.find('.item_total').val(total.toFixed(2));
-            sub_amount += total;
+            
+            sub_amount += price;
+            total_discount_tk += dis_tk;
+            total_tax_tk += tax_tk;
         });
 
+        let grand_total = sub_amount - total_discount_tk + total_tax_tk;
+
         $("#sub_amount").val(sub_amount.toFixed(2));
-
-        let overall_discount = parseFloat($("#discount").val()) || 0;
-        let overall_tax_per = parseFloat($("#tax").val()) || 0;
-        
-        let tax_tk = (sub_amount * overall_tax_per) / 100;
-
-        let grand_total = (sub_amount - overall_discount) + tax_tk;
-        
+        $("#discount_tk").val(total_discount_tk.toFixed(2));
+        $("#tax_tk").val(total_tax_tk.toFixed(2));
         $("#grand_total").val(grand_total.toFixed(2));
     }
 
     $("#addItem").click(function(){ 
         let newRow = $("#itemTable tbody tr:first").clone();
         newRow.find("input").val('0');
-        newRow.find("input[type=text]").val('');
+        newRow.find("select").val('');
+        let patient_discount = $('#patient_id').find(':selected').data('discount') || 0;
+        newRow.find('.item_discount').val(patient_discount);
         $("#itemTable tbody").append(newRow); 
     });
 
@@ -389,14 +347,16 @@ $(document).ready(function(){
 
     $(document).on('keyup change', '.calc', function(){ calculateTotal(); });
     
-    calculateTotal(); 
 });
 </script>
 
 <style>
 @media print {
-    .page-wrapper { margin: 0; }
-    .btn, .sidebar, .header { display: none !important; }
+    body * { visibility: hidden; }
+    #print_area, #print_area * { visibility: visible; }
+    #print_area { position: absolute; left: 0; top: 0; width: 100%; }
+    .no-print { display: none !important; }
+    .sidebar, .header { display: none !important; }
 }
 </style>
 

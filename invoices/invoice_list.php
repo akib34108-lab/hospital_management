@@ -1,99 +1,99 @@
 <?php require_once "../component/header.php"; ?>
 <?php require_once "../component/sidebar.php"; ?>
+<?php $conn = $crud->conn; ?>
 
-<div class="main-content">
-    <div class="row">
-        <div class="col-12">
-            <div class="d-flex align-items-lg-center flex-column flex-md-row flex-lg-row mt-3">
-                <div class="flex-grow-1">
-                    <h3 class="mb-2 text-size-26 text-color-2">Patient Invoices</h3>
-                </div>
-                <div class="mt-3 mt-lg-0">
-                    <a href="<?= $base_url; ?>invoices/create.php" class="btn btn-primary">
-                        <i class="fa-solid fa-plus me-2"></i> Add Invoice
-                    </a>
-                </div>
+<div class="page-wrapper">
+    <div class="content">
+        
+        <?php 
+        // DELETE LOGIC
+        if(isset($_GET['delete_id'])){
+            $del_id = $conn->real_escape_string($_GET['delete_id']);
+            $conn->query("DELETE FROM invoice_details WHERE invoice_id='$del_id'");
+            $conn->query("DELETE FROM invoices WHERE id='$del_id'");
+            echo "<script>alert('Invoice Deleted Successfully'); window.location='invoice_list.php';</script>";
+            exit;
+        }
+        ?>
+
+        <div class="row">
+            <div class="col-sm-4 col-3">
+                <h4 class="page-title">Invoice List</h4>
+            </div>
+            <div class="col-sm-8 col-9 text-right m-b-20">
+                <a href="invoices.php" class="btn btn-success btn-rounded"><i class="fa fa-plus"></i> Add Invoice</a>
             </div>
         </div>
-    </div>
-    
-    <div class="mt-4">
-        <div class="card shadow-sm border-0">
-            <div class="card-body p-0">
-                <div class="table-responsive">
-                    <table class="table table-bordered table-striped align-middle mb-0">
-                        <thead class="table-dark">
-                            <tr>
-                                <th width="5%">SL</th>
-                                <th>Patient Name</th>
-                                <th>Sub Amount</th>
-                                <th>Discount</th>    
-                                <th>Tax</th>
-                                <th>Total Amount</th>
-                                <th>Paid Amount</th>  
-                                <th>Due Amount</th>
-                                <th>Invoice Date</th>
-                                <th>Payment Status</th>
-                                <th class="text-center" width="15%">Action</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <?php
-                                // deleted_at bad diye disi
-                                $sql = "SELECT i.*, IFNULL(p.name, CONCAT('Unknown Patient ID: ', i.patient_id)) as patient_name 
-                                        FROM invoices i
-                                        LEFT JOIN patients p ON i.patient_id = p.id 
-                                        ORDER BY i.id DESC";
 
-                                $result = $crud->common_query($sql);
-                                $sl = 1;
-
-                            if ($result['status'] && !empty($result['data'])) {
-                                foreach ($result['data'] as $invoice) {
-                                    $total = $invoice->sub_amount - $invoice->discount + $invoice->tax;
-                                    $due = $total - $invoice->paid_amount;
-                                    
-                                    // Payment status badge
-                                    if ($due <= 0 && $invoice->paid_amount > 0) { 
-                                        $badge = '<span class="badge bg-success">Paid</span>';
-                                    } elseif ($invoice->paid_amount > 0) { 
-                                        $badge = '<span class="badge bg-info">Partial</span>';
-                                    } else { 
-                                        $badge = '<span class="badge bg-warning text-dark">Due</span>';
-                                    }
-                            ?>
-                            <tr>
-                                <td><?= $sl++ ?></td>
-                                <td><b><?= htmlspecialchars($invoice->patient_name) ?></b></td>
-                                <td><?= number_format($invoice->sub_amount, 2) ?> BDT</td>
-                                <td><?= number_format($invoice->discount, 2) ?> BDT</td>
-                                <td><?= number_format($invoice->tax, 2) ?> BDT</td>
-                                <td><b><?= number_format($total, 2) ?> BDT</b></td>
-                                <td><?= number_format($invoice->paid_amount, 2) ?> BDT</td>  
-                                <td><b class="text-danger"><?= number_format($due, 2) ?> BDT</b></td>  
-                                <td><?= date('d-m-Y', strtotime($invoice->invoice_date)) ?></td>
-                                <td><?= $badge ?></td>
-                                <td class="text-center">
-                                    <a href="<?= $base_url; ?>invoices/view.php?id=<?= $invoice->id ?>" class="btn btn-sm btn-info" title="View">
-                                        <i class="fa-regular fa-eye"></i>
-                                    </a>
-                                    <a href="<?= $base_url; ?>invoices/delete.php?id=<?= $invoice->id ?>" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure to delete this invoice?')" title="Delete">
-                                        <i class="fa-solid fa-trash-can"></i>
-                                    </a>
-                                </td>
-                            </tr>
-                            <?php
-                                }
-                            } else {
-                                echo "<tr><td colspan='11' class='text-center py-4'>No invoices found</td></tr>";
-                            }
-                            ?>
-                        </tbody>
-                    </table>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card-box">
+                    <div class="table-responsive">
+                        <table class="table table-striped custom-table mb-0 datatable">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Invoice ID</th>
+                                    <th>Patient Name</th>
+                                    <th>Invoice Date</th>
+                                    <th>Sub Amount</th>
+                                    <th>Disc TK</th>
+                                    <th>Tax TK</th>  <!-- % bad diye TK korlam -->
+                                    <th>Grand Total</th>
+                                    <th class="text-right">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php 
+                                $sl=1;
+                                $result = $conn->query("SELECT i.*, p.name as patient_name FROM invoices i 
+                                                        LEFT JOIN patients p ON i.patient_id = p.id 
+                                                        WHERE i.status=1 ORDER BY i.id DESC");
+                                if($result && $result->num_rows > 0){
+                                    while($row = $result->fetch_object()){ 
+                                        // Ekhane r % hisab kora lagbena. DB tei TK save ase
+                                        $grand_total = ($row->sub_amount - $row->discount) + $row->tax;
+                                ?>
+                                <tr>
+                                    <td><?php echo $sl++; ?></td>
+                                    <td>INV-<?php echo $row->id; ?></td>
+                                    <td><?php echo $row->patient_name; ?></td>
+                                    <td><?php echo date('d-m-Y', strtotime($row->invoice_date)); ?></td>
+                                    <td><?php echo number_format($row->sub_amount, 2); ?></td>
+                                    <td><?php echo number_format($row->discount, 2); ?> TK</td>
+                                    <td><?php echo number_format($row->tax, 2); ?> TK</td> <!-- % bad -->
+                                    <td><b><?php echo number_format($grand_total, 2); ?> TK</b></td>
+                                    <td class="text-right">
+                                        
+                                        <a href="invoices.php?id=<?php echo $row->id; ?>" class="btn btn-sm btn-info" title="View/Print">
+                                            <i class="fa fa-eye"></i>
+                                        </a>
+                                        <a href="invoices.php?edit_id=<?php echo $row->id; ?>" class="btn btn-sm btn-warning" title="Edit">
+                                            <i class="fa fa-pencil"></i>
+                                        </a>
+                                        <a href="invoice_view.php?id=<?php echo $row->id; ?>" class="btn btn-sm btn-primary" title="Details">  
+                                            <i class="fa fa-file-text"></i>
+                                        </a>
+                                        <a href="invoice_list.php?delete_id=<?php echo $row->id; ?>" onclick="return confirm('Are you sure to delete this invoice?')" class="btn btn-sm btn-danger" title="Delete">
+                                            <i class="fa fa-trash-o"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                                <?php 
+                                    } // while sesh
+                                } else { 
+                                ?>
+                                <tr><td colspan="9" class="text-center">No Invoice Found</td></tr>
+                                <?php 
+                                } 
+                                ?>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
 
-<?php require_once "../component/footer.php"; ?>
+<?php require_once "../component/footer.php" ?>

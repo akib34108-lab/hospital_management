@@ -1,172 +1,201 @@
 <?php require_once "../component/header.php";?>
-<!-- Sidebar Start -->
 <?php require_once "../component/sidebar.php";?>
-<!-- Sidebar End -->
+<?php $conn = $crud->conn;
 
-<?php
-$id = $_GET['id'];
-// trainee_id -> patient_id, trainees -> patients, transaction_id add
-$sql = "SELECT invoices.*, patients.name as patient_name, patients.discount_percent,
-        payments.transaction_id, payments.payment_method, payments.amount as paid_amount
-        FROM invoices
-        JOIN patients ON invoices.patient_id = patients.id
-        LEFT JOIN payments ON payments.invoice_id = invoices.id
-        WHERE invoices.id = $id AND invoices.deleted_at IS NULL";
+$invoice_id = intval($_GET['id']);
 
-$data = $crud->common_query($sql);
+// Invoice data
+$invoice = $conn->query("SELECT i.*, p.name, p.phone, p.address FROM invoices i LEFT JOIN patients p ON i.patient_id=p.id WHERE i.id='$invoice_id'")->fetch_object();
 
-if (!$data['status'] || empty($data['data'])) {
-    $_SESSION['message'] = array('danger', 'Error', 'Invoice not found.');
-    echo "<script>window.location.href = '". $base_url. "invoices/invoice_list.php';</script>"; // file name change
+// Hisab
+$payable_amount = ($invoice->sub_amount - $invoice->discount) + $invoice->tax;
+$grand_total = $payable_amount; 
+
+// Payment gula
+$paid_res = $conn->query("SELECT SUM(amount) as total_paid FROM payments WHERE invoice_id='$invoice_id'");
+$paid_row = $paid_res->fetch_object();
+$total_paid = $paid_row->total_paid ? $paid_row->total_paid : 0;
+$due = $grand_total - $total_paid;
+$payment_history = $conn->query("SELECT * FROM payments WHERE invoice_id='$invoice_id' ORDER BY payment_date DESC, id DESC");
+
+// Payment Save
+if(isset($_POST['save_payment'])){
+    $amount = $_POST['amount'];
+    $method = $_POST['payment_method'];
+    $date = $_POST['payment_date'];
+    $trx = $conn->real_escape_string($_POST['transaction_id']);
+    $conn->query("INSERT INTO payments(invoice_id, amount, payment_method, payment_date, transaction_id) VALUES('$invoice_id', '$amount', '$method', '$date', '$trx')");
+    echo "<script>alert('Payment Saved Successfully'); window.location='invoice_view.php?id=$invoice_id';</script>";
     exit;
 }
-$invoice = $data['data'][0];
-
-$invoice_date = date('d-m-Y', strtotime($invoice->invoice_date));
 ?>
 
-<div class="main-content">
+<div class="page-wrapper">
+<div class="content">
+
     <div class="row">
-        <div class="col-12">
-            <div class="d-flex align-items-lg-center flex-column flex-md-row flex-lg-row mt-3">
-                <div class="flex-grow-1">
-                    <h3 class="mb-2 text-size-26 text-color-2">Invoice #<?= $invoice->invoice_no?></h3>
-                </div>
-                <div class="mt-3 mt-lg-0 no-print">
-                    <a href="<?= $base_url;?>invoices/invoice_list.php" class="btn btn-secondary"> <!-- file name change -->
-                        <i class="fa-solid fa-arrow-left"></i> Back
-                    </a>
-                    <button onclick="window.print()" class="btn btn-success ms-2">
-                        <i class="fa-solid fa-print"></i> Print
-                    </button>
-                </div>
+        <div class="col-sm-6">
+            <h4 class="page-title">Invoice #INV-<?php echo str_pad($invoice->id, 4, '0', STR_PAD_LEFT);?></h4>
+        </div>
+        <div class="col-sm-6 text-right">
+            <a href="invoice_list.php" class="btn btn-primary"><i class="fa fa-arrow-left"></i> Back to List</a>
+            <a href="invoices.php?id=<?php echo $invoice->id;?>" class="btn btn-info"><i class="fa fa-print"></i> Print</a>
+        </div>
+    </div>
+
+    <!-- Patient + Invoice Info -->
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card-box">
+                <h4 class="card-title">Patient Info</h4>
+                <p><b>Name:</b> <?php echo $invoice->name;?></p>
+                <p><b>Phone:</b> <?php echo $invoice->phone;?></p>
+                <p><b>Address:</b> <?php echo $invoice->address;?></p>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card-box">
+                <h4 class="card-title">Invoice Info</h4>
+                <p><b>Date:</b> <?php echo date('d-m-Y', strtotime($invoice->invoice_date));?></p>
+                <p><b>Sub Total:</b> <?php echo number_format($invoice->sub_amount,2);?> TK</p>
+                <p><b>Discount:</b> <?php echo number_format($invoice->discount,2);?> TK</p>
+                <p><b>Tax:</b> <?php echo number_format($invoice->tax,2);?> TK</p>
+                <hr>
+                <p style="font-size: 18px; color: #ff5722; font-weight:bold;"><b>Payable Amount:</b> <?php echo number_format($payable_amount,2);?> TK</p>
             </div>
         </div>
     </div>
 
-    <div class="card shadow-sm border-0 mt-4">
-        <div class="card-body p-4">
-
-            <div class="row border-bottom pb-3 mb-4">
-                <div class="col-md-6">
-                    <h4 class="fw-bold text-primary mb-1">Shifa Hospital & Diagnostic</h4> <!-- Hospital Name -->
-                    <p class="mb-0 text-muted">Chittagong, Bangladesh</p>
-                    <p class="mb-0 text-muted">Phone: +880 18XXXXXXXX</p>
-                </div>
-                <div class="col-md-6 text-md-end">
-                    <h5 class="mb-1">Invoice #: <span class="fw-bold"><?= $invoice->invoice_no?></span></h5>
-                    <p class="mb-0 text-muted">Date: <?= $invoice_date?></p>
-                    <p class="mb-0 text-muted">Patient Discount: <span class="fw-bold"><?= number_format($invoice->discount_percent, 2)?> %</span></p> <!-- Notun -->
-                    <p class="mb-0 text-muted">Status:
-                        <?php
-                        if ($invoice->payment_status == 0) { echo '<span class="badge bg-warning text-dark">Pending</span>'; }
-                        elseif ($invoice->payment_status == 1) { echo '<span class="badge bg-success">Paid</span>'; }
-                        elseif ($invoice->payment_status == 2) { echo '<span class="badge bg-info">Partial</span>'; }
-                       ?>
-                    </p>
-                </div>
+    <!-- ========== PAYMENT SECTION START ========== -->
+    <div class="row">
+        <!-- Left: Add Payment Form -->
+        <div class="col-md-6">
+            <div class="card-box">
+                <h4 class="card-title">Add Payment</h4>
+                <?php if($due > 0){?>
+                <form method="post">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Amount *</label>
+                                <input type="number" step="0.01" max="<?php echo $due;?>" name="amount" value="<?php echo $due;?>" class="form-control" required>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Payment Method *</label>
+                                <select name="payment_method" id="payment_method" class="form-control" required>
+                                    <option value="Cash">Cash</option>
+                                    <option value="bKash">bKash</option>
+                                    <option value="Nagad">Nagad</option>
+                                    <option value="Card">Card</option>
+                                    <option value="Bank">Bank</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Payment Date</label>
+                                <input type="date" name="payment_date" value="<?php echo date('Y-m-d');?>" class="form-control" required>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>TRX ID</label>
+                                <input type="text" name="transaction_id" id="transaction_id" class="form-control" placeholder="Auto for online payment" readonly>
+                            </div>
+                        </div>
+                    </div>
+                    <button type="submit" name="save_payment" class="btn btn-success"><i class="fa fa-money"></i> Save Payment</button>
+                </form>
+                <?php } else {?>
+                    <div class="alert alert-success"><i class="fa fa-check"></i> This invoice is fully paid</div>
+                <?php }?>
             </div>
 
-            <!-- Bill To (Patient Info) -->
-            <div class="row mb-4">
-                <div class="col-md-6">
-                    <h6 class="fw-bold text-uppercase text-muted mb-2">Bill To:</h6>
-                    <h5 class="fw-bold"><?= $invoice->patient_name?></h5> <!-- trainee_name -> patient_name -->
-                </div>
-                <div class="col-md-6 text-md-end">
-                    <h6 class="fw-bold text-uppercase text-muted mb-2">Payment Info:</h6>
-                    <p class="mb-1"><strong>Transaction ID:</strong> <?= htmlspecialchars($invoice->transaction_id?? 'N/A')?></p>
-                    <p class="mb-1"><strong>Payment Method:</strong>
-                        <?php
-                        $method = $invoice->payment_method?? 0;
-                        if($method == 0) echo 'Bkash';
-                        elseif($method == 1) echo 'Cash';
-                        elseif($method == 2) echo 'Nagad';
-                        elseif($method == 3) echo 'Card';
-                        elseif($method == 4) echo 'Bank';
-                        else echo 'N/A';
-                       ?>
-                    </p>
-                </div>
-            </div>
-
-            <div class="w-100 mb-4">
+            <!-- Payment Summary -->
+            <div class="card-box">
+                <h4 class="card-title">Payment Summary</h4>
                 <table class="table table-bordered">
-                    <thead class="table-light">
-                        <tr>
-                            <th>#</th>
-                            <th>Test Name</th> <!-- Batch -> Test Name -->
-                            <th>Price</th>
-                            <th>VAT</th>
-                            <th class="text-end">Subtotal</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <?php
-
-                        // invoice_details -> invoice_detais, batch_id -> test_id, batches -> lab_category
-                        $details_sql = "SELECT invoice_details.*, lab_category.test_name
-                                        FROM invoice_details
-                                        JOIN lab_category ON invoice_details.test_id = lab_category.id
-                                        WHERE invoice_details.invoice_id = $id";
-                        $details = $crud->common_query($details_sql);
-
-                        if ($details['status'] &&!empty($details['data'])) {
-                            $i = 1;
-                            foreach ($details['data'] as $detail) {
-                       ?>
-                        <tr>
-                            <td><?= $i++;?></td>
-                            <td><?= $detail->test_name?></td>
-                            <td><?= number_format($detail->price, 2)?></td>
-                            <td><?= number_format($detail->vat, 2)?></td>
-                            <td class="text-end fw-bold"><?= number_format($detail->sub_total, 2)?></td>
-                        </tr>
-                        <?php
-                            }
-                        }
-                       ?>
-                    </tbody>
-                    <tfoot>
-                        <tr>
-                            <th colspan="4" class="text-end">Sub Total</th>
-                            <td class="text-end fw-bold"><?= number_format($invoice->sub_total, 2)?></td>
-                        </tr>
-                        <tr>
-                            <th colspan="4" class="text-end">Discount (<?= number_format($invoice->discount_percent, 2)?> %)</th> <!-- % show -->
-                            <td class="text-end fw-bold">- <?= number_format($invoice->discount_amount, 2)?></td>
-                        </tr>
-                        <tr>
-                            <th colspan="4" class="text-end">VAT</th>
-                            <td class="text-end fw-bold">+ <?= number_format($invoice->vat, 2)?></td>
-                        </tr>
-                        <tr class="table-active">
-                            <th colspan="4" class="text-end fs-5">Grand Total</th>
-                            <td class="text-end fs-5 fw-bold"><?= number_format($invoice->grand_total, 2)?> BDT</td>
-                        </tr>
-                    </tfoot>
+                    <tr>
+                        <td><b>Grand Total</b></td>
+                        <td class="text-right"><?php echo number_format($grand_total,2);?> TK</td>
+                    </tr>
+                    <tr>
+                        <td><b>Total Paid</b></td>
+                        <td class="text-right text-success"><?php echo number_format($total_paid,2);?> TK</td>
+                    </tr>
+                    <tr style="background:#ffecec;">
+                        <td><b>Due Amount</b></td>
+                        <td class="text-right text-danger"><b><?php echo number_format($due,2);?> TK</b></td>
+                    </tr>
                 </table>
             </div>
+        </div>
 
-            <!-- Payment & Notes -->
-            <div class="row border-top pt-3">
-                <div class="col-md-6">
-                    <h6 class="fw-bold text-uppercase text-muted mb-1">Notes:</h6>
-                    <p class="text-muted"><?= htmlspecialchars($invoice->notes?? 'No notes')?></p>
+        <!-- Right: Payment History -->
+        <div class="col-md-6">
+            <div class="card-box">
+                <h4 class="card-title">Payment History</h4>
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Amount</th>
+                                <th>Method</th>
+                                <th>TRX ID</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        <?php if($payment_history && $payment_history->num_rows > 0){
+                            while($ph = $payment_history->fetch_object()){?>
+                            <tr>
+                                <td><?php echo date('d-m-Y', strtotime($ph->payment_date));?></td>
+                                <td class="text-success"><?php echo number_format($ph->amount,2);?></td>
+                                <td><?php echo $ph->payment_method;?></td>
+                                <td><?php echo!empty($ph->transaction_id)? $ph->transaction_id : 'N/A';?></td>
+                            </tr>
+                        <?php }
+                        } else {?>
+                            <tr><td colspan="4" class="text-center">No Payment Yet</td></tr>
+                        <?php }?>
+                        </tbody>
+                    </table>
                 </div>
-                <div class="col-md-6 text-md-end">
-                    <h6 class="fw-bold text-uppercase text-muted mb-1">Payment Summary:</h6>
-                    <p class="mb-1"><strong>Paid Amount:</strong> <?= number_format($invoice->paid_amount, 2)?> BDT</p>
-                    <p class="mb-1"><strong>Due Amount:</strong> <?= number_format(($invoice->grand_total - $invoice->paid_amount), 2)?> BDT</p>
-                </div>
-            </div>
-
-            <!-- Footer -->
-            <div class="text-center mt-4 pt-3 border-top">
-                <p class="text-muted mb-0">Thank you for choosing Shifa Hospital & Diagnostic!</p> <!-- Hospital Name -->
             </div>
         </div>
     </div>
+    <!-- ========== PAYMENT SECTION END ========== -->
+
+</div>
 </div>
 
-<?php require_once "../component/footer.php";?>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+// Auto TRX ID Generate
+function generateTRX(method) {
+    if(method == 'Cash' || method == '') return ''; 
+
+    let prefix = {bKash:'BK', Nagad:'NG', Card:'CD', Bank:'BN'}[method];
+    let now = new Date();
+    let ymd = now.getFullYear().toString().substr(-2) +
+              ('0' + (now.getMonth()+1)).slice(-2) +
+              ('0' + now.getDate()).slice(-2);
+    let rand = Math.floor(10000 + Math.random() * 90000);
+
+    return prefix + ymd + rand; // Example: BK26080948213
+}
+
+$(document).ready(function(){
+    // Page load e auto TRX
+    $('#transaction_id').val(generateTRX($('#payment_method').val()));
+    
+    // Method change korle auto TRX
+    $('#payment_method').on('change', function(){
+        $('#transaction_id').val(generateTRX($(this).val()));
+    });
+});
+</script>
+
+<?php require_once "../component/footer.php"?>
