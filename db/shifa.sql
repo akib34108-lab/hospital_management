@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Aug 09, 2026 at 09:09 AM
+-- Generation Time: Aug 12, 2026 at 06:02 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -166,9 +166,10 @@ INSERT INTO `invoices` (`id`, `patient_id`, `sub_amount`, `discount`, `tax`, `pa
 (1, 2, 12240.00, 300.00, 10.00, 0.00, 0.00, 'Due', NULL, '2026-08-08', 1),
 (2, 5, 2266.00, 66.00, 10.00, 0.00, 0.00, 'Due', NULL, '2026-08-08', 1),
 (3, 2, 2208.00, 1000.00, 800.00, 0.00, 0.00, 'Due', NULL, '2026-08-09', 1),
-(4, 2, 1700.00, 170.00, 0.00, 0.00, 0.00, 'Due', NULL, '2026-08-09', 1),
+(4, 2, 2000.00, 100.00, 95.00, 0.00, 0.00, 'Due', NULL, '2026-08-09', 1),
 (5, 1, 6500.00, 1300.00, 0.00, 0.00, 0.00, 'Due', NULL, '2026-08-09', 1),
-(6, 2, 1700.00, 170.00, 0.00, 0.00, 0.00, 'Due', NULL, '2026-08-09', 1);
+(6, 2, 1700.00, 85.00, 242.25, 0.00, 0.00, 'Due', NULL, '2026-08-09', 1),
+(7, 3, 7800.00, 234.00, 226.98, 0.00, 0.00, 'Due', NULL, '2026-08-12', 1);
 
 -- --------------------------------------------------------
 
@@ -182,22 +183,26 @@ CREATE TABLE `invoice_details` (
   `Name` varchar(255) NOT NULL COMMENT 'Medicine/Test/Service Name',
   `price` decimal(10,2) DEFAULT 0.00,
   `discount` decimal(10,2) DEFAULT 0.00,
-  `tax` decimal(10,2) DEFAULT 0.00
+  `tax` decimal(10,2) DEFAULT 0.00,
+  `deleted_at` datetime DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `invoice_details`
 --
 
-INSERT INTO `invoice_details` (`id`, `invoice_id`, `Name`, `price`, `discount`, `tax`) VALUES
-(4, 1, 'cbc', 2400.00, 20.00, 15.00),
-(5, 1, 'vitamin D', 6000.00, 17.00, 15.00),
-(6, 1, 'Thyroid', 4000.00, 13.00, 15.00),
-(8, 2, 'cbc', 2200.00, 12.00, 15.00),
-(9, 3, 'CBC', 2400.00, 15.00, 7.00),
-(10, 0, 'CBC', 1700.00, 5.00, 0.00),
-(11, 0, 'Vitamin D test', 6500.00, 10.00, 0.00),
-(12, 0, 'CBC', 1700.00, 5.00, 0.00);
+INSERT INTO `invoice_details` (`id`, `invoice_id`, `Name`, `price`, `discount`, `tax`, `deleted_at`) VALUES
+(4, 1, 'cbc', 2400.00, 20.00, 15.00, NULL),
+(5, 1, 'vitamin D', 6000.00, 17.00, 15.00, NULL),
+(6, 1, 'Thyroid', 4000.00, 13.00, 15.00, NULL),
+(8, 2, 'cbc', 2200.00, 12.00, 15.00, NULL),
+(9, 3, 'CBC', 2400.00, 15.00, 7.00, NULL),
+(10, 0, 'CBC', 1700.00, 5.00, 0.00, NULL),
+(11, 0, 'Vitamin D test', 6500.00, 10.00, 0.00, NULL),
+(12, 0, 'CBC', 1700.00, 5.00, 0.00, NULL),
+(13, 6, 'CBC', 1700.00, 5.00, 15.00, NULL),
+(14, 7, 'Colonscopy', 7800.00, 3.00, 3.00, NULL),
+(15, 4, 'Electrocardiogram(ECG)', 2000.00, 5.00, 0.00, NULL);
 
 -- --------------------------------------------------------
 
@@ -304,16 +309,18 @@ CREATE TABLE `payments` (
   `amount` decimal(10,2) NOT NULL,
   `payment_method` varchar(50) NOT NULL,
   `payment_date` date NOT NULL,
-  `transaction_id` varchar(100) DEFAULT NULL
+  `transaction_id` varchar(100) DEFAULT NULL,
+  `deleted_at` datetime DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `payments`
 --
 
-INSERT INTO `payments` (`id`, `invoice_id`, `amount`, `payment_method`, `payment_date`, `transaction_id`) VALUES
-(1, 2, 2000.00, 'bKash', '2026-08-08', '123'),
-(2, 2, 426.60, 'Cash', '2026-08-08', '456');
+INSERT INTO `payments` (`id`, `invoice_id`, `amount`, `payment_method`, `payment_date`, `transaction_id`, `deleted_at`) VALUES
+(1, 2, 2000.00, 'bKash', '2026-08-08', '123', NULL),
+(2, 2, 426.60, 'Cash', '2026-08-08', '456', NULL),
+(3, 7, 7792.98, 'Nagad', '2026-08-12', 'NG26081213706', NULL);
 
 -- --------------------------------------------------------
 
@@ -625,13 +632,13 @@ ALTER TABLE `designation`
 -- AUTO_INCREMENT for table `invoices`
 --
 ALTER TABLE `invoices`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT for table `invoice_details`
 --
 ALTER TABLE `invoice_details`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
 
 --
 -- AUTO_INCREMENT for table `lab_category`
@@ -643,7 +650,7 @@ ALTER TABLE `lab_category`
 -- AUTO_INCREMENT for table `payments`
 --
 ALTER TABLE `payments`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
