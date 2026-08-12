@@ -112,7 +112,7 @@
                                     <option value="">Select Designation</option>
                                     <?php
                                     // Fetch all designations for the dropdown
-                                    $designations = $crud->common_select('designations');
+                                    $designations = $crud->common_select('designation');
                                     if($designations['status']){
                                         foreach($designations['data'] as $designation) { ?>
                                         <option value="<?php echo $designation->id; ?>"><?php echo htmlspecialchars($designation->designation_name); ?></option>
