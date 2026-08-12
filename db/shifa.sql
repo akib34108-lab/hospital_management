@@ -225,6 +225,31 @@ INSERT INTO `patient_admissions` (`id`, `admission_no`, `patient_id`, `doctor_id
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `payments`
+--
+
+CREATE TABLE `payments` (
+  `id` int(11) NOT NULL,
+  `invoice_id` int(11) NOT NULL,
+  `amount` decimal(10,2) NOT NULL,
+  `payment_method` varchar(50) NOT NULL,
+  `payment_date` date NOT NULL,
+  `transaction_id` varchar(100) DEFAULT NULL,
+  `deleted_at` datetime DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `payments`
+--
+
+INSERT INTO `payments` (`id`, `invoice_id`, `amount`, `payment_method`, `payment_date`, `transaction_id`, `deleted_at`) VALUES
+(1, 2, 2000.00, 'bKash', '2026-08-08', '123', NULL),
+(2, 2, 426.60, 'Cash', '2026-08-08', '456', NULL),
+(3, 7, 7792.98, 'Nagad', '2026-08-12', 'NG26081213706', NULL);
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `prescriptions`
 --
 
