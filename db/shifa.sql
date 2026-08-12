@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 5.2.1
+-- version 5.2.0
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Aug 09, 2026 at 09:09 AM
--- Server version: 10.4.32-MariaDB
--- PHP Version: 8.2.12
+-- Generation Time: Aug 12, 2026 at 06:57 AM
+-- Server version: 10.4.27-MariaDB
+-- PHP Version: 8.2.0
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -20,6 +20,35 @@ SET time_zone = "+00:00";
 --
 -- Database: `shifa`
 --
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `appointments`
+--
+
+CREATE TABLE `appointments` (
+  `id` int(11) NOT NULL,
+  `serial_no` int(11) NOT NULL,
+  `doctor_id` int(11) NOT NULL,
+  `patient_id` int(11) NOT NULL,
+  `age` int(11) NOT NULL,
+  `appointment_date` date NOT NULL,
+  `app_schedule_id` int(11) NOT NULL,
+  `note` text DEFAULT NULL,
+  `status` int(11) NOT NULL COMMENT '1 pending, 2 accepted, 3 rejected',
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `deleted_at` datetime DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `appointments`
+--
+
+INSERT INTO `appointments` (`id`, `serial_no`, `doctor_id`, `patient_id`, `age`, `appointment_date`, `app_schedule_id`, `note`, `status`, `updated_at`, `deleted_at`, `created_at`) VALUES
+(4, 1, 1, 1, 25, '2026-08-16', 8, '', 2, '2026-08-12 04:54:42', NULL, '2026-08-12 00:54:42'),
+(5, 2, 1, 5, 56, '2026-08-16', 8, '', 2, '2026-08-12 04:56:49', NULL, '2026-08-12 00:56:49');
 
 -- --------------------------------------------------------
 
@@ -70,11 +99,7 @@ CREATE TABLE `departments` (
 INSERT INTO `departments` (`id`, `department_name`, `description`, `status`, `created_at`, `updated_at`, `deleted_at`) VALUES
 (1, 'Dentists', 'Provides diagnosis, treatment, and prevention of oral and dental diseases, including routine checkups, tooth extractions, fillings, root canal treatment, and oral health care.', 1, '2026-08-01 16:43:53', '2026-08-02 16:20:27', NULL),
 (2, 'Neorology', 'Provides diagnosis and treatment of disorders affecting the brain, spinal cord, nerves, and muscles, including stroke, epilepsy, migraines, Parkinson disease, and other neurological conditions.', 1, '2026-08-01 16:45:34', '2026-08-02 15:40:12', NULL),
-(3, 'Oncology', 'Provides diagnosis, treatment, and ongoing care for patients with cancer through chemotherapy, immunotherapy, targeted therapy, and coordinated multidisciplinary support.', 1, '2026-08-01 16:46:59', '2026-08-09 04:20:30', NULL),
-(4, 'Psychology', 'rgrfgrgr', 1, '2026-08-09 04:20:48', '2026-08-09 04:20:48', NULL),
-(5, 'Cardiology', 'hgthjgjkukijolik', 1, '2026-08-09 04:21:03', '2026-08-09 04:21:03', NULL),
-(6, 'Dermatology', 'huygfuyeufr', 1, '2026-08-09 04:21:24', '2026-08-09 04:21:24', NULL),
-(7, 'Ophthalmology', 'ndhfgeytfgjkhdgbvfd', 1, '2026-08-09 04:22:12', '2026-08-09 04:22:12', NULL);
+(3, 'Cancer Department', 'Provides diagnosis, treatment, and ongoing care for patients with cancer through chemotherapy, immunotherapy, targeted therapy, and coordinated multidisciplinary support.', 1, '2026-08-01 16:46:59', '2026-08-01 16:46:59', NULL);
 
 -- --------------------------------------------------------
 
@@ -97,10 +122,8 @@ CREATE TABLE `designation` (
 --
 
 INSERT INTO `designation` (`id`, `designation_name`, `description`, `status`, `created_at`, `updated_at`, `deleted_at`) VALUES
-(1, 'Senior Doctor', 'Medical Officer', 1, NULL, NULL, NULL),
-(3, 'Junior Doctor', 'fdvdgbvfgb', 1, NULL, NULL, NULL),
-(4, 'Consultant', 'vgbhfvdhgbf', 0, NULL, NULL, NULL),
-(5, 'Surgeon', 'hngfhnjgfhkmh', 1, NULL, NULL, NULL);
+(1, 'Doctor', 'Medical Officer', 1, NULL, NULL, NULL),
+(2, 'Nurse', 'Staff Nurse', 1, NULL, NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -121,7 +144,6 @@ CREATE TABLE `doctors` (
   `phone` varchar(20) DEFAULT NULL,
   `email` varchar(100) DEFAULT NULL,
   `address` text DEFAULT NULL,
-  `status` int(2) NOT NULL COMMENT '0=inactive,1=active',
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
   `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
   `deleted_at` datetime DEFAULT NULL
@@ -131,100 +153,9 @@ CREATE TABLE `doctors` (
 -- Dumping data for table `doctors`
 --
 
-INSERT INTO `doctors` (`id`, `department_id`, `designation_id`, `shift_id`, `name`, `gender`, `specialization`, `qualification`, `experience`, `phone`, `email`, `address`, `status`, `created_at`, `updated_at`, `deleted_at`) VALUES
-(1, 1, 1, 1, 'Dr.Sarah Ahmed', 2, 'BDS', 'FCPS', 8, '01711111111', 'sarah@hospital.com', 'Dhaka', 0, '2026-08-02 04:43:34', '2026-08-07 15:34:54', NULL),
-(2, 1, 1, 1, 'Dr.Rahim Uddin', 1, 'Neurologist', 'MBBS,MD (Neurology)', 12, '01722222222', 'rahim@hospital.com', 'Chattogram', 1, '2026-08-02 06:55:16', '2026-08-07 15:36:23', NULL),
-(3, 1, 1, 1, 'Dr.Bilal Abbas', 1, 'cardio', 'MRCPS', 6, '019111111112', 'bilal01@gmail.com', 'Muradpur', 0, '2026-08-07 14:55:01', '2026-08-07 15:35:01', NULL),
-(4, 1, 1, 1, 'Dr.shahriar', 1, 'cardio', 'FCPS', 3, '01711111111', 'bilal01@gmail.com', 'Muradpur', 1, '2026-08-07 14:56:05', '2026-08-07 15:35:23', NULL),
-(6, 2, 2, 2, 'Dr.Fyroz', 2, 'cardio', 'MBBS,MD (Neurology)', 12, '01635110533', 'fyroz@gmail.com', 'Mehedibag', 0, '2026-08-07 15:38:05', '2026-08-07 15:38:05', NULL);
-
--- --------------------------------------------------------
-
---
--- Table structure for table `invoices`
---
-
-CREATE TABLE `invoices` (
-  `id` int(11) NOT NULL,
-  `patient_id` int(11) NOT NULL,
-  `sub_amount` decimal(10,2) DEFAULT 0.00,
-  `discount` decimal(10,2) DEFAULT 0.00,
-  `tax` decimal(10,2) DEFAULT 0.00,
-  `paid_amount` decimal(10,2) NOT NULL DEFAULT 0.00,
-  `due_amount` decimal(10,2) NOT NULL DEFAULT 0.00,
-  `payment_status` varchar(50) NOT NULL DEFAULT 'Due',
-  `deleted_at` timestamp NULL DEFAULT NULL,
-  `invoice_date` date NOT NULL,
-  `status` int(11) DEFAULT 1 COMMENT '1=Active, 0=Deleted'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `invoices`
---
-
-INSERT INTO `invoices` (`id`, `patient_id`, `sub_amount`, `discount`, `tax`, `paid_amount`, `due_amount`, `payment_status`, `deleted_at`, `invoice_date`, `status`) VALUES
-(1, 2, 12240.00, 300.00, 10.00, 0.00, 0.00, 'Due', NULL, '2026-08-08', 1),
-(2, 5, 2266.00, 66.00, 10.00, 0.00, 0.00, 'Due', NULL, '2026-08-08', 1),
-(3, 2, 2208.00, 1000.00, 800.00, 0.00, 0.00, 'Due', NULL, '2026-08-09', 1),
-(4, 2, 1700.00, 170.00, 0.00, 0.00, 0.00, 'Due', NULL, '2026-08-09', 1),
-(5, 1, 6500.00, 1300.00, 0.00, 0.00, 0.00, 'Due', NULL, '2026-08-09', 1),
-(6, 2, 1700.00, 170.00, 0.00, 0.00, 0.00, 'Due', NULL, '2026-08-09', 1);
-
--- --------------------------------------------------------
-
---
--- Table structure for table `invoice_details`
---
-
-CREATE TABLE `invoice_details` (
-  `id` int(11) NOT NULL,
-  `invoice_id` int(11) NOT NULL,
-  `Name` varchar(255) NOT NULL COMMENT 'Medicine/Test/Service Name',
-  `price` decimal(10,2) DEFAULT 0.00,
-  `discount` decimal(10,2) DEFAULT 0.00,
-  `tax` decimal(10,2) DEFAULT 0.00
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `invoice_details`
---
-
-INSERT INTO `invoice_details` (`id`, `invoice_id`, `Name`, `price`, `discount`, `tax`) VALUES
-(4, 1, 'cbc', 2400.00, 20.00, 15.00),
-(5, 1, 'vitamin D', 6000.00, 17.00, 15.00),
-(6, 1, 'Thyroid', 4000.00, 13.00, 15.00),
-(8, 2, 'cbc', 2200.00, 12.00, 15.00),
-(9, 3, 'CBC', 2400.00, 15.00, 7.00),
-(10, 0, 'CBC', 1700.00, 5.00, 0.00),
-(11, 0, 'Vitamin D test', 6500.00, 10.00, 0.00),
-(12, 0, 'CBC', 1700.00, 5.00, 0.00);
-
--- --------------------------------------------------------
-
---
--- Table structure for table `lab_category`
---
-
-CREATE TABLE `lab_category` (
-  `id` int(11) NOT NULL,
-  `test_name` varchar(255) DEFAULT NULL,
-  `price` varchar(40) DEFAULT NULL,
-  `test_accessor` varchar(40) DEFAULT NULL,
-  `created_at` timestamp NULL DEFAULT NULL,
-  `updated_at` timestamp NULL DEFAULT NULL,
-  `deleted_at` datetime DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `lab_category`
---
-
-INSERT INTO `lab_category` (`id`, `test_name`, `price`, `test_accessor`, `created_at`, `updated_at`, `deleted_at`) VALUES
-(1, 'CBC', '1700', 'Dr.Kamal', NULL, NULL, NULL),
-(2, 'Vitamin D test', '6500', 'Kamal', NULL, NULL, NULL),
-(3, 'Colonscopy', '7800', 'Jamal', NULL, NULL, NULL),
-(4, 'Endoscopy', '3300', 'Rahim', NULL, NULL, NULL),
-(5, 'Electrocardiogram(ECG)', '2000', 'Rafiq', NULL, NULL, NULL);
+INSERT INTO `doctors` (`id`, `department_id`, `designation_id`, `shift_id`, `name`, `gender`, `specialization`, `qualification`, `experience`, `phone`, `email`, `address`, `created_at`, `updated_at`, `deleted_at`) VALUES
+(1, 1, 1, 1, 'Dr.Sarah Ahmed', 2, 'BDS', 'FCPS', 8, '01711111111', 'sarah@hospital.com', 'Dhaka', '2026-08-02 04:43:34', '2026-08-02 04:43:34', NULL),
+(2, 2, 2, 2, 'Dr.Rahim Uddin', 1, 'Neurologist', 'MBBS,MD (Neurology)', 12, '01722222222', 'rahim@hospital.com', 'Chattogram', '2026-08-02 06:55:16', '2026-08-02 06:55:16', NULL);
 
 -- --------------------------------------------------------
 
@@ -241,7 +172,6 @@ CREATE TABLE `patients` (
   `phone` varchar(20) DEFAULT NULL,
   `email` varchar(100) DEFAULT NULL,
   `address` varchar(200) DEFAULT NULL,
-  `discount_percent` decimal(5,2) DEFAULT 0.00,
   `emergency_contact` varchar(20) DEFAULT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
   `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
@@ -254,12 +184,12 @@ CREATE TABLE `patients` (
 -- Dumping data for table `patients`
 --
 
-INSERT INTO `patients` (`id`, `name`, `gender`, `age`, `blood_group`, `phone`, `email`, `address`, `discount_percent`, `emergency_contact`, `created_at`, `updated_at`, `deleted_at`, `created_by`, `updated_by`) VALUES
-(1, 'Azad Hossain', 1, 25, 1, '01712345678', 'azad@gmail.com', 'Feni, Bangladesh', 10.00, '01812345678', '2026-08-02 04:35:22', '2026-08-09 05:53:53', NULL, 1, 1),
-(2, 'Akib', 1, 25, 1, '0153321562', 'akib@gmail.com', 'kdlk, Bangladesh', 5.00, '01812345678', '2026-08-02 05:24:16', '2026-08-09 05:53:53', NULL, 1, 1),
-(3, 'sdfg', 0, 56, 0, '0105', 'jamal@yahoo.com', '2no Gate', 0.00, '012353', '2026-08-04 06:46:36', '2026-08-04 06:46:36', NULL, NULL, NULL),
-(4, 'Azad Hossain', 1, 55, 0, '01712345678', 'azad@gmail.com', 'Feni, Bangladesh', 0.00, '01812345678', '2026-08-04 06:46:45', '2026-08-04 06:46:45', NULL, NULL, NULL),
-(5, 'Kamal Uddin', 1, 56, NULL, '01712345679', NULL, NULL, 0.00, NULL, '2026-08-04 07:01:41', '2026-08-04 07:01:41', NULL, NULL, NULL);
+INSERT INTO `patients` (`id`, `name`, `gender`, `age`, `blood_group`, `phone`, `email`, `address`, `emergency_contact`, `created_at`, `updated_at`, `deleted_at`, `created_by`, `updated_by`) VALUES
+(1, 'Azad Hossain', 1, 25, 1, '01712345678', 'azad@gmail.com', 'Feni, Bangladesh', '01812345678', '2026-08-02 04:35:22', '2026-08-02 04:35:22', NULL, 1, 1),
+(2, 'Akib', 1, 25, 1, '0153321562', 'akib@gmail.com', 'kdlk, Bangladesh', '01812345678', '2026-08-02 05:24:16', '2026-08-02 05:24:16', NULL, 1, 1),
+(3, 'sdfg', 0, 56, 0, '0105', 'jamal@yahoo.com', '2no Gate', '012353', '2026-08-04 06:46:36', '2026-08-04 06:46:36', NULL, NULL, NULL),
+(4, 'Azad Hossain', 1, 55, 0, '01712345678', 'azad@gmail.com', 'Feni, Bangladesh', '01812345678', '2026-08-04 06:46:45', '2026-08-04 06:46:45', NULL, NULL, NULL),
+(5, 'Kamal Uddin', 1, 56, NULL, '01712345679', NULL, NULL, NULL, '2026-08-04 07:01:41', '2026-08-04 07:01:41', NULL, NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -295,29 +225,6 @@ INSERT INTO `patient_admissions` (`id`, `admission_no`, `patient_id`, `doctor_id
 -- --------------------------------------------------------
 
 --
--- Table structure for table `payments`
---
-
-CREATE TABLE `payments` (
-  `id` int(11) NOT NULL,
-  `invoice_id` int(11) NOT NULL,
-  `amount` decimal(10,2) NOT NULL,
-  `payment_method` varchar(50) NOT NULL,
-  `payment_date` date NOT NULL,
-  `transaction_id` varchar(100) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `payments`
---
-
-INSERT INTO `payments` (`id`, `invoice_id`, `amount`, `payment_method`, `payment_date`, `transaction_id`) VALUES
-(1, 2, 2000.00, 'bKash', '2026-08-08', '123'),
-(2, 2, 426.60, 'Cash', '2026-08-08', '456');
-
--- --------------------------------------------------------
-
---
 -- Table structure for table `prescriptions`
 --
 
@@ -341,8 +248,7 @@ CREATE TABLE `prescriptions` (
 
 INSERT INTO `prescriptions` (`id`, `patient_id`, `doctor_id`, `Obj_date`, `Cc`, `Dx`, `Inv`, `medicines`, `additional_notes`, `Weight`, `Next_visit_day`) VALUES
 (1, 1, 1, '2026-08-04', 'Jor, Matha betha, Kashi', 'Viral Fever', 'CBC, Urine R/E', '[{\"medicationName\":\"Napa Extra 500mg\",\"dosage\":\"1+0+1\",\"frequency\":\"7 days\",\"duration\":\"After Meal\",\"instructions\":\"Pani diye khaben\"},{\"medicationName\":\"Monas 10mg\",\"dosage\":\"0+0+1\",\"frequency\":\"5 days\",\"duration\":\"At Night\",\"instructions\":\"Khawar por\"},{\"medicationName\":\"Fexo 120mg\",\"dosage\":\"1+0+0\",\"frequency\":\"5 days\",\"duration\":\"Before Meal\",\"instructions\":\"\"}]', 'Besi kore pani khan, rest nen. Gorom khabar khaben na.', '65', 15),
-(4, 2, 2, '2026-08-08', 'not healed yet', 'flu', 'serious', NULL, NULL, NULL, 30),
-(5, 3, 4, '2026-08-08', 'headache', 'eye issue', 'cornia test', NULL, NULL, NULL, 20);
+(4, 2, 2, '2026-08-08', 'not healed yet', 'flu', 'serious', NULL, NULL, NULL, 30);
 
 -- --------------------------------------------------------
 
@@ -366,9 +272,7 @@ CREATE TABLE `prescription_medicines` (
 
 INSERT INTO `prescription_medicines` (`id`, `prescription_id`, `medicine_name`, `dosage`, `frequency`, `duration`, `instructions`) VALUES
 (2, 4, 'Frenxit', '0+0+1', 'after meal', '30 days', 'regular'),
-(3, 4, 'Adovas Syrup', '1+1+1', 'after meal', '10 days', 'must'),
-(4, 1, 'napa', '0+0+1', 'after meal', '5 days', 'regular'),
-(5, 5, 'napa', '1+0+1', 'after meal', '5 days', 'regular');
+(3, 4, 'Adovas Syrup', '1+1+1', 'after meal', '10 days', 'must');
 
 -- --------------------------------------------------------
 
@@ -509,6 +413,12 @@ INSERT INTO `users` (`id`, `full_name`, `email`, `phone`, `password`, `role_id`,
 --
 
 --
+-- Indexes for table `appointments`
+--
+ALTER TABLE `appointments`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- Indexes for table `beds`
 --
 ALTER TABLE `beds`
@@ -535,24 +445,6 @@ ALTER TABLE `doctors`
   ADD KEY `department_id` (`department_id`);
 
 --
--- Indexes for table `invoices`
---
-ALTER TABLE `invoices`
-  ADD PRIMARY KEY (`id`);
-
---
--- Indexes for table `invoice_details`
---
-ALTER TABLE `invoice_details`
-  ADD PRIMARY KEY (`id`);
-
---
--- Indexes for table `lab_category`
---
-ALTER TABLE `lab_category`
-  ADD PRIMARY KEY (`id`);
-
---
 -- Indexes for table `patients`
 --
 ALTER TABLE `patients`
@@ -562,12 +454,6 @@ ALTER TABLE `patients`
 -- Indexes for table `patient_admissions`
 --
 ALTER TABLE `patient_admissions`
-  ADD PRIMARY KEY (`id`);
-
---
--- Indexes for table `payments`
---
-ALTER TABLE `payments`
   ADD PRIMARY KEY (`id`);
 
 --
@@ -606,44 +492,121 @@ ALTER TABLE `schedules`
   ADD KEY `doctor_id` (`doctor_id`);
 
 --
+-- Indexes for table `shift`
+--
+ALTER TABLE `shift`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `users`
+--
+ALTER TABLE `users`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `email` (`email`);
+
+--
 -- AUTO_INCREMENT for dumped tables
 --
+
+--
+-- AUTO_INCREMENT for table `appointments`
+--
+ALTER TABLE `appointments`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+
+--
+-- AUTO_INCREMENT for table `beds`
+--
+ALTER TABLE `beds`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `departments`
 --
 ALTER TABLE `departments`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `designation`
 --
 ALTER TABLE `designation`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+
+--
+-- AUTO_INCREMENT for table `patients`
+--
+ALTER TABLE `patients`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
--- AUTO_INCREMENT for table `invoices`
+-- AUTO_INCREMENT for table `patient_admissions`
 --
-ALTER TABLE `invoices`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+ALTER TABLE `patient_admissions`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
--- AUTO_INCREMENT for table `invoice_details`
+-- AUTO_INCREMENT for table `prescriptions`
 --
-ALTER TABLE `invoice_details`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+ALTER TABLE `prescriptions`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
--- AUTO_INCREMENT for table `lab_category`
+-- AUTO_INCREMENT for table `prescription_medicines`
 --
-ALTER TABLE `lab_category`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+ALTER TABLE `prescription_medicines`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
--- AUTO_INCREMENT for table `payments`
+-- AUTO_INCREMENT for table `roles`
 --
-ALTER TABLE `payments`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+ALTER TABLE `roles`
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+
+--
+-- AUTO_INCREMENT for table `rooms`
+--
+ALTER TABLE `rooms`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+
+--
+-- AUTO_INCREMENT for table `schedules`
+--
+ALTER TABLE `schedules`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
+
+--
+-- AUTO_INCREMENT for table `shift`
+--
+ALTER TABLE `shift`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+
+--
+-- AUTO_INCREMENT for table `users`
+--
+ALTER TABLE `users`
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+
+--
+-- Constraints for dumped tables
+--
+
+--
+-- Constraints for table `beds`
+--
+ALTER TABLE `beds`
+  ADD CONSTRAINT `beds_ibfk_1` FOREIGN KEY (`room_id`) REFERENCES `rooms` (`id`);
+
+--
+-- Constraints for table `doctors`
+--
+ALTER TABLE `doctors`
+  ADD CONSTRAINT `doctors_ibfk_1` FOREIGN KEY (`department_id`) REFERENCES `departments` (`id`);
+
+--
+-- Constraints for table `prescription_medicines`
+--
+ALTER TABLE `prescription_medicines`
+  ADD CONSTRAINT `prescription_medicines_ibfk_1` FOREIGN KEY (`prescription_id`) REFERENCES `prescriptions` (`id`) ON DELETE CASCADE;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

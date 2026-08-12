@@ -51,7 +51,6 @@ class crud_class{
             if(!empty($offset)){
                 $sql .= " OFFSET $offset";
             }
-
             // "SELECT * FROM users WHERE id='1' AND name='kamal' ORDER BY name ASC LIMIT 10 OFFSET 5"
         }
 
@@ -79,98 +78,46 @@ class crud_class{
             return 0;
         }
     }
-
-    public function common_query($sql, $limit = "", $offset = "")
-{
-    $result = [
-        "status" => false,
-        "data" => [],
-        "message" => ""
-    ];
-
-    // Get main table
-    $table = $this->getMainTable($sql);
-
-    if (!empty($table)) {
-
-        $condition = "$table.deleted_at IS NULL";
-
-        // Find ORDER BY, GROUP BY or LIMIT
-        if (preg_match('/\b(ORDER\s+BY|GROUP\s+BY|LIMIT)\b/i', $sql, $matches, PREG_OFFSET_CAPTURE)) {
-
-            $keywordPos = $matches[0][1];
-
-            $before = substr($sql, 0, $keywordPos);
-            $after  = substr($sql, $keywordPos);
-
-            if (stripos($before, 'WHERE') !== false) {
-                $sql = $before . " AND $condition " . $after;
-            } else {
-                $sql = $before . " WHERE $condition " . $after;
+    public function common_count($table, $where = []){
+        $sql = "SELECT COUNT(*) as total FROM $table";
+        if(!empty($where)){
+            $where_clauses = [];
+            foreach($where as $column => $value){
+                $where_clauses[] = "$column = '" . $this->conn->real_escape_string($value) . "'";
             }
-
+            $sql .= " WHERE " . implode(" AND ", $where_clauses);
+        }
+        $rs = $this->conn->query($sql);
+        if($rs->num_rows > 0){
+            $row = $rs->fetch_object();
+            return $row->total;
         } else {
+            return 0;
+        }
+    }
 
-            if (stripos($sql, 'WHERE') !== false) {
-                $sql .= " AND $condition";
-            } else {
-                $sql .= " WHERE $condition";
+    public function common_query($sql){
+        $result=[
+            "status"=>false,
+            "data"=>[],
+            "message"=>""
+        ];
+
+        $rs = $this->conn->query($sql);
+
+        if($rs->num_rows > 0){
+            $result["status"] = true;
+            $result["message"] = "Records found";
+            while($row = $rs->fetch_object()){
+                $result["data"][] = $row;
             }
-
+            return $result; 
+        } else {
+            $result["message"] = "No records found";
+            return $result;
         }
+        
     }
-
-    if (!empty($limit)) {
-        $sql .= " LIMIT " . (int)$limit;
-
-        if (!empty($offset)) {
-            $sql .= " OFFSET " . (int)$offset;
-        }
-    }
-
-    $rs = $this->conn->query($sql);
-
-    if ($rs && $rs->num_rows > 0) {
-        $result["status"] = true;
-        $result["message"] = "Records found";
-
-        while ($row = $rs->fetch_object()) {
-            $result["data"][] = $row;
-        }
-    } else {
-        $result["message"] = "No records found";
-    }
-
-    return $result;
-}
-
-
-    function getMainTable($sql)
-    {
-        $level = 0;
-        $length = strlen($sql);
-
-        for ($i = 0; $i < $length; $i++) {
-
-            if ($sql[$i] == '(') {
-                $level++;
-            } elseif ($sql[$i] == ')') {
-                $level--;
-            }
-
-            if ($level == 0 && strtoupper(substr($sql, $i, 5)) == 'FROM ') {
-
-                $rest = trim(substr($sql, $i + 5));
-
-                if (preg_match('/^`?([a-zA-Z0-9_]+)`?/i', $rest, $matches)) {
-                    return $matches[1];
-                }
-            }
-        }
-
-        return "";
-    }
-
 
     public function common_insert($table, $data){
         $result=[
@@ -182,7 +129,7 @@ class crud_class{
         $columns = implode(", ", array_keys($data));
         $values = implode("', '", array_map([$this->conn, 'real_escape_string'], array_values($data)));
         $sql = "INSERT INTO $table ($columns) VALUES ('$values')";
-        //echo $sql; // Debugging line to check the generated SQL query
+        echo $sql; // Debugging line to check the generated SQL query
         if($this->conn->query($sql)){
             $result["status"] = true;
             $result["data"] = $this->conn->insert_id;
