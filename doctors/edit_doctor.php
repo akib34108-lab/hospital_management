@@ -131,7 +131,7 @@
                                     <option value="">Select Shift</option>
                                     <?php
                                     // Fetch all shifts for the dropdown
-                                    $shifts = $crud->common_select('shifts');
+                                    $shifts = $crud->common_select('shift');
                                     if($shifts['status']){
                                         foreach($shifts['data'] as $shift) { ?>
                                         <option value="<?php echo $shift->id; ?>"><?php echo htmlspecialchars($shift->shift_name); ?></option>
