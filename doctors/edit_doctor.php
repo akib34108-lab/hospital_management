@@ -18,7 +18,7 @@
         <div class="page-wrapper">
             <div class="content">
                 <div class="row">
-                    <div class="col-lg-8 offset-lg-2">
+                    <div class="col-lg-8">
                         <h4 class="page-title">Edit Doctor</h4>
                     </div>
                 </div>
