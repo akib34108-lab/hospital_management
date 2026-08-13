@@ -127,8 +127,16 @@
                                 <label>Shift</label>
                                 <select name="shift_id" class="form-select form-control">
                                     <option value="">Select Shift</option>
-                                    <option value="1">Morning</option>
-                                    <option value="2">Evening</option>
+                                    <?php
+                                    // Fetch all shifts for the dropdown
+                                    $shifts = $crud->common_select('shifts');
+                                    if($shifts['status']){
+                                        foreach($shifts['data'] as $shift) { ?>
+                                        <option value="<?php echo $shift->id; ?>"><?php echo htmlspecialchars($shift->shift_name); ?></option>
+                                    <?php   }
+                                    } else { ?>
+                                    <option value="">No shifts available</option>
+                                    <?php } ?>
                                 </select>
                             </div>
                             <div class="form-group">
