@@ -10,7 +10,7 @@
             <a id="mobile_btn" class="mobile_btn float-left" href="#sidebar"><i class="fa fa-bars"></i></a>
             <ul class="nav user-menu float-right">
                 <li class="nav-item dropdown d-none d-sm-block">
-                    <a href="#" class="dropdown-toggle nav-link" data-toggle="dropdown"><i class="fa fa-bell-o"></i> <span class="badge badge-pill bg-danger float-right">3</span></a>
+                    <a href="#" class="dropdown-toggle nav-link" data-toggle="dropdown"><i class="fa fa-bell-o"></i> <span class="badge badge-pill bg-danger float-right"></span></a>
                     <div class="dropdown-menu notifications">
                         <div class="topnav-dropdown-header">
                             <span>Notifications</span>
@@ -82,7 +82,7 @@
                     </div>
                 </li>
                 <li class="nav-item dropdown d-none d-sm-block">
-                    <a href="javascript:void(0);" id="open_msg_box" class="hasnotifications nav-link"><i class="fa fa-comment-o"></i> <span class="badge badge-pill bg-danger float-right">8</span></a>
+                    <a href="javascript:void(0);" id="open_msg_box" class="hasnotifications nav-link"><i class="fa fa-comment-o"></i> <span class="badge badge-pill bg-danger float-right"></span></a>
                 </li>
                 <li class="nav-item dropdown has-arrow">
                     <a href="#" class="dropdown-toggle nav-link user-link" data-toggle="dropdown">
@@ -144,7 +144,7 @@
                         <li>
                             <a href="<?= $base_url; ?>departments/departments.php"><i class="fa fa-hospital-o"></i> <span>Departments</span></a>
                         </li>
-						<li class="submenu">
+						<!-- <li class="submenu">
 							<a href="#"><i class="fa fa-user"></i> <span> Employees </span> <span class="menu-arrow"></span></a>
 							<ul style="display: none;">
 								<li><a href="employees.html">Employees List</a></li>
@@ -152,19 +152,22 @@
 								<li><a href="holidays.html">Holidays</a></li>
 								<li><a href="attendance.html">Attendance</a></li>
 							</ul>
+						</li> -->
+                        <li class="submenu">
+							<a href="#"><i class="fa fa-money"></i> <span> Accounts </span> <span class="menu-arrow"></span></a>
+							<ul style="display: none;">
+								<li><a href="<?= $base_url; ?>invoices/invoice_list.php">Invoices</a></li>
+								<li><a href="<?= $base_url; ?>payments/payments_list.php">Payments</a></li>
+                                </ul>
 						</li>
                         <li>
                             <a href="<?= $base_url; ?>designation/designation.php"><i class="fa fa-id-badge"></i> <span>Designation</span></a>
                         </li>
                         <li>
                             <a href="<?= $base_url; ?>shift/shift.php"><i class="fa fa-clock-o"></i> <span>Shift</span></a>
-                        </li>
-						<li class="submenu">
-							<a href="#"><i class="fa fa-money"></i> <span> Accounts </span> <span class="menu-arrow"></span></a>
-							<ul style="display: none;">
-								<li><a href="<?= $base_url; ?>invoices/invoice_list.php">Invoices</a></li>
-								<li><a href="<?= $base_url; ?>payments/payments_list.php">Payments</a></li>
-								<li><a href="expenses.html">Expenses</a></li>
+                        </li> 
+						
+						<!--		<li><a href="expenses.html">Expenses</a></li>
 								<li><a href="taxes.html">Taxes</a></li>
 								<li><a href="provident-fund.html">Provident Fund</a></li>
 							</ul>
@@ -286,7 +289,7 @@
                                 </li>
                             </ul>
                         </li>
-                    </ul>
+                    </ul> -->
                 </div>
             </div>
-        </div>
+        </div> 

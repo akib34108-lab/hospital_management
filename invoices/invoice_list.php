@@ -32,7 +32,6 @@
                         <table class="table table-striped custom-table mb-0 datatable">
                             <thead>
                                 <tr>
-                                    <th>#</th>
                                     <th>Invoice ID</th>
                                     <th>Patient Name</th>
                                     <th>Invoice Date</th>
@@ -55,7 +54,6 @@
                                         $grand_total = ($row->sub_amount - $row->discount) + $row->tax;
                                 ?>
                                 <tr>
-                                    <td><?php echo $sl++; ?></td>
                                     <td>INV-<?php echo $row->id; ?></td>
                                     <td><?php echo $row->patient_name; ?></td>
                                     <td><?php echo date('d-m-Y', strtotime($row->invoice_date)); ?></td>
