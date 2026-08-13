@@ -150,15 +150,27 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <?php while($m = $meds->fetch_object()){ ?>
-                                    <tr>
-                                        <td><input type="text" name="medicine_name[]" value="<?php echo $m->medicine_name;?>" class="form-control" required></td>
-                                        <td><input type="text" name="dosage[]" value="<?php echo $m->dosage;?>" class="form-control"></td>
-                                        <td><input type="text" name="frequency[]" value="<?php echo $m->frequency;?>" class="form-control"></td>
-                                        <td><input type="text" name="duration[]" value="<?php echo $m->duration;?>" class="form-control"></td>
-                                        <td><input type="text" name="instructions[]" value="<?php echo $m->instructions;?>" class="form-control"></td>
-                                        <td><button type="button" class="btn btn-danger btn-sm removeRow">X</button></td>
-                                    </tr>
+                                    <?php 
+                                    if($meds->num_rows > 0){
+                                        while($m = $meds->fetch_object()){ ?>
+                                        <tr>
+                                            <td><input type="text" name="medicine_name[]" value="<?php echo $m->medicine_name;?>" class="form-control" required></td>
+                                            <td><input type="text" name="dosage[]" value="<?php echo $m->dosage;?>" class="form-control"></td>
+                                            <td><input type="text" name="frequency[]" value="<?php echo $m->frequency;?>" class="form-control"></td>
+                                            <td><input type="text" name="duration[]" value="<?php echo $m->duration;?>" class="form-control"></td>
+                                            <td><input type="text" name="instructions[]" value="<?php echo $m->instructions;?>" class="form-control"></td>
+                                            <td><button type="button" class="btn btn-danger btn-sm removeRow">X</button></td>
+                                        </tr>
+                                    <?php } 
+                                    } else { ?>
+                                        <tr>
+                                            <td><input type="text" name="medicine_name[]" class="form-control" required></td>
+                                            <td><input type="text" name="dosage[]" class="form-control"></td>
+                                            <td><input type="text" name="frequency[]" class="form-control"></td>
+                                            <td><input type="text" name="duration[]" class="form-control"></td>
+                                            <td><input type="text" name="instructions[]" class="form-control"></td>
+                                            <td><button type="button" class="btn btn-danger btn-sm removeRow">X</button></td>
+                                        </tr>
                                     <?php } ?>
                                 </tbody>
                             </table>
@@ -177,12 +189,20 @@
     </div>
 </div>
 
+<!-- jQuery load korsi karon header e chilo na -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
 $(document).ready(function(){
     // Notun row add
     $("#addMedicine").click(function(){
-        var newRow = $("#medicineTable tbody tr:first").clone();
-        newRow.find("input").val('');
+        var newRow = `<tr>
+            <td><input type="text" name="medicine_name[]" class="form-control" required></td>
+            <td><input type="text" name="dosage[]" class="form-control"></td>
+            <td><input type="text" name="frequency[]" class="form-control"></td>
+            <td><input type="text" name="duration[]" class="form-control"></td>
+            <td><input type="text" name="instructions[]" class="form-control"></td>
+            <td><button type="button" class="btn btn-danger btn-sm removeRow">X</button></td>
+        </tr>`;
         $("#medicineTable tbody").append(newRow);
     });
 
@@ -190,6 +210,8 @@ $(document).ready(function(){
     $(document).on('click', '.removeRow', function(){
         if($("#medicineTable tbody tr").length > 1){
             $(this).closest('tr').remove();
+        } else {
+            alert("Minimum 1 ta medicine thaktei hobe");
         }
     });
 });
