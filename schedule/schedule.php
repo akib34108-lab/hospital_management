@@ -54,12 +54,12 @@ if(isset($_GET['toggle']) && isset($_GET['id'])){
                                         } else {
                                             $page = 1;
                                         }
-                                        $schedules = $crud->common_select("schedules",'*',[],'AND','id','ASC',10,($page-1)*10);
+                                        $schedules = $crud->common_query("SELECT schedules.*, doctors.name FROM `schedules` JOIN doctors on doctors.id=schedules.doctor_id WHERE schedules.deleted_at is null LIMIT 10 OFFSET ".(($page-1)*10));
                                         
                                         if($schedules['status']){
                                         foreach ($schedules['data'] as $schedule) { ?>
                                         <td><?= $schedule->id ?></td>
-                                        <td><?= $schedule->doctor_id ?></td>
+                                        <td><?= $schedule->name ?></td>
                                         <td><?= $schedule->day_of_week ?></td>
                                         <td><?= $schedule->start_time ?></td>
                                         <td><?= $schedule->end_time ?></td>
