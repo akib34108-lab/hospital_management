@@ -93,26 +93,52 @@
                             </div>
                             <div class="form-group">
                                 <label>Department</label>
-                                <select name="department_id" class="form-control">
-                                    <option value="1">Cardiology</option>
-                                    <option value="2">Neurology</option>
-                                    <option value="3">psychologist</option>
+                                <select name="department_id" class="form-select form-control">
+                                    <option value="">Select Department</option>
+                                    <?php
+                                    // Fetch all departments for the dropdown
+                                    $departments = $crud->common_select('departments');
+                                    if($departments['status']){
+                                        foreach($departments['data'] as $department) { ?>
+                                        <option value="<?php echo $department->id; ?>"><?php echo htmlspecialchars($department->department_name); ?></option>
+                                    <?php   }
+                                    } else { ?>
+                                    <option value="">No departments available</option>
+                                    <?php } ?>
                                 </select>
                             </div>
 
                             <div class="form-group">
                                 <label>Designation</label>
-                                <select name="designation_id" class="form-control">
-                                    <option value="1">Senior Doctor</option>
-                                    <option value="2">Junior Doctor</option>
+                                <select name="designation_id" class="form-select form-control">
+                                    <option value="">Select Designation</option>
+                                    <?php
+                                    // Fetch all designations for the dropdown
+                                    $designations = $crud->common_select('designation');
+                                    if($designations['status']){
+                                        foreach($designations['data'] as $designation) { ?>
+                                        <option value="<?php echo $designation->id; ?>"><?php echo htmlspecialchars($designation->designation_name); ?></option>
+                                    <?php   }
+                                    } else { ?>
+                                    <option value="">No designations available</option>
+                                    <?php } ?>
                                 </select>
                             </div>
 
                             <div class="form-group">
                                 <label>Shift</label>
                                 <select name="shift_id" class="form-control">
-                                    <option value="1">Morning</option>
-                                    <option value="2">Evening</option>
+                                    <option value="">Select Shift</option>
+                                    <?php
+                                    // Fetch all shifts for the dropdown
+                                    $shifts = $crud->common_select('shifts');
+                                    if($shifts['status']){
+                                        foreach($shifts['data'] as $shift) { ?>
+                                        <option value="<?php echo $shift->id; ?>"><?php echo htmlspecialchars($shift->shift_name); ?></option>
+                                    <?php   }
+                                    } else { ?>
+                                    <option value="">No shifts available</option>
+                                    <?php } ?>
                                 </select>
                             </div>
 
