@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Aug 12, 2026 at 08:08 AM
+-- Generation Time: Aug 13, 2026 at 06:04 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.0.30
 
@@ -97,13 +97,16 @@ CREATE TABLE `departments` (
 --
 
 INSERT INTO `departments` (`id`, `department_name`, `description`, `status`, `created_at`, `updated_at`, `deleted_at`) VALUES
-(1, 'Dentists', 'Provides diagnosis, treatment, and prevention of oral and dental diseases, including routine checkups, tooth extractions, fillings, root canal treatment, and oral health care.', 1, '2026-08-01 16:43:53', '2026-08-02 16:20:27', NULL),
-(2, 'Neorology', 'Provides diagnosis and treatment of disorders affecting the brain, spinal cord, nerves, and muscles, including stroke, epilepsy, migraines, Parkinson disease, and other neurological conditions.', 1, '2026-08-01 16:45:34', '2026-08-02 15:40:12', NULL),
-(3, 'Oncology', 'Provides diagnosis, treatment, and ongoing care for patients with cancer through chemotherapy, immunotherapy, targeted therapy, and coordinated multidisciplinary support.', 1, '2026-08-01 16:46:59', '2026-08-09 04:20:30', NULL),
-(4, 'Psychology', 'rgrfgrgr', 1, '2026-08-09 04:20:48', '2026-08-09 04:20:48', NULL),
-(5, 'Cardiology', 'hgthjgjkukijolik', 1, '2026-08-09 04:21:03', '2026-08-09 04:21:03', NULL),
-(6, 'Dermatology', 'huygfuyeufr', 1, '2026-08-09 04:21:24', '2026-08-09 04:21:24', NULL),
-(7, 'Ophthalmology', 'ndhfgeytfgjkhdgbvfd', 1, '2026-08-09 04:22:12', '2026-08-09 04:22:12', NULL);
+(1, 'Cardiology', 'Department specializing in the diagnosis and treatment of heart and cardiovascular diseases.', 0, '2026-08-13 03:36:56', '2026-08-13 03:36:56', NULL),
+(2, 'Gynecology & Obstetrics', 'Department providing medical care for women, pregnancy, childbirth and reproductive health.', 0, '2026-08-13 03:36:56', '2026-08-13 03:36:56', NULL),
+(3, 'Internal Medicine', 'Department focused on diagnosis, prevention and treatment of adult internal diseases.', 0, '2026-08-13 03:36:56', '2026-08-13 03:36:56', NULL),
+(4, 'Pediatrics', 'Department providing healthcare services for infants, children and adolescents.', 0, '2026-08-13 03:36:56', '2026-08-13 03:36:56', NULL),
+(5, 'Orthopedic Surgery', 'Department specializing in the treatment of bones, joints, muscles and musculoskeletal conditions.', 0, '2026-08-13 03:36:56', '2026-08-13 03:36:56', NULL),
+(6, 'Dermatology', 'Department specializing in diagnosis and treatment of skin, hair and nail disorders.', 0, '2026-08-13 03:36:56', '2026-08-13 03:36:56', NULL),
+(7, 'General Surgery', 'Department providing surgical treatment for a wide range of medical conditions.', 0, '2026-08-13 03:36:56', '2026-08-13 03:36:56', NULL),
+(8, 'Ophthalmology', 'Department specializing in eye care, vision problems and eye-related diseases.', 0, '2026-08-13 03:36:56', '2026-08-13 03:36:56', NULL),
+(9, 'ENT', 'Department specializing in diseases and disorders of the ear, nose and throat.', 0, '2026-08-13 03:36:56', '2026-08-13 03:36:56', NULL),
+(10, 'Psychiatry', 'Department focused on diagnosis and treatment of mental health and behavioral disorders.', 0, '2026-08-13 03:36:56', '2026-08-13 03:36:56', NULL);
 
 -- --------------------------------------------------------
 
@@ -126,10 +129,16 @@ CREATE TABLE `designation` (
 --
 
 INSERT INTO `designation` (`id`, `designation_name`, `description`, `status`, `created_at`, `updated_at`, `deleted_at`) VALUES
-(1, 'Senior Doctor', 'Medical Officer', 1, NULL, NULL, NULL),
-(3, 'Junior Doctor', 'fdvdgbvfgb', 1, NULL, NULL, NULL),
-(4, 'Consultant', 'vgbhfvdhgbf', 0, NULL, NULL, NULL),
-(5, 'Surgeon', 'hngfhnjgfhkmh', 1, NULL, NULL, NULL);
+(1, 'Consultant', 'Experienced physician responsible for patient consultation, diagnosis and treatment planning.', 0, NULL, NULL, NULL),
+(2, 'Senior Consultant', 'Senior-level physician providing specialized consultation and advanced patient care.', 0, NULL, NULL, NULL),
+(3, 'Medical Officer', 'Doctor responsible for general patient assessment, treatment and routine medical care.', 0, NULL, NULL, NULL),
+(4, 'Associate Consultant', 'Physician assisting in specialized consultation, diagnosis and patient management.', 0, NULL, NULL, NULL),
+(5, 'Assistant Professor', 'Academic physician involved in patient care, medical education and clinical training.', 0, NULL, NULL, NULL),
+(6, 'Professor', 'Senior academic physician responsible for advanced clinical care, teaching and research.', 0, NULL, NULL, NULL),
+(7, 'Resident Medical Officer', 'Doctor responsible for regular patient monitoring, clinical assessment and treatment support.', 0, NULL, NULL, NULL),
+(8, 'Specialist', 'Physician with advanced expertise and training in a specific medical specialty.', 0, NULL, NULL, NULL),
+(9, 'Senior Specialist', 'Highly experienced specialist providing advanced diagnosis and treatment in a specific field.', 0, NULL, NULL, NULL),
+(10, 'Chief Consultant', 'Senior-most consultant responsible for specialized patient care and clinical supervision.', 0, NULL, NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -161,11 +170,16 @@ CREATE TABLE `doctors` (
 --
 
 INSERT INTO `doctors` (`id`, `department_id`, `designation_id`, `shift_id`, `name`, `gender`, `specialization`, `qualification`, `experience`, `phone`, `email`, `address`, `status`, `created_at`, `updated_at`, `deleted_at`) VALUES
-(1, 1, 1, 1, 'Dr.Sarah Ahmed', 2, 'BDS', 'FCPS', 8, '01711111111', 'sarah@hospital.com', 'Dhaka', 0, '2026-08-02 04:43:34', '2026-08-07 15:34:54', NULL),
-(2, 1, 1, 1, 'Dr.Rahim Uddin', 1, 'Neurologist', 'MBBS,MD (Neurology)', 12, '01722222222', 'rahim@hospital.com', 'Chattogram', 1, '2026-08-02 06:55:16', '2026-08-07 15:36:23', NULL),
-(3, 1, 1, 1, 'Dr.Bilal Abbas', 1, 'cardio', 'MRCPS', 6, '019111111112', 'bilal01@gmail.com', 'Muradpur', 0, '2026-08-07 14:55:01', '2026-08-07 15:35:01', NULL),
-(4, 1, 1, 1, 'Dr.shahriar', 1, 'cardio', 'FCPS', 3, '01711111111', 'bilal01@gmail.com', 'Muradpur', 1, '2026-08-07 14:56:05', '2026-08-07 15:35:23', NULL),
-(6, 2, 2, 2, 'Dr.Fyroz', 2, 'cardio', 'MBBS,MD (Neurology)', 12, '01635110533', 'fyroz@gmail.com', 'Mehedibag', 0, '2026-08-07 15:38:05', '2026-08-07 15:38:05', NULL);
+(1, 1, 1, 1, 'Dr. Arif Hossain', 1, 'Cardiology', 'MBBS, FCPS (Medicine), MD (Cardiology)', 12, '01700000001', 'arif.hossain@example.com', 'Dhaka, Bangladesh', 1, '2026-08-13 03:19:30', '2026-08-13 03:50:42', NULL),
+(2, 2, 2, 2, 'Dr. Nusrat Jahan', 0, 'Gynecology & Obstetrics', 'MBBS, FCPS (Gynae & Obs)', 9, '01700000002', 'nusrat.jahan@example.com', 'Chattogram, Bangladesh', 0, '2026-08-13 03:19:30', '2026-08-13 03:19:30', NULL),
+(3, 3, 1, 1, 'Dr. Tanvir Ahmed', 0, 'Internal Medicine', 'MBBS, FCPS (Medicine)', 10, '01700000003', 'tanvir.ahmed@example.com', 'Sylhet, Bangladesh', 0, '2026-08-13 03:19:30', '2026-08-13 03:19:30', NULL),
+(4, 1, 1, 2, 'Dr. Sadia Rahman', 2, 'Pediatrics', 'MBBS, DCH, FCPS (Pediatrics)', 8, '01700000004', 'sadia.rahman@example.com', 'Rajshahi, Bangladesh', 1, '2026-08-13 03:19:30', '2026-08-13 04:01:10', NULL),
+(5, 5, 4, 3, 'Dr. Mahmudul Hasan', 0, 'Orthopedic Surgery', 'MBBS, MS (Orthopedics)', 15, '01700000005', 'mahmudul.hasan@example.com', 'Dhaka, Bangladesh', 0, '2026-08-13 03:19:30', '2026-08-13 03:19:30', NULL),
+(6, 6, 5, 1, 'Dr. Farzana Akter', 0, 'Dermatology', 'MBBS, DDV, FCPS (Dermatology)', 7, '01700000006', 'farzana.akter@example.com', 'Khulna, Bangladesh', 0, '2026-08-13 03:19:30', '2026-08-13 03:19:30', NULL),
+(7, 1, 1, 1, 'Dr. Rezaul Karim', 1, 'General Surgery', 'MBBS, FCPS (Surgery)', 14, '01700000007', 'rezaul.karim@example.com', 'Barishal, Bangladesh', 1, '2026-08-13 03:19:30', '2026-08-13 04:00:56', NULL),
+(8, 8, 7, 3, 'Dr. Samia Sultana', 0, 'Ophthalmology', 'MBBS, DO, MS (Ophthalmology)', 11, '01700000008', 'samia.sultana@example.com', 'Mymensingh, Bangladesh', 0, '2026-08-13 03:19:30', '2026-08-13 03:19:30', NULL),
+(9, 9, 8, 1, 'Dr. Imran Kabir', 0, 'ENT', 'MBBS, DLO, FCPS (ENT)', 13, '01700000009', 'imran.kabir@example.com', 'Cumilla, Bangladesh', 0, '2026-08-13 03:19:30', '2026-08-13 03:19:30', NULL),
+(10, 10, 9, 2, 'Dr. Tania Islam', 0, 'Psychiatry', 'MBBS, FCPS (Psychiatry)', 6, '01700000010', 'tania.islam@example.com', 'Rangpur, Bangladesh', 0, '2026-08-13 03:19:30', '2026-08-13 03:19:30', NULL);
 
 -- --------------------------------------------------------
 
@@ -256,7 +270,7 @@ CREATE TABLE `lab_category` (
 --
 
 INSERT INTO `lab_category` (`id`, `test_name`, `price`, `test_accessor`, `created_at`, `updated_at`, `deleted_at`) VALUES
-(1, 'CBC', '1700', 'Dr.Kamal', NULL, NULL, NULL),
+(1, 'CBC', '1700', 'Kamal', NULL, NULL, NULL),
 (2, 'Vitamin D test', '6500', 'Kamal', NULL, NULL, NULL),
 (3, 'Colonscopy', '7800', 'Jamal', NULL, NULL, NULL),
 (4, 'Endoscopy', '3300', 'Rahim', NULL, NULL, NULL),
@@ -291,11 +305,18 @@ CREATE TABLE `patients` (
 --
 
 INSERT INTO `patients` (`id`, `name`, `gender`, `age`, `blood_group`, `phone`, `email`, `address`, `discount_percent`, `emergency_contact`, `created_at`, `updated_at`, `deleted_at`, `created_by`, `updated_by`) VALUES
-(1, 'Azad Hossain', 1, 25, 1, '01712345678', 'azad@gmail.com', 'Feni, Bangladesh', 10.00, '01812345678', '2026-08-02 04:35:22', '2026-08-09 05:53:53', NULL, 1, 1),
-(2, 'Akib', 1, 25, 1, '0153321562', 'akib@gmail.com', 'kdlk, Bangladesh', 5.00, '01812345678', '2026-08-02 05:24:16', '2026-08-09 05:53:53', NULL, 1, 1),
-(3, 'sdfg', 0, 56, 0, '0105', 'jamal@yahoo.com', '2no Gate', 0.00, '012353', '2026-08-04 06:46:36', '2026-08-04 06:46:36', NULL, NULL, NULL),
-(4, 'Azad Hossain', 1, 55, 0, '01712345678', 'azad@gmail.com', 'Feni, Bangladesh', 0.00, '01812345678', '2026-08-04 06:46:45', '2026-08-04 06:46:45', NULL, NULL, NULL),
-(5, 'Kamal Uddin', 1, 56, NULL, '01712345679', NULL, NULL, 0.00, NULL, '2026-08-04 07:01:41', '2026-08-04 07:01:41', NULL, NULL, NULL);
+(1, 'Md. Rahim Uddin', 0, NULL, 0, '01810000001', 'rahim.uddin@example.com', 'Dhaka, Bangladesh', 10.00, '01810000011', '2026-08-13 03:23:23', '2026-08-13 03:23:23', NULL, NULL, NULL),
+(2, 'Nusrat Jahan', 0, NULL, 0, '01810000002', 'nusrat.jahan@example.com', 'Chattogram, Bangladesh', 5.00, '01810000012', '2026-08-13 03:23:23', '2026-08-13 03:23:23', NULL, NULL, NULL),
+(3, 'Tanvir Ahmed', 0, NULL, 0, '01810000003', 'tanvir.ahmed@example.com', 'Sylhet, Bangladesh', 15.00, '01810000013', '2026-08-13 03:23:23', '2026-08-13 03:23:23', NULL, NULL, NULL),
+(4, 'Sadia Akter', 0, NULL, 0, '01810000004', 'sadia.akter@example.com', 'Rajshahi, Bangladesh', 10.00, '01810000014', '2026-08-13 03:23:23', '2026-08-13 03:23:23', NULL, NULL, NULL),
+(5, 'Mahmud Hasan', 0, NULL, 0, '01810000005', 'mahmud.hasan@example.com', 'Khulna, Bangladesh', 0.00, '01810000015', '2026-08-13 03:23:23', '2026-08-13 03:23:23', NULL, NULL, NULL),
+(6, 'Farzana Rahman', 0, NULL, 0, '01810000006', 'farzana.rahman@example.com', 'Barishal, Bangladesh', 20.00, '01810000016', '2026-08-13 03:23:23', '2026-08-13 03:23:23', NULL, NULL, NULL),
+(7, 'Imran Hossain', 0, NULL, 0, '01810000007', 'imran.hossain@example.com', 'Cumilla, Bangladesh', 5.00, '01810000017', '2026-08-13 03:23:23', '2026-08-13 03:23:23', NULL, NULL, NULL),
+(8, 'Samia Sultana', 0, NULL, 0, '01810000008', 'samia.sultana@example.com', 'Mymensingh, Bangladesh', 10.00, '01810000018', '2026-08-13 03:23:23', '2026-08-13 03:23:23', NULL, NULL, NULL),
+(9, 'Rakibul Islam', 0, NULL, 0, '01810000009', 'rakibul.islam@example.com', 'Rangpur, Bangladesh', 15.00, '01810000019', '2026-08-13 03:23:23', '2026-08-13 03:23:23', NULL, NULL, NULL),
+(10, 'Tania Akter', 0, NULL, 0, '01810000010', 'tania.akter@example.com', 'Narayanganj, Bangladesh', 5.00, '01810000020', '2026-08-13 03:23:23', '2026-08-13 03:23:23', NULL, NULL, NULL),
+(11, 'Md. Rahim Uddin', 1, 25, 0, '01810000001', 'rahim.uddin@example.com', 'Dhaka, Bangladesh', 0.00, '01810000011', '2026-08-13 03:56:18', '2026-08-13 03:56:18', NULL, NULL, NULL),
+(12, 'Md. Rahim Uddin', 1, 22, 0, '01810000001', 'rahim.uddin@example.com', 'Dhaka, Bangladesh', 0.00, '01810000011', '2026-08-13 04:00:10', '2026-08-13 04:00:10', NULL, NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -320,13 +341,6 @@ CREATE TABLE `patient_admissions` (
   `updated_at` timestamp NULL DEFAULT NULL,
   `deleted_at` datetime DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `patient_admissions`
---
-
-INSERT INTO `patient_admissions` (`id`, `admission_no`, `patient_id`, `doctor_id`, `room_id`, `bed_id`, `admission_date`, `admission_time`, `discharge_date`, `discharge_time`, `reason`, `status`, `created_at`, `updated_at`, `deleted_at`) VALUES
-(1, 'ADM-0001', 5, 2, 2, 4, '2026-08-04', NULL, NULL, NULL, 'fdsasd', NULL, NULL, NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -481,13 +495,16 @@ CREATE TABLE `schedules` (
 --
 
 INSERT INTO `schedules` (`id`, `doctor_id`, `day_of_week`, `start_time`, `end_time`, `appointment_qty`, `status`, `deleted_at`) VALUES
-(2, 1, 'Wednesday', '10:00:00', '11:59:00', 15, '', NULL),
-(6, 1, 'Monday', '14:00:00', '16:00:00', 52, '', NULL),
-(7, 1, 'Sunday', '14:00:00', '16:00:00', 52, 'Active', NULL),
-(8, 1, 'Sunday', '17:00:00', '22:00:00', 10, 'Active', NULL),
-(9, 1, 'Sunday', '00:00:00', '22:00:00', 45, '', NULL),
-(10, 2, 'Friday', '15:00:00', '18:00:00', 30, '', NULL),
-(11, 2, 'Thursday', '13:50:00', '15:50:00', 30, '', NULL);
+(1, 1, 'Saturday', '09:00:00', '13:00:00', 20, 'Active', NULL),
+(2, 2, 'Sunday', '10:00:00', '14:00:00', 16, 'Active', NULL),
+(3, 3, 'Monday', '09:00:00', '12:00:00', 15, 'Active', NULL),
+(4, 4, 'Tuesday', '15:00:00', '19:00:00', 20, 'Active', NULL),
+(5, 5, 'Wednesday', '10:00:00', '14:00:00', 16, 'Active', NULL),
+(6, 6, 'Thursday', '16:00:00', '20:00:00', 20, 'Active', NULL),
+(7, 7, 'Saturday', '14:00:00', '18:00:00', 20, 'Active', NULL),
+(8, 8, 'Sunday', '09:00:00', '13:00:00', 20, 'Active', NULL),
+(9, 9, 'Monday', '15:00:00', '19:00:00', 20, 'Active', NULL),
+(10, 10, 'Tuesday', '09:00:00', '13:00:00', 20, 'Active', NULL);
 
 -- --------------------------------------------------------
 
@@ -511,8 +528,16 @@ CREATE TABLE `shift` (
 --
 
 INSERT INTO `shift` (`id`, `shift_name`, `shift_start`, `shift_end`, `status`, `created_at`, `updated_at`, `deleted_at`) VALUES
-(1, 'Morning', '07:00:00', '17:00:00', 1, NULL, NULL, NULL),
-(1, 'Morning', '07:00:00', '17:00:00', 1, NULL, NULL, NULL);
+(1, 'Morning Shift', '08:00:00', '12:00:00', 0, NULL, NULL, NULL),
+(2, 'Day Shift', '10:00:00', '14:00:00', 0, NULL, NULL, NULL),
+(3, 'Evening Shift', '14:00:00', '18:00:00', 0, NULL, NULL, NULL),
+(4, 'Late Evening Shift', '16:00:00', '20:00:00', 0, NULL, NULL, NULL),
+(5, 'Night Shift', '20:00:00', '00:00:00', 0, NULL, NULL, NULL),
+(6, 'Extended Morning Shift', '07:00:00', '13:00:00', 0, NULL, NULL, NULL),
+(7, 'Extended Day Shift', '09:00:00', '15:00:00', 0, NULL, NULL, NULL),
+(8, 'Extended Evening Shift', '13:00:00', '19:00:00', 0, NULL, NULL, NULL),
+(9, 'Late Night Shift', '22:00:00', '02:00:00', 0, NULL, NULL, NULL),
+(10, 'Weekend Shift', '09:00:00', '17:00:00', 0, NULL, NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -545,7 +570,8 @@ INSERT INTO `users` (`id`, `full_name`, `email`, `phone`, `password`, `role_id`,
 (1, 'kamal', 'kamal@yahoo.com', '0105', '7c4a8d09ca3762af61e59520943dc26494f8941b', 1, 1, '2026-07-25 06:19:50', '2026-07-25 06:19:50', NULL),
 (3, 'akib', 'akib@yahoo.com', '123456', '7110eda4d09e062aa5e4a390b0a572ac0d2c0220', 1, 1, '2026-07-29 17:19:29', '2026-07-29 17:19:29', NULL),
 (4, 'Faruq', 'faruq@yahoo.com', '015', '232758d2b2310c93c7a3fb207558f22b331793e4', 1, 1, '2026-07-29 18:24:59', '2026-07-29 18:24:59', NULL),
-(5, 'Akibul Islam', 'akib34108@gmail.com', '01533198825', '6bb0e3b82a69a2bdf7139d17eeb5f79818b92a4d', 1, 1, '2026-08-01 16:24:13', '2026-08-01 16:24:13', NULL);
+(5, 'Akibul Islam', 'akib34108@gmail.com', '01533198825', '6bb0e3b82a69a2bdf7139d17eeb5f79818b92a4d', 1, 1, '2026-08-01 16:24:13', '2026-08-01 16:24:13', NULL),
+(0, 'Akib', 'akib3410@gmail.com', '01533198825', '7c4a8d09ca3762af61e59520943dc26494f8941b', 1, 1, '2026-08-13 03:04:46', '2026-08-13 03:04:46', NULL);
 
 --
 -- Indexes for dumped tables
@@ -655,6 +681,12 @@ ALTER TABLE `schedules`
   ADD KEY `doctor_id` (`doctor_id`);
 
 --
+-- Indexes for table `shift`
+--
+ALTER TABLE `shift`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- AUTO_INCREMENT for dumped tables
 --
 
@@ -674,13 +706,19 @@ ALTER TABLE `beds`
 -- AUTO_INCREMENT for table `departments`
 --
 ALTER TABLE `departments`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- AUTO_INCREMENT for table `designation`
 --
 ALTER TABLE `designation`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+
+--
+-- AUTO_INCREMENT for table `doctors`
+--
+ALTER TABLE `doctors`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- AUTO_INCREMENT for table `invoices`
@@ -701,10 +739,58 @@ ALTER TABLE `lab_category`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
+-- AUTO_INCREMENT for table `patients`
+--
+ALTER TABLE `patients`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+
+--
+-- AUTO_INCREMENT for table `patient_admissions`
+--
+ALTER TABLE `patient_admissions`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
 -- AUTO_INCREMENT for table `payments`
 --
 ALTER TABLE `payments`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+
+--
+-- AUTO_INCREMENT for table `prescriptions`
+--
+ALTER TABLE `prescriptions`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+
+--
+-- AUTO_INCREMENT for table `prescription_medicines`
+--
+ALTER TABLE `prescription_medicines`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+
+--
+-- AUTO_INCREMENT for table `roles`
+--
+ALTER TABLE `roles`
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+
+--
+-- AUTO_INCREMENT for table `rooms`
+--
+ALTER TABLE `rooms`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+
+--
+-- AUTO_INCREMENT for table `schedules`
+--
+ALTER TABLE `schedules`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+
+--
+-- AUTO_INCREMENT for table `shift`
+--
+ALTER TABLE `shift`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
