@@ -3,9 +3,9 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Aug 13, 2026 at 06:04 AM
+-- Generation Time: Aug 14, 2026 at 07:56 PM
 -- Server version: 10.4.32-MariaDB
--- PHP Version: 8.0.30
+-- PHP Version: 8.2.12
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -47,8 +47,7 @@ CREATE TABLE `appointments` (
 --
 
 INSERT INTO `appointments` (`id`, `serial_no`, `doctor_id`, `patient_id`, `age`, `appointment_date`, `app_schedule_id`, `note`, `status`, `updated_at`, `deleted_at`, `created_at`) VALUES
-(4, 1, 1, 1, 25, '2026-08-16', 8, '', 2, '2026-08-12 04:54:42', NULL, '2026-08-12 00:54:42'),
-(5, 2, 1, 5, 56, '2026-08-16', 8, '', 2, '2026-08-12 04:56:49', NULL, '2026-08-12 00:56:49');
+(1, 1, 1, 7, 55, '2026-08-15', 1, '', 2, '2026-08-13 04:59:25', NULL, '2026-08-13 00:59:25');
 
 -- --------------------------------------------------------
 
@@ -72,9 +71,38 @@ CREATE TABLE `beds` (
 --
 
 INSERT INTO `beds` (`id`, `room_id`, `bed_number`, `is_occupied`, `status`, `created_at`, `updated_at`, `deleted_at`) VALUES
-(3, 1, '1', 0, 1, NULL, NULL, NULL),
+(3, 1, '1', 1, 1, NULL, NULL, NULL),
 (4, 2, '1', 1, 1, NULL, NULL, NULL),
-(5, 2, '2', 0, 1, NULL, NULL, NULL);
+(5, 2, '2', 1, 1, NULL, NULL, NULL);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `blood_collection`
+--
+
+CREATE TABLE `blood_collection` (
+  `id` int(11) NOT NULL,
+  `donation_id` varchar(25) DEFAULT NULL,
+  `donor_id` varchar(40) DEFAULT NULL,
+  `collection_date` date DEFAULT NULL,
+  `collection_volume` int(16) DEFAULT NULL,
+  `bag_id` varchar(25) DEFAULT NULL,
+  `blood_group` varchar(25) DEFAULT NULL,
+  `collection_location` varchar(40) DEFAULT NULL,
+  `staff` varchar(255) DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `update_at` timestamp NULL DEFAULT NULL,
+  `deleted_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `blood_collection`
+--
+
+INSERT INTO `blood_collection` (`id`, `donation_id`, `donor_id`, `collection_date`, `collection_volume`, `bag_id`, `blood_group`, `collection_location`, `staff`, `created_at`, `update_at`, `deleted_at`) VALUES
+(3, 'D001', '1', '2026-08-14', 460, 'B001', 'B+', 'CMC', 'Hasan', NULL, NULL, NULL),
+(4, 'D002', '2', '2026-08-14', 360, 'B002', 'A+', 'CMC', 'Rahim', NULL, NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -179,7 +207,47 @@ INSERT INTO `doctors` (`id`, `department_id`, `designation_id`, `shift_id`, `nam
 (7, 1, 1, 1, 'Dr. Rezaul Karim', 1, 'General Surgery', 'MBBS, FCPS (Surgery)', 14, '01700000007', 'rezaul.karim@example.com', 'Barishal, Bangladesh', 1, '2026-08-13 03:19:30', '2026-08-13 04:00:56', NULL),
 (8, 8, 7, 3, 'Dr. Samia Sultana', 0, 'Ophthalmology', 'MBBS, DO, MS (Ophthalmology)', 11, '01700000008', 'samia.sultana@example.com', 'Mymensingh, Bangladesh', 0, '2026-08-13 03:19:30', '2026-08-13 03:19:30', NULL),
 (9, 9, 8, 1, 'Dr. Imran Kabir', 0, 'ENT', 'MBBS, DLO, FCPS (ENT)', 13, '01700000009', 'imran.kabir@example.com', 'Cumilla, Bangladesh', 0, '2026-08-13 03:19:30', '2026-08-13 03:19:30', NULL),
-(10, 10, 9, 2, 'Dr. Tania Islam', 0, 'Psychiatry', 'MBBS, FCPS (Psychiatry)', 6, '01700000010', 'tania.islam@example.com', 'Rangpur, Bangladesh', 0, '2026-08-13 03:19:30', '2026-08-13 03:19:30', NULL);
+(10, 6, 9, 9, 'Dr. Tania Islam', 2, 'Psychiatry', 'MBBS, FCPS (Psychiatry)', 6, '01700000010', 'tania.islam@example.com', 'Rangpur, Bangladesh', 1, '2026-08-13 03:19:30', '2026-08-13 18:50:55', NULL),
+(11, 7, 5, 5, 'Dr. Sanjana Sharmin', 2, 'Fever, diabetes, hypertension, respiratory problems, general health issues', 'MBBS', 3, '01545678925', 'sanjanasharmin@yahoo.com', 'Dhaka, Bangladesh', 1, '2026-08-13 17:42:48', '2026-08-13 17:50:42', NULL),
+(12, 4, 5, 5, 'DR. Amjad Hossain', 1, 'Child health, fever, common infections, nutrition, vaccination advice', 'BDS', 5, '01774185296', 'amjad@yahoo.com', 'Rajshahi', 0, '2026-08-13 17:45:32', '2026-08-13 17:45:32', NULL);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `donor`
+--
+
+CREATE TABLE `donor` (
+  `id` int(11) NOT NULL,
+  `donor_name` varchar(255) DEFAULT NULL,
+  `age` int(11) DEFAULT NULL,
+  `gender` int(4) DEFAULT NULL COMMENT '1=male, 2=female',
+  `phone` varchar(11) DEFAULT NULL,
+  `address` varchar(255) DEFAULT NULL,
+  `blood_group` varchar(10) DEFAULT NULL,
+  `last_donation` date DEFAULT NULL,
+  `donor_eligibility` int(4) DEFAULT NULL COMMENT '1=Eligible, 2=\r\nNot Eligible',
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  `deleted_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `donor`
+--
+
+INSERT INTO `donor` (`id`, `donor_name`, `age`, `gender`, `phone`, `address`, `blood_group`, `last_donation`, `donor_eligibility`, `created_at`, `updated_at`, `deleted_at`) VALUES
+(1, 'Mahtab', 29, 1, '01878945612', 'Satkania, Chattogram', 'O+', '2026-07-21', 1, NULL, NULL, NULL),
+(3, 'Imtiaz', 32, 1, '01842194963', 'GPO circle, new market', 'A+', '2026-07-22', 1, NULL, NULL, NULL),
+(4, 'Ashfa', 19, 0, '01412365485', 'Gachbaria', 'B+', '2026-02-17', 1, NULL, NULL, NULL),
+(5, 'Rahim', 22, 1, '01712345678', 'Chittagong', 'A+', NULL, 1, NULL, NULL, NULL),
+(6, 'Karim', 25, 1, '01812345679', 'Dhaka', 'O+', NULL, 2, NULL, NULL, NULL),
+(7, 'Nusrat', 21, 2, '01912345680', 'Comilla', 'B+', NULL, 1, NULL, NULL, NULL),
+(8, 'Jannat', 24, 2, '01612345681', 'Feni', 'AB+', NULL, 2, NULL, NULL, NULL),
+(9, 'Sakib', 20, 1, '01512345682', 'Noakhali', 'O-', NULL, 1, NULL, NULL, NULL),
+(10, 'Mim', 23, 2, '01412345683', 'Gachbaria', 'A-', NULL, 2, NULL, NULL, NULL),
+(11, 'Tanvir', 27, 1, '01312345684', 'Chandpur', 'B-', NULL, 1, NULL, NULL, NULL),
+(12, 'Sumaiya', 26, 2, '01212345685', 'Cox\'s Bazar', 'AB-', NULL, 2, NULL, NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -285,9 +353,9 @@ INSERT INTO `lab_category` (`id`, `test_name`, `price`, `test_accessor`, `create
 CREATE TABLE `patients` (
   `id` int(11) NOT NULL,
   `name` varchar(100) DEFAULT NULL,
-  `gender` int(3) DEFAULT NULL COMMENT '1=male,2=female,3=others',
-  `age` int(2) DEFAULT NULL,
-  `blood_group` int(6) DEFAULT NULL,
+  `gender` varchar(10) DEFAULT NULL COMMENT '1=male,2=female,3=others',
+  `age` varchar(10) DEFAULT NULL,
+  `blood_group` varchar(6) DEFAULT NULL,
   `phone` varchar(20) DEFAULT NULL,
   `email` varchar(100) DEFAULT NULL,
   `address` varchar(200) DEFAULT NULL,
@@ -305,18 +373,12 @@ CREATE TABLE `patients` (
 --
 
 INSERT INTO `patients` (`id`, `name`, `gender`, `age`, `blood_group`, `phone`, `email`, `address`, `discount_percent`, `emergency_contact`, `created_at`, `updated_at`, `deleted_at`, `created_by`, `updated_by`) VALUES
-(1, 'Md. Rahim Uddin', 0, NULL, 0, '01810000001', 'rahim.uddin@example.com', 'Dhaka, Bangladesh', 10.00, '01810000011', '2026-08-13 03:23:23', '2026-08-13 03:23:23', NULL, NULL, NULL),
-(2, 'Nusrat Jahan', 0, NULL, 0, '01810000002', 'nusrat.jahan@example.com', 'Chattogram, Bangladesh', 5.00, '01810000012', '2026-08-13 03:23:23', '2026-08-13 03:23:23', NULL, NULL, NULL),
-(3, 'Tanvir Ahmed', 0, NULL, 0, '01810000003', 'tanvir.ahmed@example.com', 'Sylhet, Bangladesh', 15.00, '01810000013', '2026-08-13 03:23:23', '2026-08-13 03:23:23', NULL, NULL, NULL),
-(4, 'Sadia Akter', 0, NULL, 0, '01810000004', 'sadia.akter@example.com', 'Rajshahi, Bangladesh', 10.00, '01810000014', '2026-08-13 03:23:23', '2026-08-13 03:23:23', NULL, NULL, NULL),
-(5, 'Mahmud Hasan', 0, NULL, 0, '01810000005', 'mahmud.hasan@example.com', 'Khulna, Bangladesh', 0.00, '01810000015', '2026-08-13 03:23:23', '2026-08-13 03:23:23', NULL, NULL, NULL),
-(6, 'Farzana Rahman', 0, NULL, 0, '01810000006', 'farzana.rahman@example.com', 'Barishal, Bangladesh', 20.00, '01810000016', '2026-08-13 03:23:23', '2026-08-13 03:23:23', NULL, NULL, NULL),
-(7, 'Imran Hossain', 0, NULL, 0, '01810000007', 'imran.hossain@example.com', 'Cumilla, Bangladesh', 5.00, '01810000017', '2026-08-13 03:23:23', '2026-08-13 03:23:23', NULL, NULL, NULL),
-(8, 'Samia Sultana', 0, NULL, 0, '01810000008', 'samia.sultana@example.com', 'Mymensingh, Bangladesh', 10.00, '01810000018', '2026-08-13 03:23:23', '2026-08-13 03:23:23', NULL, NULL, NULL),
-(9, 'Rakibul Islam', 0, NULL, 0, '01810000009', 'rakibul.islam@example.com', 'Rangpur, Bangladesh', 15.00, '01810000019', '2026-08-13 03:23:23', '2026-08-13 03:23:23', NULL, NULL, NULL),
-(10, 'Tania Akter', 0, NULL, 0, '01810000010', 'tania.akter@example.com', 'Narayanganj, Bangladesh', 5.00, '01810000020', '2026-08-13 03:23:23', '2026-08-13 03:23:23', NULL, NULL, NULL),
-(11, 'Md. Rahim Uddin', 1, 25, 0, '01810000001', 'rahim.uddin@example.com', 'Dhaka, Bangladesh', 0.00, '01810000011', '2026-08-13 03:56:18', '2026-08-13 03:56:18', NULL, NULL, NULL),
-(12, 'Md. Rahim Uddin', 1, 22, 0, '01810000001', 'rahim.uddin@example.com', 'Dhaka, Bangladesh', 0.00, '01810000011', '2026-08-13 04:00:10', '2026-08-13 04:00:10', NULL, NULL, NULL);
+(1, 'hasan', 'Male', '20', 'O+', '01887499250', 'hasa222@gmail.com', 'khulshi', 0.00, '01887499250', '2026-08-13 04:33:07', '2026-08-13 04:33:07', NULL, NULL, NULL),
+(2, 'shakira', 'Female', '22', 'A+', '01774489205', 'shakira222@gmail.com', 'Feni', 0.00, '01774489205', '2026-08-13 04:35:34', '2026-08-13 04:35:34', NULL, NULL, NULL),
+(3, 'akib', 'Male', '25', 'B+', '0188929247', 'akib34@gmail.com', 'kotually', 0.00, '0188929247', '2026-08-13 04:36:59', '2026-08-13 04:36:59', NULL, NULL, NULL),
+(5, 'Aftab', 'Male', '27', 'AB+', '0155399622', 'aftab653@yahoo.com', 'sylhet', 0.00, '0155399622', '2026-08-13 04:40:10', '2026-08-13 04:40:10', NULL, NULL, NULL),
+(6, 'shakib', '1', '27', NULL, '01887925099', NULL, NULL, 0.00, NULL, '2026-08-13 04:46:22', '2026-08-13 04:46:22', NULL, NULL, NULL),
+(7, 'arif', '1', '55', NULL, '0155069856', NULL, NULL, 0.00, NULL, '2026-08-13 04:59:25', '2026-08-13 04:59:25', NULL, NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -341,6 +403,15 @@ CREATE TABLE `patient_admissions` (
   `updated_at` timestamp NULL DEFAULT NULL,
   `deleted_at` datetime DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `patient_admissions`
+--
+
+INSERT INTO `patient_admissions` (`id`, `admission_no`, `patient_id`, `doctor_id`, `room_id`, `bed_id`, `admission_date`, `admission_time`, `discharge_date`, `discharge_time`, `reason`, `status`, `created_at`, `updated_at`, `deleted_at`) VALUES
+(1, 'ADM-0001', 1, 8, 1, 3, '2026-08-16', NULL, NULL, NULL, ' health problem', NULL, NULL, NULL, NULL),
+(2, 'ADM-0002', 5, 3, 2, 5, '2026-08-15', NULL, NULL, NULL, 'mental problem', NULL, NULL, NULL, NULL),
+(3, 'ADM-0003', 6, 10, 1, 3, '2026-08-18', NULL, NULL, NULL, 'health issue', NULL, NULL, NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -591,6 +662,12 @@ ALTER TABLE `beds`
   ADD KEY `room_id` (`room_id`);
 
 --
+-- Indexes for table `blood_collection`
+--
+ALTER TABLE `blood_collection`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- Indexes for table `departments`
 --
 ALTER TABLE `departments`
@@ -608,6 +685,12 @@ ALTER TABLE `designation`
 ALTER TABLE `doctors`
   ADD PRIMARY KEY (`id`),
   ADD KEY `department_id` (`department_id`);
+
+--
+-- Indexes for table `donor`
+--
+ALTER TABLE `donor`
+  ADD PRIMARY KEY (`id`);
 
 --
 -- Indexes for table `invoices`
@@ -694,13 +777,19 @@ ALTER TABLE `shift`
 -- AUTO_INCREMENT for table `appointments`
 --
 ALTER TABLE `appointments`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `beds`
 --
 ALTER TABLE `beds`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+
+--
+-- AUTO_INCREMENT for table `blood_collection`
+--
+ALTER TABLE `blood_collection`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT for table `departments`
@@ -718,7 +807,13 @@ ALTER TABLE `designation`
 -- AUTO_INCREMENT for table `doctors`
 --
 ALTER TABLE `doctors`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+
+--
+-- AUTO_INCREMENT for table `donor`
+--
+ALTER TABLE `donor`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
 --
 -- AUTO_INCREMENT for table `invoices`
@@ -742,13 +837,13 @@ ALTER TABLE `lab_category`
 -- AUTO_INCREMENT for table `patients`
 --
 ALTER TABLE `patients`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT for table `patient_admissions`
 --
 ALTER TABLE `patient_admissions`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `payments`
