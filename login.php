@@ -1,30 +1,34 @@
 <?php 
     require_once "component/header_auth.php";
 ?>
-    <div class="main-wrapper account-wrapper">
+    <div class="main-wrapper account-wrapper" style="background-image: url('<?= $base_url; ?>assets/assets/img/login-bg.png'); background-size: cover; background-position: center; min-height: 100vh;">
         <div class="account-page">
 			<div class="account-center">
-				<div class="account-box">
+				<div class="account-box" style="border: 1px solid #0b5884; padding: 20px; border-radius: 10px; background-color: rgba(255, 255, 255, 0.9); box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
                     <form action="" method="post" class="form-signin">
 						<div class="account-logo">
                             <a href="index-2.html"><img src="<?= $base_url; ?>assets/assets/img/logo-dark.png" alt=""></a>
+                            <div style="margin-top: 15px;">
+                                <span class="font-weight-bold">SHIFA</span><br>
+                                <span style="font-size: 12px;">Hospital Management</span>
+                            </div>
                         </div>
                         <div class="form-group">
-                            <label>Email</label>
-                            <input type="text" name="email" autofocus="" class="form-control">
+                            <label class="font-weight-bold" style="color: #0b5884;">Email</label>
+                            <input type="text" name="email" autofocus class="form-control" style="border: 1px solid #d9e2e8; border-radius: 50px; padding: 10px 15px; font-size: 15px; background: #f8fafc; transition: 0.3s;" onfocus="this.style.borderColor='#0b5884'; this.style.boxShadow='0 0 0 3px rgba(11,88,132,0.15)'; this.style.background='#fff';" onblur="this.style.borderColor='#d9e2e8'; this.style.boxShadow='none'; this.style.background='#f8fafc';">
                         </div>
                         <div class="form-group">
-                            <label>Password</label>
-                            <input type="password" name="password" class="form-control">
+                            <label class="font-weight-bold" style="color: #0b5884;">Password</label>
+                            <input type="password" name="password" autofocus class="form-control" style="border: 1px solid #d9e2e8; border-radius: 50px; padding: 10px 15px; font-size: 15px; background: #f8fafc; transition: 0.3s;" onfocus="this.style.borderColor='#0b5884'; this.style.boxShadow='0 0 0 3px rgba(11,88,132,0.15)'; this.style.background='#fff';" onblur="this.style.borderColor='#d9e2e8'; this.style.boxShadow='none'; this.style.background='#f8fafc';">
                         </div>
                         <div class="form-group text-right">
-                            <a href="forgot-password.html">Forgot your password?</a>
+                            <a href="forgot-password.html"  class="font-weight-bold" style="color: #0b5884;">Forgot your password?</a>
                         </div>
                         <div class="form-group text-center">
-                            <button type="submit" class="btn btn-primary account-btn">Login</button>
+                            <button type="submit" class="btn btn-primary account-btn font-weight-bold">Login</button>
                         </div>
-                        <div class="text-center register-link">
-                            Don’t have an account? <a href="signup.php">Register Now</a>
+                        <div class="text-left register-link font-weight-bold" style="color: #0b5884;">
+                            Don’t have an account? <a href="signup.php"  class="font-weight-bold" style="color: #0b5884;">Register Now</a>
                         </div>
                     </form>
                     <?php

@@ -1,6 +1,6 @@
 <body>
     <div class="main-wrapper">
-        <div class="header">
+        <div class="header" style="background-color: #427996;">
 			<div class="header-left">
 				<a href="<?= $base_url; ?>dashboard.php" class="logo">
 					<img src="<?= $base_url; ?>assets/assets/img/logo.png" width="35" height="35" alt=""> <span style="font-size: 20px;">SHIFA</span>
@@ -33,34 +33,34 @@
                 </div>
             </div>
         </div>
-<div class="sidebar" id="sidebar">
+<div class="sidebar" id="sidebar" style="background-color: #104d6f;">
             <div class="sidebar-inner slimscroll">
                 <div id="sidebar-menu" class="sidebar-menu">
                     <ul>
-                        <li class="menu-title">Main</li>
-                        <li class="active">
-                            <a href="<?= $base_url; ?>dashboard.php"><i class="fa fa-dashboard"></i> <span>Dashboard</span></a>
+                        <li class="menu-title" style="color: #fff;">Main</li>
+                        <li>
+                            <a href="<?= $base_url; ?>dashboard.php"><i class="fa fa-dashboard" style="color: #fff;"></i> <span style="color: #fff;">Dashboard</span></a>
                         </li>
 						<li>
-                            <a href="<?= $base_url; ?>doctors/doctors.php"><i class="fa fa-user-md"></i> <span>Doctors</span></a>
+                            <a href="<?= $base_url; ?>doctors/doctors.php"><i class="fa fa-user-md" style="color: #fff;"></i> <span style="color: #fff;">Doctors</span></a>
                         </li>
                         <li>
-                            <a href="<?=$base_url; ?>patients/patients.php"><i class="fa fa-wheelchair"></i> <span>Patients</span></a>
+                            <a href="<?=$base_url; ?>patients/patients.php"><i class="fa fa-wheelchair" style="color: #fff;"></i> <span style="color: #fff;">Patients</span></a>
                         </li>
                         <li>
-                            <a href="<?=$base_url; ?>appointment/appointment_list.php"><i class="fa fa-calendar"></i> <span>Appointments</span></a>
+                            <a href="<?=$base_url; ?>appointment/appointment_list.php"><i class="fa fa-calendar" style="color: #fff;"></i> <span style="color: #fff;">Appointments</span></a>
                         </li>
                         <li>
-                            <a href="<?= $base_url; ?>schedule/schedule.php"><i class="fa fa-calendar-check-o"></i> <span>Doctor Schedule</span></a>
+                            <a href="<?= $base_url; ?>schedule/schedule.php"><i class="fa fa-calendar-check-o" style="color: #fff;"></i> <span style="color: #fff;">Doctor Schedule</span></a>
                         </li>
                         <li>
-                            <a href="<?=$base_url; ?>prescription/prescription_list.php"><i class="fa fa-file-text-o"></i> <span>Prescriptions</span></a>
+                            <a href="<?=$base_url; ?>prescription/prescription_list.php"><i class="fa fa-file-text-o" style="color: #fff;"></i> <span style="color: #fff;">Prescriptions</span></a>
                         </li>
                         <li>
-                            <a href="<?=$base_url; ?>lab/lab_category/lab.php"><i class="fa fa-flask"></i> <span>Test Lab</span></a>
+                            <a href="<?=$base_url; ?>lab/lab_category/lab.php"><i class="fa fa-flask" style="color: #fff;"></i> <span style="color: #fff;">Test Lab</span></a>
                         </li>
                         <li class="submenu">
-							<a href="#"><i class="fa fa-bed"></i> <span> Ward </span> <span class="menu-arrow"></span></a>
+							<a href="#"><i class="fa fa-bed" style="color: #fff;"></i> <span style="color: #fff;"> Ward </span> <span class="menu-arrow" style="color: #fff;"></span></a>
 							<ul style="display: none;">
 								<li><a href="<?= $base_url; ?>ward/rooms/rooms.php">Rooms</a></li>
 								<li><a href="<?= $base_url; ?>ward/beds/beds.php">Beds</a></li>
@@ -68,29 +68,29 @@
 							</ul>
 						</li>
                         <li>
-                            <a href="<?= $base_url; ?>departments/departments.php"><i class="fa fa-hospital-o"></i> <span>Departments</span></a>
+                            <a href="<?= $base_url; ?>departments/departments.php"><i class="fa fa-hospital-o" style="color: #fff;"></i> <span style="color: #fff;">Departments</span></a>
                         </li>
                         <li class="submenu">
-							<a href="#"><i class="fa fa-money"></i> <span> Accounts </span> <span class="menu-arrow"></span></a>
+							<a href="#"><i class="fa fa-money" style="color: #fff;"></i> <span style="color: #fff;"> Accounts </span> <span class="menu-arrow" style="color: #fff;"></span></a>
 							<ul style="display: none;">
 								<li><a href="<?= $base_url; ?>invoices/invoice_list.php">Invoices</a></li>
 								<li><a href="<?= $base_url; ?>payments/payments_list.php">Payments</a></li>
                                 </ul>
 						</li>
                         <li>
-                            <a href="<?= $base_url; ?>designation/designation.php"><i class="fa fa-id-badge"></i> <span>Designation</span></a>
+                            <a href="<?= $base_url; ?>designation/designation.php"><i class="fa fa-id-badge" style="color: #fff;"></i> <span style="color: #fff;">Designation</span></a>
                         </li>
                         <li>
-                            <a href="<?= $base_url; ?>shift/shift.php"><i class="fa fa-clock-o"></i> <span>Shift</span></a>
+                            <a href="<?= $base_url; ?>shift/shift.php"><i class="fa fa-clock-o" style="color: #fff;"></i> <span style="color: #fff;">Shift</span></a>
                         </li>
                         <li>
-                            <a href="<?= $base_url; ?>pharmacy/pharmacy.php"><i class="fa fa-medkit"></i> <span>Pharmacy</span></a>
+                            <a href="<?= $base_url; ?>pharmacy/pharmacy.php"><i class="fa fa-medkit" style="color: #fff;"></i> <span style="color: #fff;">Pharmacy</span></a>
                         </li>
                         <li class="submenu">
-							<a href="#"><i class="fa fa-tint"></i> <span> Blood Bank </span> <span class="menu-arrow"></span></a>
+							<a href="#"><i class="fa fa-tint" style="color: #fff;"></i> <span style="color: #fff;"> Blood Bank </span> <span class="menu-arrow" style="color: #fff;"></span></a>
 							<ul style="display: none;">
-								<li><a href="<?= $base_url; ?>invoices/invoice_list.php">22</a></li>
-								<li><a href="<?= $base_url; ?>payments/payments_list.php">11</a></li>
+								<li><a href="<?= $base_url; ?>blood_bank/donor/donor.php">Donors List</a></li>
+								<li><a href="<?= $base_url; ?>blood_bank/blood_collection/collection.php">Blood Collection</a></li>
                                 </ul>
 						</li>
                     </div>

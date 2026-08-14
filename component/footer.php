@@ -31,7 +31,7 @@
                 </div>
             </div>
             <div class="row">
-                <div class="col-sm-12 text-center" style="font-size: 16px; color: #fff;background-color: #009efb; margin-bottom: 20px; padding: 10px; border-radius: 5px;">
+                <div class="col-sm-12 text-center" style="font-size: 16px; color: #fff;background-color: #427996; margin-bottom: 20px; padding: 10px; border-radius: 5px;">
                     <span style="margin-right: 20px;">Copyright © 2026 SHIFA</span> | <span style="margin-left: 20px;">All Rights Reserved by SHIFA Hospital Management Team</span>
                 </div>
             </div>
