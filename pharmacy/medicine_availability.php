@@ -1,251 +1,519 @@
 <?php
+
 require_once "../component/header.php";
 require_once "../component/sidebar.php";
+require_once "../crud/crud_class.php";
 
-/*
-|--------------------------------------------------------------------------
-| Demo Data
-|--------------------------------------------------------------------------
-| পরে database ready হলে এই অংশ SQL দিয়ে replace করা হবে।
-*/
-
-// Demo medicines
-$medicines = [
-    [
-        "id" => 1,
-        "name" => "Napa",
-        "generic" => "Paracetamol",
-        "strength" => "500mg",
-        "form" => "Tablet"
-    ],
-    [
-        "id" => 2,
-        "name" => "Seclo",
-        "generic" => "Omeprazole",
-        "strength" => "20mg",
-        "form" => "Capsule"
-    ],
-    [
-        "id" => 3,
-        "name" => "Napa Extra",
-        "generic" => "Paracetamol + Caffeine",
-        "strength" => "500mg + 65mg",
-        "form" => "Tablet"
-    ]
-];
+$crud = new crud_class();
 
 
-// Demo branches
-$branches = [
-    [
-        "id" => 1,
-        "name" => "SHIFA Main Pharmacy",
-        "location" => "Dhaka"
-    ],
-    [
-        "id" => 2,
-        "name" => "SHIFA Chattogram Pharmacy",
-        "location" => "Chattogram"
-    ],
-    [
-        "id" => 3,
-        "name" => "SHIFA Agrabad Pharmacy",
-        "location" => "Agrabad"
-    ]
-];
+// ==================================================
+// MESSAGE
+// ==================================================
+
+$message = "";
+$message_type = "";
 
 
-// Demo availability
-$availability = [
-    [
-        "medicine_id" => 1,
-        "branch_id" => 1,
-        "quantity" => 120
-    ],
-    [
-        "medicine_id" => 1,
-        "branch_id" => 2,
-        "quantity" => 75
-    ],
-    [
-        "medicine_id" => 1,
-        "branch_id" => 3,
-        "quantity" => 0
-    ],
+// ==================================================
+// ADD / UPDATE AVAILABILITY
+// ==================================================
 
-    [
-        "medicine_id" => 2,
-        "branch_id" => 1,
-        "quantity" => 40
-    ],
-    [
-        "medicine_id" => 2,
-        "branch_id" => 2,
-        "quantity" => 0
-    ],
-    [
-        "medicine_id" => 2,
-        "branch_id" => 3,
-        "quantity" => 25
-    ],
+if (isset($_POST['save_availability'])) {
 
-    [
-        "medicine_id" => 3,
-        "branch_id" => 1,
-        "quantity" => 60
-    ],
-    [
-        "medicine_id" => 3,
-        "branch_id" => 2,
-        "quantity" => 35
-    ],
-    [
-        "medicine_id" => 3,
-        "branch_id" => 3,
-        "quantity" => 0
-    ]
-];
+    $branch_id =
+        (int)($_POST['branch_id'] ?? 0);
+
+    $medicine_id =
+        (int)($_POST['medicine_id'] ?? 0);
+
+    $quantity =
+        (int)($_POST['quantity'] ?? 0);
+
+    $selling_price =
+        (float)($_POST['selling_price'] ?? 0);
 
 
-// Selected values
-$selected_medicine = isset($_GET['medicine_id'])
-    ? (int) $_GET['medicine_id']
-    : 1;
+    // ==============================================
+    // VALIDATION
+    // ==============================================
 
-$selected_branch = isset($_GET['branch_id'])
-    ? (int) $_GET['branch_id']
-    : 0;
+    if ($branch_id <= 0) {
+
+        $message = "Please select a branch.";
+        $message_type = "danger";
+
+    } elseif ($medicine_id <= 0) {
+
+        $message = "Please select a medicine.";
+        $message_type = "danger";
+
+    } elseif ($quantity < 0) {
+
+        $message = "Quantity cannot be negative.";
+        $message_type = "danger";
+
+    } elseif ($selling_price <= 0) {
+
+        $message = "Selling price must be greater than 0.";
+        $message_type = "danger";
+
+    } else {
+
+
+        // ==========================================
+        // CHECK DUPLICATE
+        // ==========================================
+
+        $check_sql = "
+            SELECT
+                branch_medicine_id
+            FROM branch_medicines
+            WHERE branch_id = '$branch_id'
+            AND medicine_id = '$medicine_id'
+            LIMIT 1
+        ";
+
+        $check_result =
+            $crud->conn->query($check_sql);
+
+
+        if (
+            $check_result &&
+            $check_result->num_rows > 0
+        ) {
+
+            // ======================================
+            // UPDATE EXISTING RECORD
+            // ======================================
+
+            $existing =
+                $check_result->fetch_assoc();
+
+            $branch_medicine_id =
+                (int)$existing[
+                    'branch_medicine_id'
+                ];
+
+
+            $update_sql = "
+                UPDATE branch_medicines
+                SET
+                    quantity = '$quantity',
+                    selling_price = '$selling_price'
+                WHERE
+                    branch_medicine_id =
+                    '$branch_medicine_id'
+            ";
+
+
+            if (
+                $crud->conn->query(
+                    $update_sql
+                )
+            ) {
+
+                $message =
+                    "Medicine availability updated successfully.";
+
+                $message_type =
+                    "success";
+
+            } else {
+
+                $message =
+                    "Update failed: "
+                    . $crud->conn->error;
+
+                $message_type =
+                    "danger";
+            }
+
+
+        } else {
+
+
+            // ======================================
+            // INSERT NEW RECORD
+            // ======================================
+
+            $insert_sql = "
+                INSERT INTO branch_medicines
+                (
+                    branch_id,
+                    medicine_id,
+                    quantity,
+                    selling_price
+                )
+                VALUES
+                (
+                    '$branch_id',
+                    '$medicine_id',
+                    '$quantity',
+                    '$selling_price'
+                )
+            ";
+
+
+            if (
+                $crud->conn->query(
+                    $insert_sql
+                )
+            ) {
+
+                $message =
+                    "Medicine added to branch successfully.";
+
+                $message_type =
+                    "success";
+
+            } else {
+
+                $message =
+                    "Insert failed: "
+                    . $crud->conn->error;
+
+                $message_type =
+                    "danger";
+            }
+        }
+    }
+}
+
+
+// ==================================================
+// DELETE AVAILABILITY
+// ==================================================
+
+if (
+    isset($_GET['delete'])
+) {
+
+    $delete_id =
+        (int)$_GET['delete'];
+
+
+    if ($delete_id > 0) {
+
+        $delete_sql = "
+            DELETE FROM branch_medicines
+            WHERE branch_medicine_id =
+            '$delete_id'
+        ";
+
+
+        if (
+            $crud->conn->query(
+                $delete_sql
+            )
+        ) {
+
+            $message =
+                "Medicine availability removed successfully.";
+
+            $message_type =
+                "success";
+
+        } else {
+
+            $message =
+                "Delete failed: "
+                . $crud->conn->error;
+
+            $message_type =
+                "danger";
+        }
+    }
+}
+
+
+// ==================================================
+// GET BRANCHES
+// ==================================================
+
+$branch_sql = "
+    SELECT
+        branch_id,
+        branch_name
+    FROM pharmacy_branches
+    WHERE deleted_at IS NULL
+    AND status = 'Active'
+    ORDER BY branch_name ASC
+";
+
+$branches =
+    $crud->common_query(
+        $branch_sql
+    );
+
+
+// ==================================================
+// GET MEDICINES
+// ==================================================
+
+$medicine_sql = "
+    SELECT
+        medicine_id,
+        medicine_name,
+        generic_name,
+        unit_price
+    FROM medicines
+    WHERE deleted_at IS NULL
+    ORDER BY medicine_name ASC
+";
+
+$medicines =
+    $crud->common_query(
+        $medicine_sql
+    );
+
+
+// ==================================================
+// GET AVAILABILITY LIST
+// ==================================================
+
+$availability_sql = "
+
+    SELECT
+
+        bm.branch_medicine_id,
+
+        bm.branch_id,
+
+        bm.medicine_id,
+
+        bm.quantity,
+
+        bm.selling_price,
+
+        pb.branch_name,
+
+        m.medicine_name,
+
+        m.generic_name
+
+    FROM branch_medicines bm
+
+    INNER JOIN pharmacy_branches pb
+
+        ON bm.branch_id =
+           pb.branch_id
+
+    INNER JOIN medicines m
+
+        ON bm.medicine_id =
+           m.medicine_id
+
+    WHERE pb.deleted_at IS NULL
+
+    AND m.deleted_at IS NULL
+
+    ORDER BY
+        bm.branch_medicine_id DESC
+
+";
+
+$availability =
+    $crud->common_query(
+        $availability_sql
+    );
+
 ?>
 
-<div class="page-wrapper">
+
+<style>
+
+.availability-page {
+    position: relative;
+}
+
+.availability-page
+input,
+.availability-page
+select,
+.availability-page
+button {
+
+    pointer-events: auto !important;
+
+    position: relative;
+
+    z-index: 20;
+}
+
+.availability-card {
+
+    background: #fff;
+
+    border: 1px solid #ddd;
+
+    border-radius: 6px;
+
+    padding: 20px;
+
+    margin-bottom: 20px;
+}
+
+.stock-low {
+
+    color: #dc3545;
+
+    font-weight: 600;
+}
+
+.stock-good {
+
+    color: #198754;
+
+    font-weight: 600;
+}
+
+</style>
+
+
+<div class="page-wrapper availability-page">
+
     <div class="content">
 
-        <!-- Page Header -->
-        <div class="row">
-            <div class="col-sm-7 col-6">
 
-                <h4 class="page-title">
+        <!-- ==========================================
+             PAGE HEADER
+        =========================================== -->
+
+        <div class="page-header">
+
+            <div class="page-title">
+
+                <h4>
                     Medicine Availability
                 </h4>
 
-            </div>
-
-            <div class="col-sm-5 col-6 text-right">
-
-                <a href="medicines.php"
-                   class="btn btn-secondary btn-rounded">
-
-                    <i class="fa fa-medkit"></i>
-                    Medicines
-
-                </a>
-
-                <a href="branches.php"
-                   class="btn btn-info btn-rounded">
-
-                    <i class="fa fa-hospital-o"></i>
-                    Branches
-
-                </a>
+                <h6>
+                    Manage medicine availability by branch
+                </h6>
 
             </div>
+
         </div>
 
 
-        <!-- Search / Filter -->
+
+        <!-- ==========================================
+             MESSAGE
+        =========================================== -->
+
+        <?php if (!empty($message)) { ?>
+
+            <div
+                class="alert alert-<?php
+                echo $message_type;
+                ?>"
+            >
+
+                <?php
+                echo htmlspecialchars(
+                    $message
+                );
+                ?>
+
+            </div>
+
+        <?php } ?>
+
+
+
+        <!-- ==========================================
+             ADD MEDICINE TO BRANCH
+        =========================================== -->
+
         <div class="card">
 
             <div class="card-header">
 
-                <h4 class="card-title">
-
-                    <i class="fa fa-search"></i>
-                    Find Medicine Availability
-
+                <h4>
+                    Add Medicine Availability
                 </h4>
-
-                <p class="text-muted mb-0">
-
-                    Find which pharmacy branch has a particular
-                    medicine available.
-
-                </p>
 
             </div>
 
 
             <div class="card-body">
 
-                <form method="GET"
-                      action="medicine_availability.php">
+                <form
+                    method="POST"
+                >
 
                     <div class="row">
 
-                        <!-- Medicine -->
-                        <div class="col-md-6">
-
-                            <div class="form-group">
-
-                                <label>
-                                    Select Medicine
-                                </label>
-
-                                <select name="medicine_id"
-                                        id="medicineSelect"
-                                        class="form-control">
-
-                                    <?php foreach ($medicines as $medicine): ?>
-
-                                        <option
-                                            value="<?= $medicine['id']; ?>"
-                                            <?= $selected_medicine == $medicine['id']
-                                                ? 'selected'
-                                                : ''; ?>>
-
-                                            <?= htmlspecialchars($medicine['name']); ?>
-                                            -
-                                            <?= htmlspecialchars($medicine['strength']); ?>
-
-                                        </option>
-
-                                    <?php endforeach; ?>
-
-                                </select>
-
-                            </div>
-
-                        </div>
-
 
                         <!-- Branch -->
-                        <div class="col-md-4">
+
+                        <div
+                            class="col-lg-3 col-md-6 col-sm-6"
+                        >
 
                             <div class="form-group">
 
                                 <label>
-                                    Pharmacy Branch
+
+                                    Branch
+                                    <span class="text-danger">
+                                        *
+                                    </span>
+
                                 </label>
 
-                                <select name="branch_id"
-                                        class="form-control">
 
-                                    <option value="0">
-                                        All Branches
+                                <select
+                                    name="branch_id"
+                                    class="form-control"
+                                    required
+                                >
+
+                                    <option value="">
+                                        Select Branch
                                     </option>
 
-                                    <?php foreach ($branches as $branch): ?>
+
+                                    <?php
+
+                                    if (
+                                        isset(
+                                            $branches['status']
+                                        )
+                                        &&
+                                        $branches['status']
+                                        === true
+                                    ) {
+
+                                        foreach (
+                                            $branches['data']
+                                            as $branch
+                                        ) {
+
+                                    ?>
 
                                         <option
-                                            value="<?= $branch['id']; ?>"
-                                            <?= $selected_branch == $branch['id']
-                                                ? 'selected'
-                                                : ''; ?>>
+                                            value="<?php
+                                            echo (int)
+                                                $branch->branch_id;
+                                            ?>"
+                                        >
 
-                                            <?= htmlspecialchars($branch['name']); ?>
+                                            <?php
+                                            echo htmlspecialchars(
+                                                $branch->branch_name
+                                            );
+                                            ?>
 
                                         </option>
 
-                                    <?php endforeach; ?>
+                                    <?php
+
+                                        }
+                                    }
+
+                                    ?>
 
                                 </select>
 
@@ -254,8 +522,168 @@ $selected_branch = isset($_GET['branch_id'])
                         </div>
 
 
-                        <!-- Search Button -->
-                        <div class="col-md-2">
+
+                        <!-- Medicine -->
+
+                        <div
+                            class="col-lg-3 col-md-6 col-sm-6"
+                        >
+
+                            <div class="form-group">
+
+                                <label>
+
+                                    Medicine
+                                    <span class="text-danger">
+                                        *
+                                    </span>
+
+                                </label>
+
+
+                                <select
+                                    name="medicine_id"
+                                    id="medicine_id"
+                                    class="form-control"
+                                    required
+                                >
+
+                                    <option value="">
+                                        Select Medicine
+                                    </option>
+
+
+                                    <?php
+
+                                    if (
+                                        isset(
+                                            $medicines['status']
+                                        )
+                                        &&
+                                        $medicines['status']
+                                        === true
+                                    ) {
+
+                                        foreach (
+                                            $medicines['data']
+                                            as $medicine
+                                        ) {
+
+                                    ?>
+
+                                        <option
+                                            value="<?php
+                                            echo (int)
+                                                $medicine->medicine_id;
+                                            ?>"
+                                            data-price="<?php
+                                            echo htmlspecialchars(
+                                                $medicine->unit_price
+                                            );
+                                            ?>"
+                                        >
+
+                                            <?php
+
+                                            echo htmlspecialchars(
+                                                $medicine->medicine_name
+                                            );
+
+                                            if (
+                                                !empty(
+                                                    $medicine
+                                                    ->generic_name
+                                                )
+                                            ) {
+
+                                                echo " - "
+                                                    .
+                                                    htmlspecialchars(
+                                                        $medicine
+                                                        ->generic_name
+                                                    );
+
+                                            }
+
+                                            ?>
+
+                                        </option>
+
+                                    <?php
+
+                                        }
+                                    }
+
+                                    ?>
+
+                                </select>
+
+                            </div>
+
+                        </div>
+
+
+
+                        <!-- Quantity -->
+
+                        <div
+                            class="col-lg-2 col-md-6 col-sm-6"
+                        >
+
+                            <div class="form-group">
+
+                                <label>
+                                    Quantity
+                                </label>
+
+                                <input
+                                    type="number"
+                                    name="quantity"
+                                    class="form-control"
+                                    min="0"
+                                    value="0"
+                                    required
+                                >
+
+                            </div>
+
+                        </div>
+
+
+
+                        <!-- Selling Price -->
+
+                        <div
+                            class="col-lg-2 col-md-6 col-sm-6"
+                        >
+
+                            <div class="form-group">
+
+                                <label>
+                                    Selling Price
+                                </label>
+
+                                <input
+                                    type="number"
+                                    name="selling_price"
+                                    id="selling_price"
+                                    class="form-control"
+                                    min="0"
+                                    step="0.01"
+                                    required
+                                >
+
+                            </div>
+
+                        </div>
+
+
+
+                        <!-- Save -->
+
+                        <div
+                            class="col-lg-2 col-md-6 col-sm-6"
+                        >
 
                             <div class="form-group">
 
@@ -263,17 +691,22 @@ $selected_branch = isset($_GET['branch_id'])
                                     &nbsp;
                                 </label>
 
-                                <button type="submit"
-                                        class="btn btn-primary btn-block">
+                                <button
+                                    type="submit"
+                                    name="save_availability"
+                                    class="btn btn-primary w-100"
+                                >
 
-                                    <i class="fa fa-search"></i>
-                                    Search
+                                    <i class="fa fa-plus"></i>
+
+                                    Add
 
                                 </button>
 
                             </div>
 
                         </div>
+
 
                     </div>
 
@@ -284,285 +717,18 @@ $selected_branch = isset($_GET['branch_id'])
         </div>
 
 
-        <?php
 
-        /*
-        |--------------------------------------------------------------------------
-        | Find Selected Medicine
-        |--------------------------------------------------------------------------
-        */
+        <!-- ==========================================
+             AVAILABILITY LIST
+        =========================================== -->
 
-        $selectedMedicineData = null;
-
-        foreach ($medicines as $medicine) {
-
-            if ($medicine['id'] == $selected_medicine) {
-
-                $selectedMedicineData = $medicine;
-                break;
-
-            }
-        }
-
-
-        /*
-        |--------------------------------------------------------------------------
-        | Calculate Availability
-        |--------------------------------------------------------------------------
-        */
-
-        $total_quantity = 0;
-        $available_branches = 0;
-        $unavailable_branches = 0;
-
-        foreach ($availability as $item) {
-
-            if ($item['medicine_id'] != $selected_medicine) {
-                continue;
-            }
-
-            if (
-                $selected_branch != 0 &&
-                $item['branch_id'] != $selected_branch
-            ) {
-                continue;
-            }
-
-            $total_quantity += $item['quantity'];
-
-            if ($item['quantity'] > 0) {
-                $available_branches++;
-            } else {
-                $unavailable_branches++;
-            }
-        }
-
-        ?>
-
-
-        <!-- Selected Medicine Overview -->
-        <?php if ($selectedMedicineData): ?>
-
-            <div class="card">
-
-                <div class="card-body">
-
-                    <div class="row align-items-center">
-
-                        <!-- Icon -->
-                        <div class="col-md-1 text-center">
-
-                            <div style="
-                                width:70px;
-                                height:70px;
-                                border-radius:12px;
-                                background:#e8f7ff;
-                                display:flex;
-                                align-items:center;
-                                justify-content:center;
-                                margin:auto;
-                            ">
-
-                                <i class="fa fa-medkit"
-                                   style="
-                                   font-size:35px;
-                                   color:#009efb;
-                                   ">
-                                </i>
-
-                            </div>
-
-                        </div>
-
-
-                        <!-- Medicine Info -->
-                        <div class="col-md-7">
-
-                            <h3 class="mb-1">
-
-                                <?= htmlspecialchars(
-                                    $selectedMedicineData['name']
-                                ); ?>
-
-                            </h3>
-
-                            <p class="text-muted mb-0">
-
-                                <?= htmlspecialchars(
-                                    $selectedMedicineData['generic']
-                                ); ?>
-
-                                &nbsp; | &nbsp;
-
-                                <?= htmlspecialchars(
-                                    $selectedMedicineData['strength']
-                                ); ?>
-
-                                &nbsp; | &nbsp;
-
-                                <?= htmlspecialchars(
-                                    $selectedMedicineData['form']
-                                ); ?>
-
-                            </p>
-
-                        </div>
-
-
-                        <!-- Total -->
-                        <div class="col-md-4 text-right">
-
-                            <small class="text-muted">
-                                Total Available Quantity
-                            </small>
-
-                            <h2 class="text-primary mb-0">
-
-                                <?= $total_quantity; ?>
-
-                            </h2>
-
-                        </div>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-        <?php endif; ?>
-
-
-        <!-- Summary Cards -->
-        <div class="row">
-
-            <div class="col-md-4">
-
-                <div class="card dash-widget">
-
-                    <div class="card-body">
-
-                        <span class="dash-widget-icon bg-success">
-
-                            <i class="fa fa-check-circle"></i>
-
-                        </span>
-
-                        <div class="dash-widget-info">
-
-                            <h3>
-                                <?= $available_branches; ?>
-                            </h3>
-
-                            <span>
-                                Available Branches
-                            </span>
-
-                        </div>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-
-            <div class="col-md-4">
-
-                <div class="card dash-widget">
-
-                    <div class="card-body">
-
-                        <span class="dash-widget-icon bg-danger">
-
-                            <i class="fa fa-times-circle"></i>
-
-                        </span>
-
-                        <div class="dash-widget-info">
-
-                            <h3>
-                                <?= $unavailable_branches; ?>
-                            </h3>
-
-                            <span>
-                                Out of Stock
-                            </span>
-
-                        </div>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-
-            <div class="col-md-4">
-
-                <div class="card dash-widget">
-
-                    <div class="card-body">
-
-                        <span class="dash-widget-icon bg-info">
-
-                            <i class="fa fa-cubes"></i>
-
-                        </span>
-
-                        <div class="dash-widget-info">
-
-                            <h3>
-                                <?= $total_quantity; ?>
-                            </h3>
-
-                            <span>
-                                Total Quantity
-                            </span>
-
-                        </div>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-        </div>
-
-
-        <!-- Branch Availability Table -->
         <div class="card">
 
             <div class="card-header">
 
-                <div class="row align-items-center">
-
-                    <div class="col-md-7">
-
-                        <h4 class="card-title mb-0">
-
-                            <i class="fa fa-hospital-o"></i>
-                            Branch-wise Availability
-
-                        </h4>
-
-                    </div>
-
-                    <div class="col-md-5 text-right">
-
-                        <span class="badge badge-info"
-                              style="font-size:13px; padding:8px;">
-
-                            <?= htmlspecialchars(
-                                $selectedMedicineData['name']
-                            ); ?>
-
-                        </span>
-
-                    </div>
-
-                </div>
+                <h4>
+                    Medicine Availability List
+                </h4>
 
             </div>
 
@@ -571,20 +737,24 @@ $selected_branch = isset($_GET['branch_id'])
 
                 <div class="table-responsive">
 
-                    <table class="table table-striped custom-table">
+                    <table
+                        class="table table-bordered table-striped"
+                    >
 
                         <thead>
 
                             <tr>
 
-                                <th>#</th>
-
                                 <th>
-                                    Pharmacy Branch
+                                    #
                                 </th>
 
                                 <th>
-                                    Location
+                                    Medicine
+                                </th>
+
+                                <th>
+                                    Branch
                                 </th>
 
                                 <th>
@@ -592,10 +762,14 @@ $selected_branch = isset($_GET['branch_id'])
                                 </th>
 
                                 <th>
-                                    Availability
+                                    Selling Price
                                 </th>
 
-                                <th class="text-right">
+                                <th>
+                                    Status
+                                </th>
+
+                                <th>
                                     Action
                                 </th>
 
@@ -610,138 +784,233 @@ $selected_branch = isset($_GET['branch_id'])
 
                             $counter = 1;
 
-                            foreach ($availability as $item):
 
-                                if (
-                                    $item['medicine_id']
-                                    != $selected_medicine
+                            if (
+                                isset(
+                                    $availability['status']
+                                )
+                                &&
+                                $availability['status']
+                                === true
+                            ) {
+
+                                foreach (
+                                    $availability['data']
+                                    as $row
                                 ) {
-                                    continue;
-                                }
-
-
-                                if (
-                                    $selected_branch != 0 &&
-                                    $item['branch_id']
-                                    != $selected_branch
-                                ) {
-                                    continue;
-                                }
-
-
-                                // Find branch
-                                $currentBranch = null;
-
-                                foreach ($branches as $branch) {
-
-                                    if (
-                                        $branch['id']
-                                        == $item['branch_id']
-                                    ) {
-
-                                        $currentBranch = $branch;
-                                        break;
-
-                                    }
-                                }
-
-                                if (!$currentBranch) {
-                                    continue;
-                                }
 
                             ?>
 
                                 <tr>
 
+                                    <!-- Number -->
+
                                     <td>
-                                        <?= $counter++; ?>
+
+                                        <?php
+                                        echo $counter++;
+                                        ?>
+
                                     </td>
 
+
+                                    <!-- Medicine -->
 
                                     <td>
 
                                         <strong>
 
-                                            <?= htmlspecialchars(
-                                                $currentBranch['name']
-                                            ); ?>
+                                            <?php
+                                            echo htmlspecialchars(
+                                                $row
+                                                ->medicine_name
+                                            );
+                                            ?>
 
                                         </strong>
 
+
+                                        <?php
+
+                                        if (
+                                            !empty(
+                                                $row
+                                                ->generic_name
+                                            )
+                                        ) {
+
+                                        ?>
+
+                                            <br>
+
+                                            <small
+                                                class="text-muted"
+                                            >
+
+                                                <?php
+                                                echo htmlspecialchars(
+                                                    $row
+                                                    ->generic_name
+                                                );
+                                                ?>
+
+                                            </small>
+
+                                        <?php
+
+                                        }
+
+                                        ?>
+
                                     </td>
 
 
+                                    <!-- Branch -->
+
                                     <td>
 
-                                        <i class="fa fa-map-marker text-muted"></i>
-
-                                        <?= htmlspecialchars(
-                                            $currentBranch['location']
-                                        ); ?>
+                                        <?php
+                                        echo htmlspecialchars(
+                                            $row
+                                            ->branch_name
+                                        );
+                                        ?>
 
                                     </td>
 
 
+                                    <!-- Quantity -->
+
                                     <td>
 
-                                        <?php if ($item['quantity'] > 0): ?>
+                                        <?php
 
-                                            <strong>
+                                        if (
+                                            (int)
+                                            $row->quantity
+                                            <= 10
+                                        ) {
 
-                                                <?= $item['quantity']; ?>
+                                        ?>
 
-                                            </strong>
+                                            <span
+                                                class="stock-low"
+                                            >
 
-                                            units
+                                                <?php
+                                                echo (int)
+                                                    $row->quantity;
+                                                ?>
 
-                                        <?php else: ?>
-
-                                            <span class="text-muted">
-                                                0 units
                                             </span>
 
-                                        <?php endif; ?>
+                                        <?php
+
+                                        } else {
+
+                                        ?>
+
+                                            <span
+                                                class="stock-good"
+                                            >
+
+                                                <?php
+                                                echo (int)
+                                                    $row->quantity;
+                                                ?>
+
+                                            </span>
+
+                                        <?php
+
+                                        }
+
+                                        ?>
 
                                     </td>
 
 
+                                    <!-- Selling Price -->
+
                                     <td>
 
-                                        <?php if ($item['quantity'] > 0): ?>
+                                        ৳
 
-                                            <span class="badge badge-success"
-                                                  style="padding:7px 10px;">
+                                        <?php
 
-                                                <i class="fa fa-check"></i>
+                                        echo number_format(
+                                            $row
+                                                ->selling_price,
+                                            2
+                                        );
+
+                                        ?>
+
+                                    </td>
+
+
+                                    <!-- Status -->
+
+                                    <td>
+
+                                        <?php
+
+                                        if (
+                                            (int)
+                                            $row->quantity
+                                            > 0
+                                        ) {
+
+                                        ?>
+
+                                            <span
+                                                class="badge badge-success"
+                                            >
 
                                                 Available
 
                                             </span>
 
-                                        <?php else: ?>
+                                        <?php
 
-                                            <span class="badge badge-danger"
-                                                  style="padding:7px 10px;">
+                                        } else {
 
-                                                <i class="fa fa-times"></i>
+                                        ?>
+
+                                            <span
+                                                class="badge badge-danger"
+                                            >
 
                                                 Out of Stock
 
                                             </span>
 
-                                        <?php endif; ?>
+                                        <?php
+
+                                        }
+
+                                        ?>
 
                                     </td>
 
 
-                                    <td class="text-right">
+                                    <!-- Action -->
 
-                                        <a href="new_sale.php?medicine_id=<?= $selected_medicine; ?>&branch_id=<?= $item['branch_id']; ?>"
-                                           class="btn btn-success btn-sm">
+                                    <td>
 
-                                            <i class="fa fa-shopping-cart"></i>
+                                        <a
+                                            href="medicine_availability.php?delete=<?php
+                                            echo (int)
+                                                $row
+                                                ->branch_medicine_id;
+                                            ?>"
+                                            class="btn btn-danger btn-sm"
+                                            onclick="return confirm('Are you sure you want to remove this medicine from this branch?');"
+                                        >
 
-                                            Sell
+                                            <i
+                                                class="fa fa-trash"
+                                            ></i>
 
                                         </a>
 
@@ -749,7 +1018,32 @@ $selected_branch = isset($_GET['branch_id'])
 
                                 </tr>
 
-                            <?php endforeach; ?>
+                            <?php
+
+                                }
+
+                            } else {
+
+                            ?>
+
+                                <tr>
+
+                                    <td
+                                        colspan="7"
+                                        class="text-center text-muted"
+                                    >
+
+                                        No medicine availability found.
+
+                                    </td>
+
+                                </tr>
+
+                            <?php
+
+                            }
+
+                            ?>
 
                         </tbody>
 
@@ -762,65 +1056,49 @@ $selected_branch = isset($_GET['branch_id'])
         </div>
 
 
-        <!-- Smart Information -->
-        <div class="card">
-
-            <div class="card-body">
-
-                <div class="row align-items-center">
-
-                    <div class="col-md-1 text-center">
-
-                        <i class="fa fa-lightbulb-o"
-                           style="
-                           font-size:40px;
-                           color:#f5a623;
-                           ">
-                        </i>
-
-                    </div>
-
-
-                    <div class="col-md-8">
-
-                        <h5>
-                            Smart Branch Finder
-                        </h5>
-
-                        <p class="text-muted mb-0">
-
-                            Instead of checking each pharmacy manually,
-                            staff can search for a medicine and instantly
-                            identify which SHIFA branch has stock.
-
-                        </p>
-
-                    </div>
-
-
-                    <div class="col-md-3 text-right">
-
-                        <a href="medicines.php"
-                           class="btn btn-outline-primary">
-
-                            <i class="fa fa-medkit"></i>
-                            Browse Medicines
-
-                        </a>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-        </div>
-
     </div>
 
-
-    <?php
-    require_once "../component/footer.php";
-    ?>
-
 </div>
+
+
+<script>
+
+// ==================================================
+// AUTO FILL SELLING PRICE
+// ==================================================
+
+document
+    .getElementById("medicine_id")
+    .addEventListener(
+        "change",
+        function () {
+
+            const option =
+                this.options[
+                    this.selectedIndex
+                ];
+
+            const price =
+                option.getAttribute(
+                    "data-price"
+                );
+
+
+            document
+                .getElementById(
+                    "selling_price"
+                )
+                .value =
+                price || "";
+
+        }
+    );
+
+</script>
+
+
+<?php
+
+require_once "../component/footer.php";
+
+?>

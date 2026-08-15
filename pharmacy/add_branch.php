@@ -1,97 +1,264 @@
 <?php
+
+require_once "../component/connection.php";
 require_once "../component/header.php";
 require_once "../component/sidebar.php";
+
+
+/* =========================
+   Add Branch
+   ========================= */
+
+if (isset($_POST['add_branch'])) {
+
+    $branch_name = trim($_POST['branch_name']);
+    $branch_code = trim($_POST['branch_code']);
+    $location    = trim($_POST['location']);
+    $address     = trim($_POST['address']);
+    $phone       = trim($_POST['phone']);
+    $status      = $_POST['status'];
+
+
+    /* =========================
+       Validate Required Fields
+       ========================= */
+
+    if (
+        empty($branch_name) ||
+        empty($branch_code) ||
+        empty($location) ||
+        empty($address) ||
+        empty($phone)
+    ) {
+
+        echo "<script>
+                alert('Please fill all required fields');
+              </script>";
+
+    } else {
+
+
+        /* =========================
+           Check Duplicate Branch Code
+           ========================= */
+
+        $check = $crud->common_select(
+            "pharmacy_branches",
+            "*",
+            ["branch_code" => $branch_code]
+        );
+
+
+        if ($check["status"]) {
+
+            echo "<script>
+                    alert('Branch code already exists');
+                  </script>";
+
+        } else {
+
+
+            /* =========================
+               Branch Data
+               ========================= */
+
+            $data = [
+
+                "branch_name" => $branch_name,
+                "branch_code" => $branch_code,
+                "location"    => $location,
+                "address"     => $address,
+                "phone"       => $phone,
+                "status"      => $status
+
+            ];
+
+
+            /* =========================
+               Insert Branch
+               ========================= */
+
+            $insert_result = $crud->common_insert(
+                "pharmacy_branches",
+                $data
+            );
+
+
+            /* =========================
+               Check Insert Result
+               ========================= */
+
+            if ($insert_result["status"]) {
+
+                echo "<script>
+                        alert('Branch added successfully');
+                        window.location.href='branches.php';
+                      </script>";
+
+                exit;
+
+            } else {
+
+                echo "<script>
+                        alert('Error: " .
+                        addslashes($insert_result["message"]) .
+                        "');
+                      </script>";
+            }
+        }
+    }
+}
+
 ?>
 
+
 <div class="page-wrapper">
+
     <div class="content">
 
-        <!-- Page Header -->
+
+        <!-- =========================
+             Page Header
+             ========================= -->
+
         <div class="row">
+
             <div class="col-sm-7 col-6">
-                <h4 class="page-title">Add Pharmacy Branch</h4>
+
+                <h4 class="page-title">
+
+                    Add Pharmacy Branch
+
+                </h4>
+
             </div>
 
+
             <div class="col-sm-5 col-6 text-right">
-                <a href="branches.php" class="btn btn-secondary btn-rounded">
+
+                <a href="branches.php"
+                   class="btn btn-secondary btn-rounded">
+
                     <i class="fa fa-arrow-left"></i>
+
                     Back to Branches
+
                 </a>
+
             </div>
+
         </div>
 
 
-        <!-- Branch Form -->
+
+        <!-- =========================
+             Branch Form
+             ========================= -->
+
         <div class="card">
 
             <div class="card-header">
+
                 <h4 class="card-title">
+
                     <i class="fa fa-hospital-o"></i>
+
                     Branch Information
+
                 </h4>
 
                 <p class="text-muted mb-0">
-                    Add a new pharmacy branch to SHIFA.
+
+                    Add a new pharmacy branch.
+
                 </p>
+
             </div>
 
 
             <div class="card-body">
 
+
                 <form method="POST" action="">
+
 
                     <div class="row">
 
+
                         <!-- Branch Name -->
+
                         <div class="col-md-6">
+
                             <div class="form-group">
 
                                 <label>
+
                                     Branch Name
+
                                     <span class="text-danger">*</span>
+
                                 </label>
+
 
                                 <input type="text"
                                        name="branch_name"
                                        class="form-control"
-                                       placeholder="e.g. SHIFA Agrabad Pharmacy"
+                                       placeholder="e.g. SHIFA Agrabad Branch"
                                        required>
 
                             </div>
+
                         </div>
 
 
+
                         <!-- Branch Code -->
+
                         <div class="col-md-6">
+
                             <div class="form-group">
 
                                 <label>
+
                                     Branch Code
+
                                     <span class="text-danger">*</span>
+
                                 </label>
+
 
                                 <input type="text"
                                        name="branch_code"
                                        class="form-control"
-                                       placeholder="e.g. SHP-004"
+                                       placeholder="e.g. SHIFA-AGR"
                                        required>
 
-                                <small class="form-text text-muted">
+                                <small class="text-muted">
+
                                     Use a unique code for each branch.
+
                                 </small>
 
                             </div>
+
                         </div>
 
 
+
                         <!-- Location -->
+
                         <div class="col-md-6">
+
                             <div class="form-group">
 
                                 <label>
+
                                     Location
+
                                     <span class="text-danger">*</span>
+
                                 </label>
+
 
                                 <input type="text"
                                        name="location"
@@ -100,178 +267,111 @@ require_once "../component/sidebar.php";
                                        required>
 
                             </div>
+
                         </div>
 
-
-                        <!-- Address -->
-                        <div class="col-md-6">
-                            <div class="form-group">
-
-                                <label>
-                                    Full Address
-                                </label>
-
-                                <input type="text"
-                                       name="address"
-                                       class="form-control"
-                                       placeholder="Enter complete branch address">
-
-                            </div>
-                        </div>
 
 
                         <!-- Phone -->
+
                         <div class="col-md-6">
+
                             <div class="form-group">
 
                                 <label>
-                                    Phone Number
+
+                                    Phone
+
                                     <span class="text-danger">*</span>
+
                                 </label>
+
 
                                 <input type="text"
                                        name="phone"
                                        class="form-control"
-                                       placeholder="e.g. 01700000000"
+                                       placeholder="e.g. 01911111111"
                                        required>
 
                             </div>
+
                         </div>
 
 
-                        <!-- Email -->
-                        <div class="col-md-6">
+
+                        <!-- Address -->
+
+                        <div class="col-md-12">
+
                             <div class="form-group">
 
                                 <label>
-                                    Email
-                                </label>
 
-                                <input type="email"
-                                       name="email"
-                                       class="form-control"
-                                       placeholder="branch@example.com">
+                                    Full Address
 
-                            </div>
-                        </div>
-
-
-                        <!-- Manager -->
-                        <div class="col-md-6">
-                            <div class="form-group">
-
-                                <label>
-                                    Branch Manager
                                     <span class="text-danger">*</span>
+
                                 </label>
 
-                                <input type="text"
-                                       name="manager"
-                                       class="form-control"
-                                       placeholder="Enter branch manager name"
-                                       required>
+
+                                <textarea name="address"
+                                          rows="4"
+                                          class="form-control"
+                                          placeholder="Enter full branch address"
+                                          required></textarea>
 
                             </div>
+
                         </div>
 
-
-                        <!-- Manager Phone -->
-                        <div class="col-md-6">
-                            <div class="form-group">
-
-                                <label>
-                                    Manager Contact
-                                </label>
-
-                                <input type="text"
-                                       name="manager_phone"
-                                       class="form-control"
-                                       placeholder="Manager phone number">
-
-                            </div>
-                        </div>
-
-
-                        <!-- Opening Time -->
-                        <div class="col-md-6">
-                            <div class="form-group">
-
-                                <label>
-                                    Opening Time
-                                </label>
-
-                                <input type="time"
-                                       name="opening_time"
-                                       class="form-control"
-                                       value="08:00">
-
-                            </div>
-                        </div>
-
-
-                        <!-- Closing Time -->
-                        <div class="col-md-6">
-                            <div class="form-group">
-
-                                <label>
-                                    Closing Time
-                                </label>
-
-                                <input type="time"
-                                       name="closing_time"
-                                       class="form-control"
-                                       value="22:00">
-
-                            </div>
-                        </div>
 
 
                         <!-- Status -->
+
                         <div class="col-md-6">
+
                             <div class="form-group">
 
                                 <label>
+
                                     Status
+
                                 </label>
+
 
                                 <select name="status"
                                         class="form-control">
 
+
                                     <option value="Active">
+
                                         Active
+
                                     </option>
 
+
                                     <option value="Inactive">
+
                                         Inactive
+
                                     </option>
+
 
                                 </select>
 
                             </div>
+
                         </div>
 
-
-                        <!-- Description -->
-                        <div class="col-md-12">
-                            <div class="form-group">
-
-                                <label>
-                                    Branch Description
-                                </label>
-
-                                <textarea name="description"
-                                          rows="4"
-                                          class="form-control"
-                                          placeholder="Write any additional information about this branch..."></textarea>
-
-                            </div>
-                        </div>
 
                     </div>
 
 
+
                     <!-- Buttons -->
+
                     <div class="text-right">
+
 
                         <a href="branches.php"
                            class="btn btn-secondary">
@@ -280,16 +380,20 @@ require_once "../component/sidebar.php";
 
                         </a>
 
+
                         <button type="submit"
-                                name="save_branch"
+                                name="add_branch"
                                 class="btn btn-primary">
 
                             <i class="fa fa-save"></i>
+
                             Save Branch
 
                         </button>
 
+
                     </div>
+
 
                 </form>
 
@@ -298,53 +402,13 @@ require_once "../component/sidebar.php";
         </div>
 
 
-        <!-- Important Information -->
-        <div class="card">
-
-            <div class="card-body">
-
-                <div class="row align-items-center">
-
-                    <div class="col-md-1 text-center">
-
-                        <i class="fa fa-info-circle"
-                           style="
-                           font-size:38px;
-                           color:#009efb;
-                           ">
-                        </i>
-
-                    </div>
-
-
-                    <div class="col-md-11">
-
-                        <h5>
-                            Why Branch Code is Important
-                        </h5>
-
-                        <p class="text-muted mb-0">
-
-                            Each pharmacy branch should have a unique
-                            branch code. This code will later help the
-                            system identify medicine availability,
-                            sales and reports for individual branches.
-
-                        </p>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-        </div>
-
     </div>
 
 
     <?php
+
     require_once "../component/footer.php";
+
     ?>
 
 </div>

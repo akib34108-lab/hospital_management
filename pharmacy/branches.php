@@ -1,136 +1,218 @@
 <?php
+
+require_once "../component/connection.php";
 require_once "../component/header.php";
 require_once "../component/sidebar.php";
 
-// Demo branch data
-$branches = [
-    [
-        "id" => 1,
-        "name" => "SHIFA Main Pharmacy",
-        "code" => "SHP-001",
-        "location" => "Dhaka",
-        "phone" => "01700000001",
-        "manager" => "Pharmacy Manager",
-        "status" => "Active"
-    ],
-    [
-        "id" => 2,
-        "name" => "SHIFA Chattogram Pharmacy",
-        "code" => "SHP-002",
-        "location" => "Chattogram",
-        "phone" => "01700000002",
-        "manager" => "Branch Manager",
-        "status" => "Active"
-    ],
-    [
-        "id" => 3,
-        "name" => "SHIFA Agrabad Pharmacy",
-        "code" => "SHP-003",
-        "location" => "Agrabad",
-        "phone" => "01700000003",
-        "manager" => "Branch Manager",
-        "status" => "Inactive"
-    ]
-];
+
+/* =========================
+   Get Pharmacy Branches
+   ========================= */
+
+$branch_result = $crud->common_select(
+    "pharmacy_branches",
+    "*",
+    [],
+    "AND",
+    "branch_id",
+    "DESC"
+);
+
+
+/* =========================
+   Branch Statistics
+   ========================= */
+
+$total_branches = $crud->number_of_records("pharmacy_branches");
+
+$active_branches = $crud->common_count(
+    "pharmacy_branches",
+    ["status" => "Active"]
+);
+
+$inactive_branches = $crud->common_count(
+    "pharmacy_branches",
+    ["status" => "Inactive"]
+);
+
 ?>
 
+
 <div class="page-wrapper">
+
     <div class="content">
 
-        <!-- Page Header -->
+
+        <!-- =========================
+             Page Header
+        ========================= -->
+
         <div class="row">
+
             <div class="col-sm-7 col-6">
-                <h4 class="page-title">Pharmacy Branches</h4>
+
+                <h4 class="page-title">
+                    Pharmacy Branches
+                </h4>
+
             </div>
 
+
             <div class="col-sm-5 col-6 text-right">
+
                 <a href="add_branch.php"
                    class="btn btn-primary btn-rounded">
+
                     <i class="fa fa-plus"></i>
+
                     Add Branch
+
                 </a>
+
             </div>
+
         </div>
 
 
-        <!-- Summary Cards -->
+
+        <!-- =========================
+             Summary Cards
+        ========================= -->
+
         <div class="row">
 
+
+            <!-- Total Branches -->
+
             <div class="col-md-4 col-sm-6">
+
                 <div class="card dash-widget">
 
                     <div class="card-body">
 
                         <span class="dash-widget-icon bg-info">
+
                             <i class="fa fa-hospital-o"></i>
+
                         </span>
 
+
                         <div class="dash-widget-info">
-                            <h3>3</h3>
-                            <span>Total Branches</span>
+
+                            <h3>
+                                <?php echo $total_branches; ?>
+                            </h3>
+
+                            <span>
+                                Total Branches
+                            </span>
+
                         </div>
 
                     </div>
 
                 </div>
+
             </div>
 
 
+
+            <!-- Active Branches -->
+
             <div class="col-md-4 col-sm-6">
+
                 <div class="card dash-widget">
 
                     <div class="card-body">
 
                         <span class="dash-widget-icon bg-success">
+
                             <i class="fa fa-check-circle"></i>
+
                         </span>
 
+
                         <div class="dash-widget-info">
-                            <h3>2</h3>
-                            <span>Active Branches</span>
+
+                            <h3>
+                                <?php echo $active_branches; ?>
+                            </h3>
+
+                            <span>
+                                Active Branches
+                            </span>
+
                         </div>
 
                     </div>
 
                 </div>
+
             </div>
 
 
+
+            <!-- Inactive Branches -->
+
             <div class="col-md-4 col-sm-6">
+
                 <div class="card dash-widget">
 
                     <div class="card-body">
 
-                        <span class="dash-widget-icon bg-danger">
-                            <i class="fa fa-times-circle"></i>
+                        <span class="dash-widget-icon bg-warning">
+
+                            <i class="fa fa-exclamation-circle"></i>
+
                         </span>
 
+
                         <div class="dash-widget-info">
-                            <h3>1</h3>
-                            <span>Inactive Branches</span>
+
+                            <h3>
+                                <?php echo $inactive_branches; ?>
+                            </h3>
+
+                            <span>
+                                Inactive Branches
+                            </span>
+
                         </div>
 
                     </div>
 
                 </div>
+
             </div>
 
         </div>
 
 
-        <!-- Branch List -->
+
+        <!-- =========================
+             Branch List Card
+        ========================= -->
+
         <div class="card">
+
 
             <div class="card-header">
 
                 <div class="row align-items-center">
 
+
                     <div class="col-md-6">
+
                         <h4 class="card-title mb-0">
+
                             <i class="fa fa-hospital-o"></i>
-                            Branch List
+
+                            Pharmacy Branch List
+
                         </h4>
+
                     </div>
+
 
                     <div class="col-md-6 text-right">
 
@@ -138,6 +220,7 @@ $branches = [
                            class="btn btn-outline-info btn-sm">
 
                             <i class="fa fa-search"></i>
+
                             Medicine Availability
 
                         </a>
@@ -149,24 +232,33 @@ $branches = [
             </div>
 
 
+
             <div class="card-body">
 
-                <!-- Search & Filter -->
+
+                <!-- =========================
+                     Search
+                ========================= -->
+
                 <div class="row mb-3">
 
-                    <div class="col-md-7">
+                    <div class="col-md-6">
 
                         <div class="input-group">
 
                             <input type="text"
                                    id="branchSearch"
                                    class="form-control"
-                                   placeholder="Search branch, code, location or manager...">
+                                   placeholder="Search branch...">
+
 
                             <div class="input-group-append">
 
-                                <button class="btn btn-primary">
+                                <button type="button"
+                                        class="btn btn-primary">
+
                                     <i class="fa fa-search"></i>
+
                                 </button>
 
                             </div>
@@ -175,135 +267,260 @@ $branches = [
 
                     </div>
 
-
-                    <div class="col-md-5">
-
-                        <select id="branchStatusFilter"
-                                class="form-control">
-
-                            <option value="">
-                                All Status
-                            </option>
-
-                            <option value="Active">
-                                Active
-                            </option>
-
-                            <option value="Inactive">
-                                Inactive
-                            </option>
-
-                        </select>
-
-                    </div>
-
                 </div>
 
 
-                <!-- Table -->
+
+                <!-- =========================
+                     Branch Table
+                ========================= -->
+
                 <div class="table-responsive">
 
                     <table class="table table-striped custom-table"
                            id="branchTable">
 
+
                         <thead>
 
                             <tr>
 
-                                <th>#</th>
-                                <th>Branch</th>
-                                <th>Code</th>
-                                <th>Location</th>
-                                <th>Phone</th>
-                                <th>Manager</th>
-                                <th>Status</th>
-                                <th class="text-right">Action</th>
+                                <th>
+                                    #
+                                </th>
+
+
+                                <th>
+                                    Branch Name
+                                </th>
+
+
+                                <th>
+                                    Branch Code
+                                </th>
+
+
+                                <th>
+                                    Location
+                                </th>
+
+
+                                <th>
+                                    Address
+                                </th>
+
+
+                                <th>
+                                    Phone
+                                </th>
+
+
+                                <th>
+                                    Status
+                                </th>
+
+
+                                <th class="text-right">
+                                    Action
+                                </th>
 
                             </tr>
 
                         </thead>
 
 
+
                         <tbody>
 
-                            <?php foreach ($branches as $branch): ?>
+
+                        <?php if ($branch_result["status"]): ?>
+
+
+                            <?php
+
+                            $serial = 1;
+
+                            ?>
+
+
+                            <?php foreach ($branch_result["data"] as $branch): ?>
+
 
                                 <tr>
 
+
+                                    <!-- Serial -->
+
                                     <td>
-                                        <?= $branch['id']; ?>
+
+                                        <?php
+                                        echo $serial++;
+                                        ?>
+
                                     </td>
 
+
+
+                                    <!-- Branch Name -->
 
                                     <td>
 
                                         <strong>
-                                            <?= htmlspecialchars($branch['name']); ?>
+
+                                            <?php
+
+                                            echo htmlspecialchars(
+                                                $branch->branch_name ?? ''
+                                            );
+
+                                            ?>
+
                                         </strong>
 
                                     </td>
 
 
+
+                                    <!-- Branch Code -->
+
                                     <td>
 
-                                        <span class="badge badge-light">
-                                            <?= htmlspecialchars($branch['code']); ?>
-                                        </span>
+                                        <?php
+
+                                        if (isset($branch->branch_code)
+                                            && $branch->branch_code !== null
+                                            && $branch->branch_code !== '') {
+
+                                            echo htmlspecialchars(
+                                                $branch->branch_code
+                                            );
+
+                                        } else {
+
+                                            echo '<span class="text-muted">-</span>';
+
+                                        }
+
+                                        ?>
 
                                     </td>
 
 
+
+                                    <!-- Location -->
+
                                     <td>
 
-                                        <i class="fa fa-map-marker text-muted"></i>
+                                        <?php
 
-                                        <?= htmlspecialchars($branch['location']); ?>
+                                        if (isset($branch->location)
+                                            && $branch->location !== null
+                                            && $branch->location !== '') {
+
+                                            echo htmlspecialchars(
+                                                $branch->location
+                                            );
+
+                                        } else {
+
+                                            echo '<span class="text-muted">-</span>';
+
+                                        }
+
+                                        ?>
 
                                     </td>
 
 
+
+                                    <!-- Address -->
+
                                     <td>
 
-                                        <i class="fa fa-phone text-muted"></i>
+                                        <?php
 
-                                        <?= htmlspecialchars($branch['phone']); ?>
+                                        if (isset($branch->address)
+                                            && $branch->address !== null
+                                            && $branch->address !== '') {
+
+                                            echo htmlspecialchars(
+                                                $branch->address
+                                            );
+
+                                        } else {
+
+                                            echo '<span class="text-muted">-</span>';
+
+                                        }
+
+                                        ?>
 
                                     </td>
 
 
+
+                                    <!-- Phone -->
+
                                     <td>
-                                        <?= htmlspecialchars($branch['manager']); ?>
+
+                                        <?php
+
+                                        echo htmlspecialchars(
+                                            $branch->phone ?? ''
+                                        );
+
+                                        ?>
+
                                     </td>
 
 
+
+                                    <!-- Status -->
+
                                     <td>
 
-                                        <?php if ($branch['status'] == "Active"): ?>
+
+                                        <?php
+
+                                        $status = $branch->status ?? 'Inactive';
+
+                                        ?>
+
+
+                                        <?php if ($status == "Active"): ?>
+
 
                                             <span class="badge badge-success">
 
-                                                <i class="fa fa-check"></i>
                                                 Active
 
                                             </span>
 
+
                                         <?php else: ?>
 
-                                            <span class="badge badge-danger">
 
-                                                <i class="fa fa-times"></i>
+                                            <span class="badge badge-warning">
+
                                                 Inactive
 
                                             </span>
 
+
                                         <?php endif; ?>
+
 
                                     </td>
 
 
+
+                                    <!-- Action -->
+
                                     <td class="text-right">
 
+
                                         <div class="dropdown dropdown-action">
+
 
                                             <a href="#"
                                                class="action-icon dropdown-toggle"
@@ -314,57 +531,83 @@ $branches = [
                                             </a>
 
 
+
                                             <div class="dropdown-menu dropdown-menu-right">
 
-                                                <a class="dropdown-item"
-                                                   href="medicine_availability.php?branch_id=<?= $branch['id']; ?>">
 
-                                                    <i class="fa fa-search m-r-5"></i>
-                                                    View Medicines
+                                                <!-- View -->
+
+                                                <a class="dropdown-item"
+                                                   href="branch_view.php?id=<?php echo $branch->branch_id; ?>">
+
+                                                    <i class="fa fa-eye m-r-5"></i>
+
+                                                    View
 
                                                 </a>
 
 
+
+                                                <!-- Edit -->
+
                                                 <a class="dropdown-item"
-                                                   href="edit_branch.php?id=<?= $branch['id']; ?>">
+                                                   href="edit_branch.php?id=<?php echo $branch->branch_id; ?>">
 
                                                     <i class="fa fa-pencil m-r-5"></i>
+
                                                     Edit
 
                                                 </a>
+
 
                                             </div>
 
                                         </div>
 
+
                                     </td>
 
+
                                 </tr>
+
 
                             <?php endforeach; ?>
 
 
-                            <!-- No Result -->
-                            <tr id="noBranchMessage"
-                                style="display:none;">
+                        <?php else: ?>
+
+
+                            <!-- No Branch -->
+
+                            <tr id="noBranchMessage">
 
                                 <td colspan="8"
                                     class="text-center text-muted"
                                     style="padding:30px;">
 
+
                                     <i class="fa fa-hospital-o"
                                        style="font-size:30px;">
                                     </i>
 
-                                    <br><br>
 
-                                    No branch found.
+                                    <br>
+                                    <br>
+
+
+                                    No pharmacy branch found.
+
 
                                 </td>
 
                             </tr>
 
+
+                        <?php endif; ?>
+
+
                         </tbody>
+
 
                     </table>
 
@@ -375,52 +618,59 @@ $branches = [
         </div>
 
 
-        <!-- Branch & Medicine Connection -->
+
+        <!-- =========================
+             Medicine Availability Card
+        ========================= -->
+
         <div class="card">
+
 
             <div class="card-body">
 
+
                 <div class="row align-items-center">
-
-                    <div class="col-md-1 text-center">
-
-                        <i class="fa fa-link"
-                           style="
-                           font-size:38px;
-                           color:#009efb;
-                           ">
-                        </i>
-
-                    </div>
 
 
                     <div class="col-md-8">
 
+
                         <h5>
-                            Branch-wise Medicine Management
+
+                            <i class="fa fa-info-circle text-info"></i>
+
+                            Medicine Availability
+
                         </h5>
+
 
                         <p class="text-muted mb-0">
 
-                            Manage and track which medicines are
-                            available at each pharmacy branch.
+                            Check which pharmacy branch has
+                            a particular medicine.
 
                         </p>
 
+
                     </div>
 
 
-                    <div class="col-md-3 text-right">
+
+                    <div class="col-md-4 text-right">
+
 
                         <a href="medicine_availability.php"
-                           class="btn btn-primary">
+                           class="btn btn-info">
 
                             <i class="fa fa-search"></i>
-                            Check Availability
+
+                            Find Medicine
 
                         </a>
 
+
                     </div>
+
 
                 </div>
 
@@ -428,34 +678,48 @@ $branches = [
 
         </div>
 
+
     </div>
 
 
+
     <?php
+
     require_once "../component/footer.php";
+
     ?>
+
 
 </div>
 
 
+
+<!-- =========================
+     Search Script
+========================= -->
+
 <script>
+
 $(document).ready(function () {
 
-    function filterBranches() {
+
+    $("#branchSearch").on("keyup", function () {
+
 
         var searchValue =
-            $("#branchSearch").val().toLowerCase();
+            $(this).val().toLowerCase();
 
-        var statusValue =
-            $("#branchStatusFilter").val().toLowerCase();
 
         var visibleRows = 0;
 
 
         $("#branchTable tbody tr").each(function () {
 
+
             if ($(this).attr("id") === "noBranchMessage") {
+
                 return;
+
             }
 
 
@@ -463,24 +727,7 @@ $(document).ready(function () {
                 $(this).text().toLowerCase();
 
 
-            var statusText =
-                $(this)
-                .find("td:eq(6)")
-                .text()
-                .trim()
-                .toLowerCase();
-
-
-            var searchMatch =
-                rowText.includes(searchValue);
-
-
-            var statusMatch =
-                statusValue === "" ||
-                statusText === statusValue;
-
-
-            if (searchMatch && statusMatch) {
+            if (rowText.includes(searchValue)) {
 
                 $(this).show();
 
@@ -504,17 +751,10 @@ $(document).ready(function () {
             $("#noBranchMessage").hide();
 
         }
-    }
 
-
-    $("#branchSearch").on("keyup", function () {
-        filterBranches();
     });
 
-
-    $("#branchStatusFilter").on("change", function () {
-        filterBranches();
-    });
 
 });
+
 </script>

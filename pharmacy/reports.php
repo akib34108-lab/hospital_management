@@ -1,87 +1,477 @@
 <?php
+
 require_once "../component/header.php";
 require_once "../component/sidebar.php";
+require_once "../crud/crud_class.php";
 
-/*
-|--------------------------------------------------------------------------
-| Demo Report Data
-|--------------------------------------------------------------------------
-*/
-
-$branches = [
-    [
-        "name" => "SHIFA Main Pharmacy",
-        "sales" => 120,
-        "revenue" => 18500
-    ],
-    [
-        "name" => "SHIFA Chattogram Pharmacy",
-        "sales" => 85,
-        "revenue" => 12400
-    ],
-    [
-        "name" => "SHIFA Agrabad Pharmacy",
-        "sales" => 65,
-        "revenue" => 9100
-    ]
-];
+$crud = new crud_class();
 
 
-$medicines = [
-    [
-        "name" => "Napa",
-        "sold" => 150,
-        "revenue" => 1500
-    ],
-    [
-        "name" => "Seclo",
-        "sold" => 95,
-        "revenue" => 5700
-    ],
-    [
-        "name" => "Napa Extra",
-        "sold" => 70,
-        "revenue" => 1050
-    ],
-    [
-        "name" => "Fexo",
-        "sold" => 45,
-        "revenue" => 2250
-    ]
-];
+// ==================================================
+// DATE FILTER
+// ==================================================
+
+$from_date = $_GET['from_date'] ?? date('Y-m-01');
+$to_date   = $_GET['to_date'] ?? date('Y-m-d');
 
 
-$total_sales = 270;
-$total_revenue = 40000;
-$paid_amount = 35000;
-$pending_amount = 5000;
+// ==================================================
+// ESCAPE DATE
+// ==================================================
+
+$from_date_safe =
+    $crud->conn->real_escape_string($from_date);
+
+$to_date_safe =
+    $crud->conn->real_escape_string($to_date);
+
+
+// ==================================================
+// 1. TOTAL SALES
+// ==================================================
+
+$total_sales_sql = "
+
+    SELECT COUNT(*) AS total_sales
+
+    FROM pharmacy_sales
+
+    WHERE deleted_at IS NULL
+
+    AND status = 'Completed'
+
+    AND DATE(sale_date)
+        BETWEEN '$from_date_safe'
+        AND '$to_date_safe'
+
+";
+
+$total_sales_result =
+    $crud->conn->query($total_sales_sql);
+
+$total_sales = 0;
+
+if ($total_sales_result) {
+
+    $row =
+        $total_sales_result->fetch_assoc();
+
+    $total_sales =
+        (int)$row['total_sales'];
+}
+
+
+// ==================================================
+// 2. TOTAL REVENUE
+// ==================================================
+
+$total_revenue_sql = "
+
+    SELECT
+        COALESCE(
+            SUM(total_amount),
+            0
+        ) AS total_revenue
+
+    FROM pharmacy_sales
+
+    WHERE deleted_at IS NULL
+
+    AND status = 'Completed'
+
+    AND DATE(sale_date)
+        BETWEEN '$from_date_safe'
+        AND '$to_date_safe'
+
+";
+
+$total_revenue_result =
+    $crud->conn->query(
+        $total_revenue_sql
+    );
+
+$total_revenue = 0;
+
+if ($total_revenue_result) {
+
+    $row =
+        $total_revenue_result->fetch_assoc();
+
+    $total_revenue =
+        (float)$row['total_revenue'];
+}
+
+
+// ==================================================
+// 3. PENDING SALES
+// ==================================================
+
+$pending_sql = "
+
+    SELECT COUNT(*) AS total_pending
+
+    FROM pharmacy_sales
+
+    WHERE deleted_at IS NULL
+
+    AND status = 'Pending'
+
+    AND DATE(sale_date)
+        BETWEEN '$from_date_safe'
+        AND '$to_date_safe'
+
+";
+
+$pending_result =
+    $crud->conn->query($pending_sql);
+
+$total_pending = 0;
+
+if ($pending_result) {
+
+    $row =
+        $pending_result->fetch_assoc();
+
+    $total_pending =
+        (int)$row['total_pending'];
+}
+
+
+// ==================================================
+// 4. CANCELLED SALES
+// ==================================================
+
+$cancelled_sql = "
+
+    SELECT COUNT(*) AS total_cancelled
+
+    FROM pharmacy_sales
+
+    WHERE deleted_at IS NULL
+
+    AND status = 'Cancelled'
+
+    AND DATE(sale_date)
+        BETWEEN '$from_date_safe'
+        AND '$to_date_safe'
+
+";
+
+$cancelled_result =
+    $crud->conn->query(
+        $cancelled_sql
+    );
+
+$total_cancelled = 0;
+
+if ($cancelled_result) {
+
+    $row =
+        $cancelled_result->fetch_assoc();
+
+    $total_cancelled =
+        (int)$row['total_cancelled'];
+}
+
+
+// ==================================================
+// 5. BRANCH-WISE SALES
+// ==================================================
+
+$branch_sales_sql = "
+
+    SELECT
+
+        pb.branch_name,
+
+        COUNT(ps.sale_id)
+        AS total_sales,
+
+        COALESCE(
+            SUM(ps.total_amount),
+            0
+        ) AS total_amount
+
+    FROM pharmacy_sales ps
+
+    INNER JOIN pharmacy_branches pb
+
+        ON ps.branch_id =
+           pb.branch_id
+
+    WHERE ps.deleted_at IS NULL
+
+    AND ps.status = 'Completed'
+
+    AND DATE(ps.sale_date)
+        BETWEEN '$from_date_safe'
+        AND '$to_date_safe'
+
+    GROUP BY
+        ps.branch_id,
+        pb.branch_name
+
+    ORDER BY
+        total_amount DESC
+
+";
+
+$branch_sales_result =
+    $crud->conn->query(
+        $branch_sales_sql
+    );
+
+
+// ==================================================
+// 6. PAYMENT METHOD SALES
+// ==================================================
+
+$payment_sql = "
+
+    SELECT
+
+        payment_method,
+
+        COUNT(*) AS total_sales,
+
+        COALESCE(
+            SUM(total_amount),
+            0
+        ) AS total_amount
+
+    FROM pharmacy_sales
+
+    WHERE deleted_at IS NULL
+
+    AND status = 'Completed'
+
+    AND DATE(sale_date)
+        BETWEEN '$from_date_safe'
+        AND '$to_date_safe'
+
+    GROUP BY payment_method
+
+    ORDER BY total_amount DESC
+
+";
+
+$payment_result =
+    $crud->conn->query(
+        $payment_sql
+    );
+
+
+// ==================================================
+// 7. TOP SELLING MEDICINES
+// ==================================================
+
+$top_medicine_sql = "
+
+    SELECT
+
+        m.medicine_name,
+
+        m.generic_name,
+
+        SUM(
+            psi.quantity
+        ) AS total_quantity,
+
+        COALESCE(
+            SUM(psi.subtotal),
+            0
+        ) AS total_amount
+
+    FROM pharmacy_sale_items psi
+
+    INNER JOIN pharmacy_sales ps
+
+        ON psi.sale_id =
+           ps.sale_id
+
+    INNER JOIN medicines m
+
+        ON psi.medicine_id =
+           m.medicine_id
+
+    WHERE psi.deleted_at IS NULL
+
+    AND ps.deleted_at IS NULL
+
+    AND ps.status = 'Completed'
+
+    AND DATE(ps.sale_date)
+        BETWEEN '$from_date_safe'
+        AND '$to_date_safe'
+
+    GROUP BY
+
+        psi.medicine_id,
+        m.medicine_name,
+        m.generic_name
+
+    ORDER BY
+        total_quantity DESC
+
+    LIMIT 10
+
+";
+
+$top_medicine_result =
+    $crud->conn->query(
+        $top_medicine_sql
+    );
+
+
+// ==================================================
+// 8. DAILY SALES
+// ==================================================
+
+$daily_sales_sql = "
+
+    SELECT
+
+        DATE(sale_date)
+        AS sale_day,
+
+        COUNT(*) AS total_sales,
+
+        COALESCE(
+            SUM(total_amount),
+            0
+        ) AS total_amount
+
+    FROM pharmacy_sales
+
+    WHERE deleted_at IS NULL
+
+    AND status = 'Completed'
+
+    AND DATE(sale_date)
+        BETWEEN '$from_date_safe'
+        AND '$to_date_safe'
+
+    GROUP BY
+        DATE(sale_date)
+
+    ORDER BY
+        sale_day DESC
+
+";
+
+$daily_sales_result =
+    $crud->conn->query(
+        $daily_sales_sql
+    );
+
 ?>
+
+<style>
+
+.report-card {
+
+    border-radius: 8px;
+    border: 1px solid #e5e5e5;
+    background: #fff;
+    padding: 20px;
+    margin-bottom: 20px;
+
+}
+
+.report-card h3 {
+
+    font-size: 26px;
+    margin-bottom: 5px;
+
+}
+
+.report-card p {
+
+    margin-bottom: 0;
+    color: #777;
+
+}
+
+.report-title {
+
+    font-weight: 600;
+    margin-bottom: 20px;
+
+}
+
+.report-table th {
+
+    background: #f5f5f5;
+
+}
+
+.filter-card {
+
+    background: #fff;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    margin-bottom: 20px;
+
+}
+
+@media print {
+
+    .sidebar,
+    .page-header,
+    .filter-card,
+    .no-print,
+    footer {
+
+        display: none !important;
+
+    }
+
+    .page-wrapper {
+
+        margin-left: 0 !important;
+
+    }
+
+}
+
+</style>
+
 
 <div class="page-wrapper">
 
     <div class="content">
 
-        <!-- Page Header -->
-        <div class="row align-items-center mb-3">
 
-            <div class="col-md-7">
+        <!-- ==========================================
+             PAGE HEADER
+        =========================================== -->
 
-                <h4 class="page-title mb-1">
+        <div class="page-header">
+
+            <div class="page-title">
+
+                <h4>
                     Pharmacy Reports
                 </h4>
 
-                <p class="text-muted mb-0">
-                    Analyze pharmacy sales and performance
-                </p>
+                <h6>
+                    Sales and pharmacy performance report
+                </h6>
 
             </div>
 
-            <div class="col-md-5 text-right">
 
-                <button onclick="window.print()"
-                        class="btn btn-primary">
+            <div class="page-btn no-print">
+
+                <button
+                    type="button"
+                    onclick="window.print()"
+                    class="btn btn-primary"
+                >
 
                     <i class="fa fa-print"></i>
+
                     Print Report
 
                 </button>
@@ -91,131 +481,128 @@ $pending_amount = 5000;
         </div>
 
 
-        <!-- Filter -->
-        <div class="card">
 
-            <div class="card-body">
+        <!-- ==========================================
+             DATE FILTER
+        =========================================== -->
+
+        <div class="filter-card no-print">
+
+            <form
+                method="GET"
+            >
 
                 <div class="row">
 
-                    <div class="col-md-4">
+                    <div
+                        class="col-lg-4 col-md-4 col-sm-6"
+                    >
 
-                        <label>
-                            Report Period
-                        </label>
+                        <div class="form-group">
 
-                        <select class="form-control">
+                            <label>
+                                From Date
+                            </label>
 
-                            <option>
-                                Today
-                            </option>
+                            <input
+                                type="date"
+                                name="from_date"
+                                class="form-control"
+                                value="<?php
+                                echo htmlspecialchars(
+                                    $from_date
+                                );
+                                ?>"
+                            >
 
-                            <option selected>
-                                This Month
-                            </option>
-
-                            <option>
-                                Last Month
-                            </option>
-
-                            <option>
-                                This Year
-                            </option>
-
-                        </select>
+                        </div>
 
                     </div>
 
 
-                    <div class="col-md-4">
+                    <div
+                        class="col-lg-4 col-md-4 col-sm-6"
+                    >
 
-                        <label>
-                            Pharmacy Branch
-                        </label>
+                        <div class="form-group">
 
-                        <select class="form-control">
+                            <label>
+                                To Date
+                            </label>
 
-                            <option>
-                                All Branches
-                            </option>
+                            <input
+                                type="date"
+                                name="to_date"
+                                class="form-control"
+                                value="<?php
+                                echo htmlspecialchars(
+                                    $to_date
+                                );
+                                ?>"
+                            >
 
-                            <?php foreach ($branches as $branch): ?>
-
-                                <option>
-                                    <?= $branch["name"]; ?>
-                                </option>
-
-                            <?php endforeach; ?>
-
-                        </select>
+                        </div>
 
                     </div>
 
 
-                    <div class="col-md-4">
+                    <div
+                        class="col-lg-4 col-md-4 col-sm-12"
+                    >
 
-                        <label>
-                            Report Type
-                        </label>
+                        <div class="form-group">
 
-                        <select class="form-control">
+                            <label>
+                                &nbsp;
+                            </label>
 
-                            <option>
-                                Sales Report
-                            </option>
+                            <button
+                                type="submit"
+                                class="btn btn-primary w-100"
+                            >
 
-                            <option>
-                                Medicine Report
-                            </option>
+                                <i class="fa fa-search"></i>
 
-                            <option>
-                                Branch Report
-                            </option>
+                                Generate Report
 
-                            <option>
-                                Payment Report
-                            </option>
+                            </button>
 
-                        </select>
+                        </div>
 
                     </div>
 
                 </div>
 
-            </div>
+            </form>
 
         </div>
 
 
-        <!-- Summary Cards -->
+
+        <!-- ==========================================
+             SUMMARY CARDS
+        =========================================== -->
+
         <div class="row">
 
-            <!-- Sales -->
-            <div class="col-md-3 col-sm-6">
 
-                <div class="card dash-widget">
+            <!-- Total Sales -->
 
-                    <div class="card-body">
+            <div
+                class="col-lg-3 col-md-6 col-sm-6"
+            >
 
-                        <span class="dash-widget-icon bg-info">
+                <div class="report-card">
 
-                            <i class="fa fa-shopping-cart"></i>
+                    <p>
+                        Total Completed Sales
+                    </p>
 
-                        </span>
-
-                        <div class="dash-widget-info">
-
-                            <h3>
-                                <?= $total_sales; ?>
-                            </h3>
-
-                            <span>
-                                Total Sales
-                            </span>
-
-                        </div>
-
-                    </div>
+                    <h3>
+                        <?php
+                        echo $total_sales;
+                        ?>
+                    </h3>
 
                 </div>
 
@@ -223,69 +610,31 @@ $pending_amount = 5000;
 
 
             <!-- Revenue -->
-            <div class="col-md-3 col-sm-6">
 
-                <div class="card dash-widget">
+            <div
+                class="col-lg-3 col-md-6 col-sm-6"
+            >
 
-                    <div class="card-body">
+                <div class="report-card">
 
-                        <span class="dash-widget-icon bg-success">
+                    <p>
+                        Total Revenue
+                    </p>
 
-                            <i class="fa fa-money"></i>
+                    <h3>
 
-                        </span>
+                        ৳
 
-                        <div class="dash-widget-info">
+                        <?php
 
-                            <h3>
-                                ৳<?= number_format(
-                                    $total_revenue,
-                                    2
-                                ); ?>
-                            </h3>
+                        echo number_format(
+                            $total_revenue,
+                            2
+                        );
 
-                            <span>
-                                Total Revenue
-                            </span>
+                        ?>
 
-                        </div>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-
-            <!-- Paid -->
-            <div class="col-md-3 col-sm-6">
-
-                <div class="card dash-widget">
-
-                    <div class="card-body">
-
-                        <span class="dash-widget-icon bg-primary">
-
-                            <i class="fa fa-check-circle"></i>
-
-                        </span>
-
-                        <div class="dash-widget-info">
-
-                            <h3>
-                                ৳<?= number_format(
-                                    $paid_amount,
-                                    2
-                                ); ?>
-                            </h3>
-
-                            <span>
-                                Paid Amount
-                            </span>
-
-                        </div>
-
-                    </div>
+                    </h3>
 
                 </div>
 
@@ -293,34 +642,45 @@ $pending_amount = 5000;
 
 
             <!-- Pending -->
-            <div class="col-md-3 col-sm-6">
 
-                <div class="card dash-widget">
+            <div
+                class="col-lg-3 col-md-6 col-sm-6"
+            >
 
-                    <div class="card-body">
+                <div class="report-card">
 
-                        <span class="dash-widget-icon bg-warning">
+                    <p>
+                        Pending Sales
+                    </p>
 
-                            <i class="fa fa-clock-o"></i>
+                    <h3>
+                        <?php
+                        echo $total_pending;
+                        ?>
+                    </h3>
 
-                        </span>
+                </div>
 
-                        <div class="dash-widget-info">
+            </div>
 
-                            <h3>
-                                ৳<?= number_format(
-                                    $pending_amount,
-                                    2
-                                ); ?>
-                            </h3>
 
-                            <span>
-                                Pending Amount
-                            </span>
+            <!-- Cancelled -->
 
-                        </div>
+            <div
+                class="col-lg-3 col-md-6 col-sm-6"
+            >
 
-                    </div>
+                <div class="report-card">
+
+                    <p>
+                        Cancelled Sales
+                    </p>
+
+                    <h3>
+                        <?php
+                        echo $total_cancelled;
+                        ?>
+                    </h3>
 
                 </div>
 
@@ -329,258 +689,20 @@ $pending_amount = 5000;
         </div>
 
 
-        <!-- Branch Performance -->
-        <div class="row">
 
-            <div class="col-md-7">
+        <!-- ==========================================
+             BRANCH-WISE SALES
+        =========================================== -->
 
-                <div class="card">
-
-                    <div class="card-header">
-
-                        <h4 class="card-title">
-
-                            <i class="fa fa-hospital-o text-primary"></i>
-
-                            Branch Performance
-
-                        </h4>
-
-                    </div>
-
-
-                    <div class="card-body">
-
-                        <div class="table-responsive">
-
-                            <table class="table table-striped">
-
-                                <thead>
-
-                                    <tr>
-
-                                        <th>
-                                            Branch
-                                        </th>
-
-                                        <th>
-                                            Sales
-                                        </th>
-
-                                        <th>
-                                            Revenue
-                                        </th>
-
-                                    </tr>
-
-                                </thead>
-
-
-                                <tbody>
-
-                                    <?php foreach (
-                                        $branches as $branch
-                                    ): ?>
-
-                                        <tr>
-
-                                            <td>
-
-                                                <i class="fa fa-hospital-o
-                                                          text-muted">
-                                                </i>
-
-                                                <?= $branch["name"]; ?>
-
-                                            </td>
-
-
-                                            <td>
-
-                                                <span class="badge badge-info">
-
-                                                    <?= $branch["sales"]; ?>
-
-                                                </span>
-
-                                            </td>
-
-
-                                            <td>
-
-                                                <strong>
-
-                                                    ৳<?= number_format(
-                                                        $branch["revenue"],
-                                                        2
-                                                    ); ?>
-
-                                                </strong>
-
-                                            </td>
-
-                                        </tr>
-
-                                    <?php endforeach; ?>
-
-                                </tbody>
-
-                            </table>
-
-                        </div>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-
-            <!-- Payment Summary -->
-            <div class="col-md-5">
-
-                <div class="card">
-
-                    <div class="card-header">
-
-                        <h4 class="card-title">
-
-                            <i class="fa fa-credit-card text-primary"></i>
-
-                            Payment Summary
-
-                        </h4>
-
-                    </div>
-
-
-                    <div class="card-body">
-
-                        <div class="row text-center">
-
-                            <div class="col-6">
-
-                                <div style="
-                                    padding:20px;
-                                    border-radius:8px;
-                                    background:#eaf8ef;
-                                ">
-
-                                    <i class="fa fa-check-circle
-                                              text-success"
-                                       style="font-size:30px;">
-                                    </i>
-
-                                    <h4 class="mt-2">
-
-                                        ৳<?= number_format(
-                                            $paid_amount,
-                                            2
-                                        ); ?>
-
-                                    </h4>
-
-                                    <span class="text-muted">
-                                        Paid
-                                    </span>
-
-                                </div>
-
-                            </div>
-
-
-                            <div class="col-6">
-
-                                <div style="
-                                    padding:20px;
-                                    border-radius:8px;
-                                    background:#fff7e6;
-                                ">
-
-                                    <i class="fa fa-clock-o
-                                              text-warning"
-                                       style="font-size:30px;">
-                                    </i>
-
-                                    <h4 class="mt-2">
-
-                                        ৳<?= number_format(
-                                            $pending_amount,
-                                            2
-                                        ); ?>
-
-                                    </h4>
-
-                                    <span class="text-muted">
-                                        Pending
-                                    </span>
-
-                                </div>
-
-                            </div>
-
-                        </div>
-
-
-                        <hr>
-
-
-                        <div class="text-center">
-
-                            <span class="text-muted">
-                                Payment Collection Rate
-                            </span>
-
-                            <h3 class="text-success">
-
-                                <?= round(
-                                    ($paid_amount /
-                                    $total_revenue) * 100
-                                ); ?>%
-
-                            </h3>
-
-                        </div>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-        </div>
-
-
-        <!-- Medicine Performance -->
         <div class="card">
 
             <div class="card-header">
 
-                <div class="row">
+                <h4 class="report-title">
 
-                    <div class="col-md-8">
+                    Branch-wise Sales
 
-                        <h4 class="card-title">
-
-                            <i class="fa fa-medkit text-primary"></i>
-
-                            Medicine Sales Performance
-
-                        </h4>
-
-                    </div>
-
-                    <div class="col-md-4 text-right">
-
-                        <span class="badge badge-primary">
-
-                            Best Selling Medicines
-
-                        </span>
-
-                    </div>
-
-                </div>
+                </h4>
 
             </div>
 
@@ -589,7 +711,9 @@ $pending_amount = 5000;
 
                 <div class="table-responsive">
 
-                    <table class="table table-striped">
+                    <table
+                        class="table table-bordered report-table"
+                    >
 
                         <thead>
 
@@ -600,19 +724,15 @@ $pending_amount = 5000;
                                 </th>
 
                                 <th>
-                                    Medicine
+                                    Branch
                                 </th>
 
                                 <th>
-                                    Units Sold
+                                    Total Sales
                                 </th>
 
                                 <th>
-                                    Revenue
-                                </th>
-
-                                <th>
-                                    Performance
+                                    Total Amount
                                 </th>
 
                             </tr>
@@ -623,91 +743,69 @@ $pending_amount = 5000;
                         <tbody>
 
                             <?php
-                            $rank = 1;
 
-                            foreach (
-                                $medicines as $medicine
-                            ):
+                            $counter = 1;
+
+
+                            if (
+                                $branch_sales_result
+                                &&
+                                $branch_sales_result
+                                    ->num_rows > 0
+                            ) {
+
+                                while (
+                                    $row =
+                                    $branch_sales_result
+                                        ->fetch_assoc()
+                                ) {
+
                             ?>
 
                                 <tr>
 
                                     <td>
-
-                                        <?php if ($rank == 1): ?>
-
-                                            <span class="badge badge-warning">
-                                                #1
-                                            </span>
-
-                                        <?php elseif ($rank == 2): ?>
-
-                                            <span class="badge badge-info">
-                                                #2
-                                            </span>
-
-                                        <?php else: ?>
-
-                                            #<?= $rank; ?>
-
-                                        <?php endif; ?>
-
+                                        <?php
+                                        echo $counter++;
+                                        ?>
                                     </td>
-
 
                                     <td>
 
-                                        <i class="fa fa-medkit
-                                                  text-muted">
-                                        </i>
-
-                                        <strong>
-                                            <?= $medicine["name"]; ?>
-                                        </strong>
+                                        <?php
+                                        echo htmlspecialchars(
+                                            $row[
+                                                'branch_name'
+                                            ]
+                                        );
+                                        ?>
 
                                     </td>
-
 
                                     <td>
 
-                                        <?= $medicine["sold"]; ?>
-
-                                        units
+                                        <?php
+                                        echo $row[
+                                            'total_sales'
+                                        ];
+                                        ?>
 
                                     </td>
-
 
                                     <td>
 
-                                        <strong>
+                                        ৳
 
-                                            ৳<?= number_format(
-                                                $medicine["revenue"],
-                                                2
-                                            ); ?>
+                                        <?php
 
-                                        </strong>
+                                        echo number_format(
+                                            $row[
+                                                'total_amount'
+                                            ],
+                                            2
+                                        );
 
-                                    </td>
-
-
-                                    <td style="width:30%;">
-
-                                        <div class="progress"
-                                             style="height:8px;">
-
-                                            <div class="progress-bar"
-                                                 style="
-                                                 width:
-                                                 <?= min(
-                                                     $medicine["sold"] /
-                                                     150 * 100,
-                                                     100
-                                                 ); ?>%;
-                                                 ">
-                                            </div>
-
-                                        </div>
+                                        ?>
 
                                     </td>
 
@@ -715,9 +813,28 @@ $pending_amount = 5000;
 
                             <?php
 
-                            $rank++;
+                                }
 
-                            endforeach;
+                            } else {
+
+                            ?>
+
+                                <tr>
+
+                                    <td
+                                        colspan="4"
+                                        class="text-center"
+                                    >
+
+                                        No branch sales found.
+
+                                    </td>
+
+                                </tr>
+
+                            <?php
+
+                            }
 
                             ?>
 
@@ -732,41 +849,158 @@ $pending_amount = 5000;
         </div>
 
 
-        <!-- Report Insight -->
+
+        <!-- ==========================================
+             PAYMENT METHOD
+        =========================================== -->
+
         <div class="card">
+
+            <div class="card-header">
+
+                <h4 class="report-title">
+
+                    Payment Method Summary
+
+                </h4>
+
+            </div>
+
 
             <div class="card-body">
 
-                <div class="row align-items-center">
+                <div class="table-responsive">
 
-                    <div class="col-md-1 text-center">
+                    <table
+                        class="table table-bordered report-table"
+                    >
 
-                        <i class="fa fa-lightbulb-o"
-                           style="
-                           font-size:40px;
-                           color:#f5a623;
-                           ">
-                        </i>
+                        <thead>
 
-                    </div>
+                            <tr>
+
+                                <th>
+                                    #
+                                </th>
+
+                                <th>
+                                    Payment Method
+                                </th>
+
+                                <th>
+                                    Total Sales
+                                </th>
+
+                                <th>
+                                    Total Amount
+                                </th>
+
+                            </tr>
+
+                        </thead>
 
 
-                    <div class="col-md-11">
+                        <tbody>
 
-                        <h5>
-                            Pharmacy Performance Insight
-                        </h5>
+                            <?php
 
-                        <p class="text-muted mb-0">
+                            $counter = 1;
 
-                            The report shows branch performance,
-                            revenue collection and best-selling
-                            medicines. This information can help
-                            pharmacy management make better decisions.
 
-                        </p>
+                            if (
+                                $payment_result
+                                &&
+                                $payment_result
+                                    ->num_rows > 0
+                            ) {
 
-                    </div>
+                                while (
+                                    $row =
+                                    $payment_result
+                                        ->fetch_assoc()
+                                ) {
+
+                            ?>
+
+                                <tr>
+
+                                    <td>
+                                        <?php
+                                        echo $counter++;
+                                        ?>
+                                    </td>
+
+                                    <td>
+
+                                        <?php
+                                        echo htmlspecialchars(
+                                            $row[
+                                                'payment_method'
+                                            ]
+                                        );
+                                        ?>
+
+                                    </td>
+
+                                    <td>
+
+                                        <?php
+                                        echo $row[
+                                            'total_sales'
+                                        ];
+                                        ?>
+
+                                    </td>
+
+                                    <td>
+
+                                        ৳
+
+                                        <?php
+
+                                        echo number_format(
+                                            $row[
+                                                'total_amount'
+                                            ],
+                                            2
+                                        );
+
+                                        ?>
+
+                                    </td>
+
+                                </tr>
+
+                            <?php
+
+                                }
+
+                            } else {
+
+                            ?>
+
+                                <tr>
+
+                                    <td
+                                        colspan="4"
+                                        class="text-center"
+                                    >
+
+                                        No payment data found.
+
+                                    </td>
+
+                                </tr>
+
+                            <?php
+
+                            }
+
+                            ?>
+
+                        </tbody>
+
+                    </table>
 
                 </div>
 
@@ -774,36 +1008,363 @@ $pending_amount = 5000;
 
         </div>
 
+
+
+        <!-- ==========================================
+             TOP SELLING MEDICINES
+        =========================================== -->
+
+        <div class="card">
+
+            <div class="card-header">
+
+                <h4 class="report-title">
+
+                    Top Selling Medicines
+
+                </h4>
+
+            </div>
+
+
+            <div class="card-body">
+
+                <div class="table-responsive">
+
+                    <table
+                        class="table table-bordered report-table"
+                    >
+
+                        <thead>
+
+                            <tr>
+
+                                <th>
+                                    #
+                                </th>
+
+                                <th>
+                                    Medicine
+                                </th>
+
+                                <th>
+                                    Generic Name
+                                </th>
+
+                                <th>
+                                    Quantity Sold
+                                </th>
+
+                                <th>
+                                    Total Amount
+                                </th>
+
+                            </tr>
+
+                        </thead>
+
+
+                        <tbody>
+
+                            <?php
+
+                            $counter = 1;
+
+
+                            if (
+                                $top_medicine_result
+                                &&
+                                $top_medicine_result
+                                    ->num_rows > 0
+                            ) {
+
+                                while (
+                                    $row =
+                                    $top_medicine_result
+                                        ->fetch_assoc()
+                                ) {
+
+                            ?>
+
+                                <tr>
+
+                                    <td>
+                                        <?php
+                                        echo $counter++;
+                                        ?>
+                                    </td>
+
+                                    <td>
+
+                                        <?php
+                                        echo htmlspecialchars(
+                                            $row[
+                                                'medicine_name'
+                                            ]
+                                        );
+                                        ?>
+
+                                    </td>
+
+                                    <td>
+
+                                        <?php
+
+                                        echo !empty(
+                                            $row[
+                                                'generic_name'
+                                            ]
+                                        )
+                                            ? htmlspecialchars(
+                                                $row[
+                                                    'generic_name'
+                                                ]
+                                            )
+                                            : "N/A";
+
+                                        ?>
+
+                                    </td>
+
+                                    <td>
+
+                                        <?php
+                                        echo $row[
+                                            'total_quantity'
+                                        ];
+                                        ?>
+
+                                    </td>
+
+                                    <td>
+
+                                        ৳
+
+                                        <?php
+
+                                        echo number_format(
+                                            $row[
+                                                'total_amount'
+                                            ],
+                                            2
+                                        );
+
+                                        ?>
+
+                                    </td>
+
+                                </tr>
+
+                            <?php
+
+                                }
+
+                            } else {
+
+                            ?>
+
+                                <tr>
+
+                                    <td
+                                        colspan="5"
+                                        class="text-center"
+                                    >
+
+                                        No medicine sales found.
+
+                                    </td>
+
+                                </tr>
+
+                            <?php
+
+                            }
+
+                            ?>
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- ==========================================
+             DAILY SALES
+        =========================================== -->
+
+        <div class="card">
+
+            <div class="card-header">
+
+                <h4 class="report-title">
+
+                    Daily Sales
+
+                </h4>
+
+            </div>
+
+
+            <div class="card-body">
+
+                <div class="table-responsive">
+
+                    <table
+                        class="table table-bordered report-table"
+                    >
+
+                        <thead>
+
+                            <tr>
+
+                                <th>
+                                    #
+                                </th>
+
+                                <th>
+                                    Date
+                                </th>
+
+                                <th>
+                                    Total Sales
+                                </th>
+
+                                <th>
+                                    Total Amount
+                                </th>
+
+                            </tr>
+
+                        </thead>
+
+
+                        <tbody>
+
+                            <?php
+
+                            $counter = 1;
+
+
+                            if (
+                                $daily_sales_result
+                                &&
+                                $daily_sales_result
+                                    ->num_rows > 0
+                            ) {
+
+                                while (
+                                    $row =
+                                    $daily_sales_result
+                                        ->fetch_assoc()
+                                ) {
+
+                            ?>
+
+                                <tr>
+
+                                    <td>
+                                        <?php
+                                        echo $counter++;
+                                        ?>
+                                    </td>
+
+                                    <td>
+
+                                        <?php
+
+                                        echo date(
+                                            "d M Y",
+                                            strtotime(
+                                                $row[
+                                                    'sale_day'
+                                                ]
+                                            )
+                                        );
+
+                                        ?>
+
+                                    </td>
+
+                                    <td>
+
+                                        <?php
+                                        echo $row[
+                                            'total_sales'
+                                        ];
+                                        ?>
+
+                                    </td>
+
+                                    <td>
+
+                                        ৳
+
+                                        <?php
+
+                                        echo number_format(
+                                            $row[
+                                                'total_amount'
+                                            ],
+                                            2
+                                        );
+
+                                        ?>
+
+                                    </td>
+
+                                </tr>
+
+                            <?php
+
+                                }
+
+                            } else {
+
+                            ?>
+
+                                <tr>
+
+                                    <td
+                                        colspan="4"
+                                        class="text-center"
+                                    >
+
+                                        No daily sales found.
+
+                                    </td>
+
+                                </tr>
+
+                            <?php
+
+                            }
+
+                            ?>
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
     </div>
-
-
-    <?php
-    require_once "../component/footer.php";
-    ?>
 
 </div>
 
 
-<style>
+<?php
 
-@media print {
+require_once "../component/footer.php";
 
-    .header,
-    .sidebar,
-    .btn,
-    footer {
-        display: none !important;
-    }
-
-    .page-wrapper {
-        margin: 0 !important;
-    }
-
-    .card {
-        border: none !important;
-        box-shadow: none !important;
-    }
-
-}
-
-</style>
+?>
