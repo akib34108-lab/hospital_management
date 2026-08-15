@@ -47,7 +47,17 @@
                     <div class="col-sm-3 offset-sm-2">
                         <div class="form-group">
                             <label for="blood_group">Blood Group:</label>
-                            <input class="form-control" type="text" id="blood_group" name="blood_group" value="<?= $donor->blood_group ?>" required>
+                            <select class="form-control" id="blood_group" name="blood_group" required>
+                                <option value="">Select Blood Group</option>
+                                <option value="1" <?= $donor->blood_group === 1 ? 'selected' : '' ?>>A+</option>
+                                <option value="2" <?= $donor->blood_group === 2 ? 'selected' : '' ?>>A-</option>
+                                <option value="3" <?= $donor->blood_group === 3 ? 'selected' : '' ?>>B+</option>
+                                <option value="4" <?= $donor->blood_group === 4 ? 'selected' : '' ?>>B-</option>
+                                <option value="5" <?= $donor->blood_group === 5 ? 'selected' : '' ?>>AB+</option>
+                                <option value="6" <?= $donor->blood_group === 6 ? 'selected' : '' ?>>AB-</option>
+                                <option value="7" <?= $donor->blood_group === 7 ? 'selected' : '' ?>>O+</option>
+                                <option value="8" <?= $donor->blood_group === 8 ? 'selected' : '' ?>>O-</option>
+                            </select>
                         </div>
                     </div>
                     <div class="col-sm-3">

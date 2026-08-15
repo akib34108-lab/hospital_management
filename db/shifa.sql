@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Aug 14, 2026 at 07:56 PM
+-- Generation Time: Aug 15, 2026 at 07:10 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -224,7 +224,7 @@ CREATE TABLE `donor` (
   `gender` int(4) DEFAULT NULL COMMENT '1=male, 2=female',
   `phone` varchar(11) DEFAULT NULL,
   `address` varchar(255) DEFAULT NULL,
-  `blood_group` varchar(10) DEFAULT NULL,
+  `blood_group` int(4) DEFAULT NULL COMMENT '1=A+, 2=A-, 3=B+, 4=B-, 5=AB+, 6=AB-, 7=O+, 8=O-',
   `last_donation` date DEFAULT NULL,
   `donor_eligibility` int(4) DEFAULT NULL COMMENT '1=Eligible, 2=\r\nNot Eligible',
   `created_at` timestamp NULL DEFAULT NULL,
@@ -237,17 +237,17 @@ CREATE TABLE `donor` (
 --
 
 INSERT INTO `donor` (`id`, `donor_name`, `age`, `gender`, `phone`, `address`, `blood_group`, `last_donation`, `donor_eligibility`, `created_at`, `updated_at`, `deleted_at`) VALUES
-(1, 'Mahtab', 29, 1, '01878945612', 'Satkania, Chattogram', 'O+', '2026-07-21', 1, NULL, NULL, NULL),
-(3, 'Imtiaz', 32, 1, '01842194963', 'GPO circle, new market', 'A+', '2026-07-22', 1, NULL, NULL, NULL),
-(4, 'Ashfa', 19, 0, '01412365485', 'Gachbaria', 'B+', '2026-02-17', 1, NULL, NULL, NULL),
-(5, 'Rahim', 22, 1, '01712345678', 'Chittagong', 'A+', NULL, 1, NULL, NULL, NULL),
-(6, 'Karim', 25, 1, '01812345679', 'Dhaka', 'O+', NULL, 2, NULL, NULL, NULL),
-(7, 'Nusrat', 21, 2, '01912345680', 'Comilla', 'B+', NULL, 1, NULL, NULL, NULL),
-(8, 'Jannat', 24, 2, '01612345681', 'Feni', 'AB+', NULL, 2, NULL, NULL, NULL),
-(9, 'Sakib', 20, 1, '01512345682', 'Noakhali', 'O-', NULL, 1, NULL, NULL, NULL),
-(10, 'Mim', 23, 2, '01412345683', 'Gachbaria', 'A-', NULL, 2, NULL, NULL, NULL),
-(11, 'Tanvir', 27, 1, '01312345684', 'Chandpur', 'B-', NULL, 1, NULL, NULL, NULL),
-(12, 'Sumaiya', 26, 2, '01212345685', 'Cox\'s Bazar', 'AB-', NULL, 2, NULL, NULL, NULL);
+(1, 'Mahtab', 29, 1, '01878945612', 'Satkania, Chattogram', 7, '2026-07-21', 1, NULL, NULL, NULL),
+(3, 'Imtiaz', 32, 1, '01842194963', 'GPO circle, new market', 4, '2026-07-22', 1, NULL, NULL, NULL),
+(4, 'Ashfa', 19, 0, '01412365485', 'Gachbaria', 3, '2026-02-17', 1, NULL, NULL, NULL),
+(5, 'Rahim', 22, 1, '01712345678', 'Chittagong', 3, '2026-07-06', 1, NULL, NULL, NULL),
+(6, 'Karim', 25, 1, '01812345679', 'Dhaka', 7, '2026-08-02', 1, NULL, NULL, NULL),
+(7, 'Nusrat', 21, 0, '01912345680', 'Comilla', 5, '2026-08-07', 1, NULL, NULL, NULL),
+(8, 'Jannat', 24, 0, '01612345681', 'Feni', 3, '2026-08-07', 1, NULL, NULL, NULL),
+(9, 'Sakib', 20, 1, '01512345682', 'Noakhali', 8, '2026-04-15', 1, NULL, NULL, NULL),
+(10, 'Mim', 23, 0, '01412345683', 'Gachbaria', 2, '2026-08-01', 1, NULL, NULL, NULL),
+(11, 'Tanvir', 27, 1, '01312345684', 'Chandpur', 0, NULL, 1, NULL, NULL, NULL),
+(12, 'Sumaiya', 26, 2, '01212345685', 'Cox\'s Bazar', 0, NULL, 2, NULL, NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -580,6 +580,42 @@ INSERT INTO `schedules` (`id`, `doctor_id`, `day_of_week`, `start_time`, `end_ti
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `screening`
+--
+
+CREATE TABLE `screening` (
+  `id` int(11) NOT NULL,
+  `bag_id` varchar(11) DEFAULT NULL,
+  `abo_group` int(4) DEFAULT NULL COMMENT '1=A, 2=B, 3=AB, 4=O',
+  `rh_type` int(4) DEFAULT NULL COMMENT '1=positive(+), 2=negative(-)',
+  `hiv` int(4) DEFAULT NULL COMMENT '1=pending, 2=non-reactive, 3=reactive, 4=invalid',
+  `hbsag` int(4) DEFAULT NULL COMMENT '1=pending, 2=non-reactive, 3=reactive, 4=invalid',
+  `hcv` int(4) DEFAULT NULL COMMENT '1=pending, 2=non-reactive, 3=reactive, 4=invalid',
+  `syphilis` int(4) DEFAULT NULL COMMENT '1=pending, 2=non-reactive, 3=reactive, 4=invalid',
+  `malaria` int(4) DEFAULT NULL COMMENT '1=pending, 2=non-reactive, 3=reactive, 4=invalid',
+  `other` int(4) DEFAULT NULL COMMENT '1=positive(+), 2=negative(-)',
+  `status` int(4) DEFAULT NULL COMMENT '1=pending, 2=passed, 3=quarantined, 4=reactive, 5=invalid, 6=discarded, 7=released',
+  `tested_by` varchar(40) DEFAULT NULL,
+  `tested_at` datetime DEFAULT NULL,
+  `verified_by` varchar(40) DEFAULT NULL,
+  `verified_at` datetime DEFAULT NULL,
+  `remarks` text DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  `deleted_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `screening`
+--
+
+INSERT INTO `screening` (`id`, `bag_id`, `abo_group`, `rh_type`, `hiv`, `hbsag`, `hcv`, `syphilis`, `malaria`, `other`, `status`, `tested_by`, `tested_at`, `verified_by`, `verified_at`, `remarks`, `created_at`, `updated_at`, `deleted_at`) VALUES
+(1, 'B001', 2, 1, 1, 1, 1, 1, 1, 1, 3, 'Rahim', '2026-08-03 19:55:00', 'Karim', '2026-08-10 16:09:00', 'aada', NULL, NULL, NULL),
+(2, 'B002', 3, 1, 1, 1, 1, 1, 1, 2, 1, 'Akbar', '2026-08-07 12:00:00', 'Dr. Nizam', '2026-08-10 14:45:00', 'asfsaf', NULL, NULL, NULL);
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `shift`
 --
 
@@ -764,6 +800,12 @@ ALTER TABLE `schedules`
   ADD KEY `doctor_id` (`doctor_id`);
 
 --
+-- Indexes for table `screening`
+--
+ALTER TABLE `screening`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- Indexes for table `shift`
 --
 ALTER TABLE `shift`
@@ -880,6 +922,12 @@ ALTER TABLE `rooms`
 --
 ALTER TABLE `schedules`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+
+--
+-- AUTO_INCREMENT for table `screening`
+--
+ALTER TABLE `screening`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `shift`

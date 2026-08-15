@@ -57,6 +57,17 @@
                             <a href="<?=$base_url; ?>prescription/prescription_list.php"><i class="fa fa-file-text-o" style="color: #fff;"></i> <span style="color: #fff;">Prescriptions</span></a>
                         </li>
                         <li>
+                            <a href="<?= $base_url; ?>pharmacy/pharmacy.php"><i class="fa fa-medkit" style="color: #fff;"></i> <span style="color: #fff;">Pharmacy</span></a>
+                        </li>
+                        <li class="submenu">
+							<a href="#"><i class="fa fa-tint" style="color: #fff;"></i> <span style="color: #fff;"> Blood Bank </span> <span class="menu-arrow" style="color: #fff;"></span></a>
+							<ul style="display: none;">
+								<li><a href="<?= $base_url; ?>blood_bank/donor/donor.php">Donors List</a></li>
+								<li><a href="<?= $base_url; ?>blood_bank/blood_collection/collection.php">Blood Collection</a></li>
+								<li><a href="<?= $base_url; ?>blood_bank/screening/screening.php">Screening</a></li>
+                                </ul>
+						</li>
+                        <li>
                             <a href="<?=$base_url; ?>lab/lab_category/lab.php"><i class="fa fa-flask" style="color: #fff;"></i> <span style="color: #fff;">Test Lab</span></a>
                         </li>
                         <li class="submenu">
@@ -83,16 +94,6 @@
                         <li>
                             <a href="<?= $base_url; ?>shift/shift.php"><i class="fa fa-clock-o" style="color: #fff;"></i> <span style="color: #fff;">Shift</span></a>
                         </li>
-                        <li>
-                            <a href="<?= $base_url; ?>pharmacy/pharmacy.php"><i class="fa fa-medkit" style="color: #fff;"></i> <span style="color: #fff;">Pharmacy</span></a>
-                        </li>
-                        <li class="submenu">
-							<a href="#"><i class="fa fa-tint" style="color: #fff;"></i> <span style="color: #fff;"> Blood Bank </span> <span class="menu-arrow" style="color: #fff;"></span></a>
-							<ul style="display: none;">
-								<li><a href="<?= $base_url; ?>blood_bank/donor/donor.php">Donors List</a></li>
-								<li><a href="<?= $base_url; ?>blood_bank/blood_collection/collection.php">Blood Collection</a></li>
-                                </ul>
-						</li>
                     </div>
             </div>
         </div> 

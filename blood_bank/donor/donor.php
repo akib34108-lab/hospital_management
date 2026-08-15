@@ -53,7 +53,12 @@
                 </tr>
                 <tr class="text-center">
                     <td>Blood Group</td>
-                    <td><?= htmlspecialchars($donor->blood_group) ?></td>
+                    <td>
+                    <?php
+                        $bloodGroups = [1 => 'A+',2 => 'A-',3 => 'B+',4 => 'B-',5 => 'AB+',6 => 'AB-',7 => 'O+',8 => 'O-'];
+                    ?>
+                    <?= htmlspecialchars($bloodGroups[(int)$donor->blood_group] ?? 'N/A') ?>
+                    </td>
                 </tr>
             </table>
             <table class="w-100" style="border: 1px solid #dee2e6; border-radius: 5px; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);">

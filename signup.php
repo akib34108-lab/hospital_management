@@ -31,7 +31,7 @@
                             <button type="submit" class="btn btn-primary account-btn font-weight-bold">Sign Up</button>
                         </div>
                         <div class="text-left font-weight-bold" style="color: #0b5884;">
-                            Already have an account? <a href="signup.php" class="font-weight-bold" style="color: #0b5884;">Login</a>
+                            Already have an account? <a href="login.php" class="font-weight-bold" style="color: #0b5884;">Login</a>
                         </div>
                     </form>
                     <?php
