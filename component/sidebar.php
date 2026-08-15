@@ -16,10 +16,10 @@
                         <i class="fa fa-user pr-2"></i><span class="auth-role" style="padding-right: 5px;"><?= $_SESSION['user_role']; ?></span>[<span class="auth-name"><?= $_SESSION['user_name']; ?></span>]
                     </a>
 					<div class="dropdown-menu">
-						<a class="dropdown-item" href="profile.html">My Profile</a>
-						<a class="dropdown-item" href="edit-profile.html">Edit Profile</a>
-						<a class="dropdown-item" href="settings.html">Settings</a>
-						<a class="dropdown-item" onclick="return confirm('Are you sure want to log out?')" href="<?= $base_url; ?>logout.php">Logout</a>
+						<a class="dropdown-item" href="profile.html"><i class="fa fa-user-circle"></i> My Profile</a>
+						<a class="dropdown-item" href="edit-profile.html"><i class="fa fa-edit"></i> Edit Profile</a>
+						<a class="dropdown-item" href="settings.html"><i class="fa fa-cog"></i> Settings</a>
+						<a class="dropdown-item" onclick="return confirm('Are you sure want to log out?')" href="<?= $base_url; ?>logout.php"><i class="fa fa-sign-out"></i> Logout</a>
 					</div>
                 </li>
             </ul>

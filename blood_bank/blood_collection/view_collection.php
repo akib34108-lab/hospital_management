@@ -3,14 +3,14 @@
 <?php require_once "../../component/sidebar.php"; 
 
   $id = $_GET['id'];
-  $donor = $crud->common_select("donor", "*", ['id' => $id]);
-  if (!$donor['status'] || empty($donor['data'])) {
-    $_SESSION['message'] = array('danger','Error', 'Donor not found.');
-    echo "<script>window.location.href = '".$base_url."donor/donor.php';</script>";
+  $blood_collection = $crud->common_select("blood_collection", "*", ['id' => $id]);
+  if (!$blood_collection['status'] || empty($blood_collection['data'])) {
+    $_SESSION['message'] = array('danger','Error', 'blood collection not found.');
+    echo "<script>window.location.href = '".$base_url."blood_bank/blood_collection/collection.php';</script>";
     exit;
   }
 
-  $donor = $donor['data'][0];
+  $blood_collection = $blood_collection['data'][0];
 
 ?>
 <!-- Sidebar End -->
@@ -18,78 +18,104 @@
     <div class="content">
         <div class="row">
             <div class="col-sm-5 col-5">
-                <h4 style="color: #009efb; font-size: 24px;">Donor Information</h4>
+                <h4 style="color: #104d6f; font-size: 24px;">Blood Collection Information</h4>
             </div>
             <div class="col-sm-7 col-7 text-right m-b-30">
-                <a href="donor.php" style="display:inline-flex;align-items:center;gap:9px;padding:9px 17px;background:#009efb;color:#fff;border-radius:7px;text-decoration:none;font-size:14px;font-weight:600;box-shadow:0 3px 8px rgba(13,110,253,.22);">
+                <a href="collection.php" style="display:inline-flex;align-items:center;gap:9px;padding:9px 17px;background:#104d6f;color:#fff;border-radius:7px;text-decoration:none;font-size:14px;font-weight:600;box-shadow:0 3px 8px rgba(13,110,253,.22);">
                 <span style="display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;background:rgba(255,255,255,.18);border-radius:50%;"><i class="fa fa-arrow-left" style="font-size:11px;color:#fff;"></i></span>Back</a>
             </div>
         </div>
         <div class="row">
-            <div class="col-md-8 offset-md-2">
+            <div class="col-md-3 offset-md-2">
                 <div class="table-responsive">
                     <table class="table custom-table mb-0 datatable">
                         <thead>
                             <tr>
-                                <th colspan="2" style="font-size: 20px;" class="btn-success">Personal Information</th>
+                                <th colspan="2" style="font-size: 20px; background-color: #3e79b5; color: #fff;">Donor Information</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr>
-                            <?php if (!empty($donor)) { ?>
+                            <?php if (!empty($blood_collection)) { ?>
                                 <td class="font-weight-bold">Name:</td>
-                                <td><?= $donor->donor_name ?></td>
-                            </tr>
-                            <tr>
-                                <td class="font-weight-bold">Age:</td>
-                                <td><?= $donor->age ?></td>
-                            </tr>
-                            <tr>
-                                <td class="font-weight-bold">Gender:</td>
-                                <td> <?php if($donor->gender == '1'){ ?>
-                                    <span>Male</span>
-                                    <?php } else { ?>
-                                    <span>Female</span>
-                                    <?php } ?>
-                                </td>
+                                <td><?= $blood_collection->donor_id ?></td>
                             </tr>
                             <tr>
                                 <td class="font-weight-bold">Blood Group:</td>
-                                <td><?= $donor->blood_group ?></td>
-                            </tr>
-                            <tr>
-                                <td class="font-weight-bold">Phone:</td>
-                                <td><?= $donor->phone ?></td>
-                            </tr>
-                            <tr>
-                                <td class="font-weight-bold">Address:</td>
-                                <td><?= $donor->address ?></td>
-                            </tr>
-                            <tr>
-                                <td class="font-weight-bold">Last Donated:</td>
-                                <td><?= !empty($donor->last_donated) ? htmlspecialchars($donor->last_donated) : 'Not donated yet' ?></td>
-                            </tr>
-                            <tr>
-                                <td class="font-weight-bold">Donor Eligibility:</td>
-                                <td> <?php if($donor->donor_eligibility == '1'){ ?>
-                                    <span>Eligible</span>
-                                    <?php } else { ?>
-                                    <span>Not Eligible</span>
-                                    <?php } ?>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="text-center" colspan="2">
-                                    <a href="<?= $base_url ?>blood_bank/donor/edit_donor.php?id=<?= $donor->id ?>" class="btn btn-sm btn-primary mb-2 mb-lg-0 me-0 me-lg-2">Edit</a>
-                                    <a onclick="return confirm('Are you sure you want to delete this doctor?')" href="<?= $base_url ?>blood_bank/donor/delete_donor.php?id=<?= $donor->id ?>" class="btn btn-sm btn-danger">Delete</a>
-                                </td>
+                                <td><?= $blood_collection->blood_group ?></td>
                             </tr>
                             <?php } ?>
                         </tbody>
                     </table>
                 </div>
             </div>
-        </div>
-    </div>
-</div>
+            <div class="col-md-3">
+                <div class="table-responsive">
+                    <table class="table custom-table mb-0 datatable">
+                        <thead>
+                            <tr>
+                                <th colspan="2" style="font-size: 20px; background-color: #3e79b5; color: #fff;">Donation Information</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                            <?php if (!empty($blood_collection)) { ?>
+                            <td class="font-weight-bold">Donation ID:</td>
+                                <td><?= $blood_collection->donation_id ?></td>
+                            </tr>
+                            <tr>
+                                <td class="font-weight-bold">Bag ID:</td>
+                                <td><?= $blood_collection->bag_id ?></td>
+                            </tr>
+                            <tr>
+                                <td class="font-weight-bold">Collection Date:</td>
+                                <td><?= $blood_collection->collection_date ?></td>
+                            </tr>
+                            <tr>
+                                <td class="font-weight-bold">Collection Volume (mL):</td>
+                                <td><?= $blood_collection->collection_volume ?></td>
+                            </tr>
+                            <tr>
+                                <td class="font-weight-bold">Collection Location:</td>
+                                <td><?= $blood_collection->collection_location ?></td>
+                            </tr>
+                            <?php } ?>
+                        </tbody>
+                    </table>
+                </div>
+            </div><div class="col-md-3">
+                <div class="table-responsive">
+                    <table class="table custom-table mb-0 datatable">
+                        <thead>
+                            <tr>
+                                <th colspan="2" style="font-size: 20px; background-color: #3e79b5; color: #fff;">Phlebotomist Information</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                            <?php if (!empty($blood_collection)) { ?>
+                            <td class="font-weight-bold">ID:</td>
+                                <td><?= $blood_collection->staff ?></td>
+                            </tr>
+                            <tr>
+                                <td class="font-weight-bold">Name:</td>
+                                <td><?= $blood_collection->staff ?></td>
+                            </tr>
+                            <tr>
+                                <td class="font-weight-bold">Phone:</td>
+                                <td><?= $blood_collection->staff ?></td>
+                            </tr>
+                            <tr>
+                                <td class="font-weight-bold">Address:</td>
+                                <td><?= $blood_collection->staff ?></td>
+                            </tr>
+                            <tr>
+                                <td class="font-weight-bold">Designation:</td>
+                                <td><?= $blood_collection->staff ?></td>
+                            </tr>
+                            <?php } ?>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
 <?php require_once "../../component/footer.php" ?>   
