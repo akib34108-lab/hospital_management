@@ -1,111 +1,574 @@
 <?php
+
 require_once "../component/header.php";
 require_once "../component/sidebar.php";
+require_once "../crud/crud_class.php";
 
-/*
-|--------------------------------------------------------------------------
-| Demo Branches
-|--------------------------------------------------------------------------
-*/
-$branches = [
-    [
-        "id" => 1,
-        "name" => "SHIFA Main Pharmacy",
-        "location" => "Dhaka"
-    ],
-    [
-        "id" => 2,
-        "name" => "SHIFA Chattogram Pharmacy",
-        "location" => "Chattogram"
-    ],
-    [
-        "id" => 3,
-        "name" => "SHIFA Agrabad Pharmacy",
-        "location" => "Agrabad"
-    ]
-];
+$crud = new crud_class();
+
+$message = "";
+$message_type = "";
 
 
-/*
-|--------------------------------------------------------------------------
-| Demo Medicines
-|--------------------------------------------------------------------------
-*/
-$medicines = [
-    [
-        "id" => 1,
-        "name" => "Napa",
-        "generic" => "Paracetamol",
-        "strength" => "500mg",
-        "form" => "Tablet",
-        "price" => 10
-    ],
-    [
-        "id" => 2,
-        "name" => "Seclo",
-        "generic" => "Omeprazole",
-        "strength" => "20mg",
-        "form" => "Capsule",
-        "price" => 60
-    ],
-    [
-        "id" => 3,
-        "name" => "Napa Extra",
-        "generic" => "Paracetamol + Caffeine",
-        "strength" => "500mg + 65mg",
-        "form" => "Tablet",
-        "price" => 15
-    ]
-];
+// ==================================================
+// INVOICE NUMBER
+// ==================================================
+
+$invoice_no = "INV-" . date("YmdHis");
 
 
-/*
-|--------------------------------------------------------------------------
-| Demo Availability
-|--------------------------------------------------------------------------
-*/
-$availability = [
-    1 => [
-        1 => 120,
-        2 => 75,
-        3 => 0
-    ],
+// ==================================================
+// GET ACTIVE BRANCHES
+// ==================================================
 
-    2 => [
-        1 => 40,
-        2 => 0,
-        3 => 25
-    ],
+$branch_sql = "
+    SELECT
+        branch_id,
+        branch_name
+    FROM pharmacy_branches
+    WHERE status = 'Active'
+    AND deleted_at IS NULL
+    ORDER BY branch_name ASC
+";
 
-    3 => [
-        1 => 60,
-        2 => 35,
-        3 => 0
-    ]
-];
+$branches = $crud->common_query($branch_sql);
+
+
+// ==================================================
+// GET MEDICINES
+// STATUS FILTER REMOVED
+// ==================================================
+
+$medicine_sql = "
+    SELECT
+        medicine_id,
+        medicine_name,
+        generic_name,
+        unit_price
+    FROM medicines
+    WHERE deleted_at IS NULL
+    ORDER BY medicine_name ASC
+";
+
+$medicines = $crud->common_query($medicine_sql);
+
+
+// ==================================================
+// SAVE SALE
+// ==================================================
+
+if (isset($_POST['save_sale'])) {
+
+    $branch_id = (int)($_POST['branch_id'] ?? 0);
+
+    $customer_name = trim(
+        $_POST['customer_name'] ?? ""
+    );
+
+    $customer_phone = trim(
+        $_POST['customer_phone'] ?? ""
+    );
+
+    $payment_method =
+        $_POST['payment_method'] ?? "Cash";
+
+    $sale_items =
+        $_POST['sale_items'] ?? [];
+
+
+    // ==============================================
+    // VALIDATION
+    // ==============================================
+
+    if ($branch_id <= 0) {
+
+        $message = "Please select a branch.";
+        $message_type = "danger";
+
+    } elseif (empty($sale_items)) {
+
+        $message = "Please add at least one medicine.";
+        $message_type = "danger";
+
+    } else {
+
+        $crud->conn->begin_transaction();
+
+        try {
+
+            // ==========================================
+            // CHECK BRANCH
+            // ==========================================
+
+            $branch_check_sql = "
+                SELECT branch_id
+                FROM pharmacy_branches
+                WHERE branch_id = '$branch_id'
+                AND status = 'Active'
+                AND deleted_at IS NULL
+                LIMIT 1
+            ";
+
+            $branch_check =
+                $crud->conn->query(
+                    $branch_check_sql
+                );
+
+
+            if (
+                !$branch_check ||
+                $branch_check->num_rows == 0
+            ) {
+
+                throw new Exception(
+                    "Selected branch is not available."
+                );
+            }
+
+
+            // ==========================================
+            // CALCULATE TOTAL
+            // ==========================================
+
+            $total_amount = 0;
+
+
+            foreach ($sale_items as $item) {
+
+                $medicine_id =
+                    (int)($item['medicine_id'] ?? 0);
+
+                $quantity =
+                    (int)($item['quantity'] ?? 0);
+
+
+                if ($medicine_id <= 0) {
+
+                    throw new Exception(
+                        "Invalid medicine selected."
+                    );
+                }
+
+
+                if ($quantity <= 0) {
+
+                    throw new Exception(
+                        "Quantity must be greater than 0."
+                    );
+                }
+
+
+                // Get price
+                $price_sql = "
+                    SELECT
+                        medicine_name,
+                        unit_price
+                    FROM medicines
+                    WHERE medicine_id = '$medicine_id'
+                    AND deleted_at IS NULL
+                    LIMIT 1
+                ";
+
+
+                $price_result =
+                    $crud->conn->query(
+                        $price_sql
+                    );
+
+
+                if (
+                    !$price_result ||
+                    $price_result->num_rows == 0
+                ) {
+
+                    throw new Exception(
+                        "Medicine not found."
+                    );
+                }
+
+
+                $price_row =
+                    $price_result->fetch_assoc();
+
+
+                $unit_price =
+                    (float)$price_row['unit_price'];
+
+
+                $subtotal =
+                    $unit_price * $quantity;
+
+
+                $total_amount += $subtotal;
+            }
+
+
+            // ==========================================
+            // INSERT SALE
+            // ==========================================
+
+            $invoice_safe =
+                $crud->conn->real_escape_string(
+                    $invoice_no
+                );
+
+            $customer_name_safe =
+                $crud->conn->real_escape_string(
+                    $customer_name
+                );
+
+            $customer_phone_safe =
+                $crud->conn->real_escape_string(
+                    $customer_phone
+                );
+
+            $payment_safe =
+                $crud->conn->real_escape_string(
+                    $payment_method
+                );
+
+
+            $sale_sql = "
+                INSERT INTO pharmacy_sales
+                (
+                    invoice_no,
+                    branch_id,
+                    customer_name,
+                    customer_phone,
+                    sale_date,
+                    total_amount,
+                    payment_method,
+                    status,
+                    deleted_at
+                )
+                VALUES
+                (
+                    '$invoice_safe',
+                    '$branch_id',
+                    '$customer_name_safe',
+                    '$customer_phone_safe',
+                    NOW(),
+                    '$total_amount',
+                    '$payment_safe',
+                    'Completed',
+                    NULL
+                )
+            ";
+
+
+            if (
+                !$crud->conn->query(
+                    $sale_sql
+                )
+            ) {
+
+                throw new Exception(
+                    "Sale could not be created: "
+                    . $crud->conn->error
+                );
+            }
+
+
+            $sale_id =
+                $crud->conn->insert_id;
+
+
+            // ==========================================
+            // INSERT SALE ITEMS
+            // ==========================================
+
+            foreach ($sale_items as $item) {
+
+                $medicine_id =
+                    (int)($item['medicine_id'] ?? 0);
+
+                $quantity =
+                    (int)($item['quantity'] ?? 0);
+
+
+                // Get medicine price
+                $price_sql = "
+                    SELECT
+                        medicine_name,
+                        unit_price
+                    FROM medicines
+                    WHERE medicine_id = '$medicine_id'
+                    AND deleted_at IS NULL
+                    LIMIT 1
+                ";
+
+
+                $price_result =
+                    $crud->conn->query(
+                        $price_sql
+                    );
+
+
+                if (
+                    !$price_result ||
+                    $price_result->num_rows == 0
+                ) {
+
+                    throw new Exception(
+                        "Medicine not found."
+                    );
+                }
+
+
+                $medicine_row =
+                    $price_result->fetch_assoc();
+
+
+                $medicine_name =
+                    $medicine_row['medicine_name'];
+
+                $unit_price =
+                    (float)$medicine_row['unit_price'];
+
+
+                $subtotal =
+                    $unit_price * $quantity;
+
+
+                // ======================================
+                // CHECK BRANCH STOCK
+                // ======================================
+
+                $stock_sql = "
+                    SELECT
+                        branch_medicine_id,
+                        quantity
+                    FROM branch_medicines
+                    WHERE branch_id = '$branch_id'
+                    AND medicine_id = '$medicine_id'
+                    LIMIT 1
+                    FOR UPDATE
+                ";
+
+
+                $stock_result =
+                    $crud->conn->query(
+                        $stock_sql
+                    );
+
+
+                if (!$stock_result) {
+
+                    throw new Exception(
+                        "Unable to check stock."
+                    );
+                }
+
+
+                if ($stock_result->num_rows == 0) {
+
+                    throw new Exception(
+                        $medicine_name .
+                        " is not available in this branch."
+                    );
+                }
+
+
+                $stock =
+                    $stock_result->fetch_assoc();
+
+
+                $available_quantity =
+                    (int)$stock['quantity'];
+
+                $branch_medicine_id =
+                    (int)$stock[
+                        'branch_medicine_id'
+                    ];
+
+
+                // ======================================
+                // CHECK QUANTITY
+                // ======================================
+
+                if (
+                    $quantity >
+                    $available_quantity
+                ) {
+
+                    throw new Exception(
+                        "Not enough stock for "
+                        . $medicine_name
+                        . ". Available: "
+                        . $available_quantity
+                    );
+                }
+
+
+                // ======================================
+                // INSERT SALE ITEM
+                // ======================================
+
+                $item_sql = "
+                    INSERT INTO pharmacy_sale_items
+                    (
+                        sale_id,
+                        medicine_id,
+                        quantity,
+                        unit_price,
+                        subtotal,
+                        deleted_at
+                    )
+                    VALUES
+                    (
+                        '$sale_id',
+                        '$medicine_id',
+                        '$quantity',
+                        '$unit_price',
+                        '$subtotal',
+                        NULL
+                    )
+                ";
+
+
+                if (
+                    !$crud->conn->query(
+                        $item_sql
+                    )
+                ) {
+
+                    throw new Exception(
+                        "Unable to save sale item: "
+                        . $crud->conn->error
+                    );
+                }
+
+
+                // ======================================
+                // UPDATE STOCK
+                // ======================================
+
+                $new_quantity =
+                    $available_quantity - $quantity;
+
+
+                $update_stock_sql = "
+                    UPDATE branch_medicines
+                    SET quantity = '$new_quantity'
+                    WHERE branch_medicine_id =
+                    '$branch_medicine_id'
+                ";
+
+
+                if (
+                    !$crud->conn->query(
+                        $update_stock_sql
+                    )
+                ) {
+
+                    throw new Exception(
+                        "Unable to update stock: "
+                        . $crud->conn->error
+                    );
+                }
+            }
+
+
+            // ==========================================
+            // COMMIT
+            // ==========================================
+
+            $crud->conn->commit();
+
+
+            $message =
+                "Sale created successfully! Invoice No: "
+                . $invoice_no;
+
+            $message_type = "success";
+
+
+            $invoice_no =
+                "INV-" . date("YmdHis");
+
+        } catch (Exception $e) {
+
+            $crud->conn->rollback();
+
+            $message =
+                $e->getMessage();
+
+            $message_type =
+                "danger";
+        }
+    }
+}
+
 ?>
 
-<div class="page-wrapper">
+
+<style>
+
+.new-sale-page {
+    position: relative;
+}
+
+.new-sale-page input,
+.new-sale-page select,
+.new-sale-page textarea,
+.new-sale-page button {
+    pointer-events: auto !important;
+    position: relative;
+    z-index: 20;
+}
+
+.new-sale-page .form-group {
+    position: relative;
+    z-index: 20;
+}
+
+.new-sale-page .card {
+    position: relative;
+    z-index: 5;
+}
+
+.sale-total {
+    font-size: 18px;
+    font-weight: bold;
+}
+
+</style>
+
+
+<div class="page-wrapper new-sale-page">
+
     <div class="content">
 
-        <!-- Page Header -->
-        <div class="row">
 
-            <div class="col-sm-7 col-6">
+        <!-- ==========================================
+             PAGE HEADER
+        =========================================== -->
 
-                <h4 class="page-title">
-                    New Pharmacy Sale
+        <div class="page-header">
+
+            <div class="page-title">
+
+                <h4>
+                    New Sale
                 </h4>
+
+                <h6>
+                    Create a new pharmacy sale
+                </h6>
 
             </div>
 
-            <div class="col-sm-5 col-6 text-right">
 
-                <a href="sales.php"
-                   class="btn btn-secondary btn-rounded">
+            <div class="page-btn">
+
+                <a
+                    href="sales.php"
+                    class="btn btn-secondary"
+                >
 
                     <i class="fa fa-arrow-left"></i>
-                    Sales History
+
+                    Back to Sales
 
                 </a>
 
@@ -114,68 +577,159 @@ $availability = [
         </div>
 
 
-        <!-- Sale Form -->
-        <div class="card">
 
-            <div class="card-header">
+        <!-- ==========================================
+             MESSAGE
+        =========================================== -->
 
-                <h4 class="card-title">
-                    <i class="fa fa-cart-plus"></i>
-                    Create New Sale
-                </h4>
+        <?php if (!empty($message)) { ?>
 
-                <p class="text-muted mb-0">
-                    Select a branch and medicine to create a pharmacy sale.
-                </p>
+            <div
+                class="alert alert-<?php
+                echo $message_type;
+                ?>"
+            >
+
+                <?php
+                echo htmlspecialchars(
+                    $message
+                );
+                ?>
 
             </div>
 
+        <?php } ?>
 
-            <div class="card-body">
 
-                <form method="POST"
-                      action=""
-                      id="saleForm">
 
+        <!-- ==========================================
+             SALE FORM
+        =========================================== -->
+
+        <form
+            method="POST"
+            id="saleForm"
+        >
+
+
+            <!-- ======================================
+                 SALE INFORMATION
+            ======================================= -->
+
+            <div class="card">
+
+                <div class="card-header">
+
+                    <h4>
+                        Sale Information
+                    </h4>
+
+                </div>
+
+
+                <div class="card-body">
 
                     <div class="row">
+
+
+                        <!-- Invoice -->
+
+                        <div
+                            class="col-lg-4 col-sm-6 col-12"
+                        >
+
+                            <div class="form-group">
+
+                                <label>
+                                    Invoice No
+                                </label>
+
+                                <input
+                                    type="text"
+                                    class="form-control"
+                                    value="<?php
+                                    echo htmlspecialchars(
+                                        $invoice_no
+                                    );
+                                    ?>"
+                                    readonly
+                                >
+
+                            </div>
+
+                        </div>
+
+
 
                         <!-- Branch -->
-                        <div class="col-md-6">
+
+                        <div
+                            class="col-lg-4 col-sm-6 col-12"
+                        >
 
                             <div class="form-group">
 
                                 <label>
-                                    Pharmacy Branch
-                                    <span class="text-danger">*</span>
+
+                                    Branch
+                                    <span class="text-danger">
+                                        *
+                                    </span>
+
                                 </label>
 
-                                <select name="branch_id"
-                                        id="branchSelect"
-                                        class="form-control"
-                                        required>
+
+                                <select
+                                    name="branch_id"
+                                    id="branch_id"
+                                    class="form-control"
+                                    required
+                                >
 
                                     <option value="">
-                                        Select Pharmacy Branch
+                                        Select Branch
                                     </option>
 
-                                    <?php foreach ($branches as $branch): ?>
+
+                                    <?php
+
+                                    if (
+                                        isset(
+                                            $branches['status']
+                                        )
+                                        &&
+                                        $branches['status']
+                                        === true
+                                    ) {
+
+                                        foreach (
+                                            $branches['data']
+                                            as $branch
+                                        ) {
+
+                                    ?>
 
                                         <option
-                                            value="<?= $branch['id']; ?>">
+                                            value="<?php
+                                            echo (int)
+                                                $branch->branch_id;
+                                            ?>"
+                                        >
 
-                                            <?= htmlspecialchars(
-                                                $branch['name']
-                                            ); ?>
-
-                                            -
-                                            <?= htmlspecialchars(
-                                                $branch['location']
-                                            ); ?>
+                                            <?php
+                                            echo htmlspecialchars(
+                                                $branch->branch_name
+                                            );
+                                            ?>
 
                                         </option>
 
-                                    <?php endforeach; ?>
+                                    <?php
+
+                                        }
+                                    }
+
+                                    ?>
 
                                 </select>
 
@@ -184,340 +738,73 @@ $availability = [
                         </div>
 
 
-                        <!-- Medicine -->
-                        <div class="col-md-6">
+
+                        <!-- Customer Name -->
+
+                        <div
+                            class="col-lg-4 col-sm-6 col-12"
+                        >
 
                             <div class="form-group">
 
                                 <label>
-                                    Medicine
-                                    <span class="text-danger">*</span>
+                                    Customer Name
                                 </label>
 
-                                <select name="medicine_id"
-                                        id="medicineSelect"
-                                        class="form-control"
-                                        required>
-
-                                    <option value="">
-                                        Select Medicine
-                                    </option>
-
-                                    <?php foreach ($medicines as $medicine): ?>
-
-                                        <option
-                                            value="<?= $medicine['id']; ?>"
-                                            data-price="<?= $medicine['price']; ?>">
-
-                                            <?= htmlspecialchars(
-                                                $medicine['name']
-                                            ); ?>
-
-                                            -
-                                            <?= htmlspecialchars(
-                                                $medicine['strength']
-                                            ); ?>
-
-                                        </option>
-
-                                    <?php endforeach; ?>
-
-                                </select>
+                                <input
+                                    type="text"
+                                    name="customer_name"
+                                    class="form-control"
+                                    placeholder="Enter customer name"
+                                >
 
                             </div>
 
                         </div>
 
-                    </div>
 
 
-                    <!-- Medicine Information -->
-                    <div id="medicineInfo"
-                         class="alert alert-info"
-                         style="display:none;">
+                        <!-- Customer Phone -->
 
-                        <div class="row">
-
-                            <div class="col-md-4">
-
-                                <strong>
-                                    Generic:
-                                </strong>
-
-                                <span id="genericName">
-                                    -
-                                </span>
-
-                            </div>
-
-
-                            <div class="col-md-4">
-
-                                <strong>
-                                    Form:
-                                </strong>
-
-                                <span id="medicineForm">
-                                    -
-                                </span>
-
-                            </div>
-
-
-                            <div class="col-md-4">
-
-                                <strong>
-                                    Unit Price:
-                                </strong>
-
-                                ৳<span id="displayPrice">
-                                    0.00
-                                </span>
-
-                            </div>
-
-                        </div>
-
-                    </div>
-
-
-                    <!-- Availability -->
-                    <div id="availabilityBox"
-                         class="card"
-                         style="display:none;">
-
-                        <div class="card-body">
-
-                            <div class="row align-items-center">
-
-                                <div class="col-md-1 text-center">
-
-                                    <i class="fa fa-cubes"
-                                       style="
-                                       font-size:35px;
-                                       color:#009efb;
-                                       ">
-                                    </i>
-
-                                </div>
-
-
-                                <div class="col-md-7">
-
-                                    <h5 class="mb-1">
-                                        Branch Availability
-                                    </h5>
-
-                                    <p class="text-muted mb-0">
-                                        Available stock in selected branch
-                                    </p>
-
-                                </div>
-
-
-                                <div class="col-md-4 text-right">
-
-                                    <h2 class="text-primary mb-0">
-
-                                        <span id="availableQuantity">
-                                            0
-                                        </span>
-
-                                    </h2>
-
-                                    <small class="text-muted">
-                                        units available
-                                    </small>
-
-                                </div>
-
-                            </div>
-
-                        </div>
-
-                    </div>
-
-
-                    <div class="row">
-
-                        <!-- Quantity -->
-                        <div class="col-md-4">
+                        <div
+                            class="col-lg-4 col-sm-6 col-12"
+                        >
 
                             <div class="form-group">
 
                                 <label>
-                                    Quantity
-                                    <span class="text-danger">*</span>
+                                    Customer Phone
                                 </label>
 
-                                <input type="number"
-                                       name="quantity"
-                                       id="quantity"
-                                       class="form-control"
-                                       min="1"
-                                       value="1"
-                                       required>
-
-                                <small id="stockWarning"
-                                       class="text-danger"
-                                       style="display:none;">
-                                </small>
+                                <input
+                                    type="text"
+                                    name="customer_phone"
+                                    class="form-control"
+                                    placeholder="Enter phone number"
+                                >
 
                             </div>
 
                         </div>
 
 
-                        <!-- Unit Price -->
-                        <div class="col-md-4">
-
-                            <div class="form-group">
-
-                                <label>
-                                    Unit Price
-                                </label>
-
-                                <div class="input-group">
-
-                                    <div class="input-group-prepend">
-                                        <span class="input-group-text">
-                                            ৳
-                                        </span>
-                                    </div>
-
-                                    <input type="number"
-                                           name="unit_price"
-                                           id="unitPrice"
-                                           class="form-control"
-                                           step="0.01"
-                                           readonly>
-
-                                </div>
-
-                            </div>
-
-                        </div>
-
-
-                        <!-- Discount -->
-                        <div class="col-md-4">
-
-                            <div class="form-group">
-
-                                <label>
-                                    Discount
-                                </label>
-
-                                <div class="input-group">
-
-                                    <div class="input-group-prepend">
-                                        <span class="input-group-text">
-                                            ৳
-                                        </span>
-                                    </div>
-
-                                    <input type="number"
-                                           name="discount"
-                                           id="discount"
-                                           class="form-control"
-                                           min="0"
-                                           step="0.01"
-                                           value="0">
-
-                                </div>
-
-                            </div>
-
-                        </div>
-
-                    </div>
-
-
-                    <!-- Total -->
-                    <div class="card"
-                         style="
-                         background:#f8fbff;
-                         border:1px solid #e5eef7;
-                         ">
-
-                        <div class="card-body">
-
-                            <div class="row">
-
-                                <div class="col-md-4">
-
-                                    <small class="text-muted">
-                                        Subtotal
-                                    </small>
-
-                                    <h4>
-                                        ৳<span id="subtotal">
-                                            0.00
-                                        </span>
-                                    </h4>
-
-                                </div>
-
-
-                                <div class="col-md-4">
-
-                                    <small class="text-muted">
-                                        Discount
-                                    </small>
-
-                                    <h4>
-                                        ৳<span id="discountDisplay">
-                                            0.00
-                                        </span>
-                                    </h4>
-
-                                </div>
-
-
-                                <div class="col-md-4 text-right">
-
-                                    <small class="text-muted">
-                                        Grand Total
-                                    </small>
-
-                                    <h2 class="text-primary">
-                                        ৳<span id="grandTotal">
-                                            0.00
-                                        </span>
-                                    </h2>
-
-                                    <input type="hidden"
-                                           name="total_amount"
-                                           id="totalAmount">
-
-                                </div>
-
-                            </div>
-
-                        </div>
-
-                    </div>
-
-
-                    <div class="row">
 
                         <!-- Payment Method -->
-                        <div class="col-md-6">
+
+                        <div
+                            class="col-lg-4 col-sm-6 col-12"
+                        >
 
                             <div class="form-group">
 
                                 <label>
                                     Payment Method
-                                    <span class="text-danger">*</span>
                                 </label>
 
-                                <select name="payment_method"
-                                        class="form-control"
-                                        required>
-
-                                    <option value="">
-                                        Select Payment Method
-                                    </option>
+                                <select
+                                    name="payment_method"
+                                    class="form-control"
+                                >
 
                                     <option value="Cash">
                                         Cash
@@ -527,7 +814,9 @@ $availability = [
                                         Card
                                     </option>
 
-                                    <option value="Mobile Banking">
+                                    <option
+                                        value="Mobile Banking"
+                                    >
                                         Mobile Banking
                                     </option>
 
@@ -537,26 +826,119 @@ $availability = [
 
                         </div>
 
+                    </div>
 
-                        <!-- Payment Status -->
-                        <div class="col-md-6">
+                </div>
+
+            </div>
+
+
+
+            <!-- ==========================================
+                 ADD MEDICINE
+            =========================================== -->
+
+            <div class="card">
+
+                <div class="card-header">
+
+                    <h4>
+                        Add Medicine
+                    </h4>
+
+                </div>
+
+
+                <div class="card-body">
+
+                    <div class="row">
+
+
+                        <!-- Medicine -->
+
+                        <div
+                            class="col-lg-5 col-sm-6 col-12"
+                        >
 
                             <div class="form-group">
 
                                 <label>
-                                    Payment Status
+                                    Medicine
                                 </label>
 
-                                <select name="payment_status"
-                                        class="form-control">
 
-                                    <option value="Paid">
-                                        Paid
+                                <select
+                                    id="medicine_id"
+                                    class="form-control"
+                                >
+
+                                    <option value="">
+                                        Select Medicine
                                     </option>
 
-                                    <option value="Pending">
-                                        Pending
-                                    </option>
+
+                                    <?php
+
+                                    if (
+                                        isset(
+                                            $medicines['status']
+                                        )
+                                        &&
+                                        $medicines['status']
+                                        === true
+                                    ) {
+
+                                        foreach (
+                                            $medicines['data']
+                                            as $medicine
+                                        ) {
+
+                                    ?>
+
+                                        <option
+                                            value="<?php
+                                            echo (int)
+                                                $medicine->medicine_id;
+                                            ?>"
+                                            data-price="<?php
+                                            echo htmlspecialchars(
+                                                $medicine->unit_price
+                                            );
+                                            ?>"
+                                        >
+
+                                            <?php
+
+                                            echo htmlspecialchars(
+                                                $medicine->medicine_name
+                                            );
+
+
+                                            if (
+                                                !empty(
+                                                    $medicine
+                                                    ->generic_name
+                                                )
+                                            ) {
+
+                                                echo " - "
+                                                    .
+                                                    htmlspecialchars(
+                                                        $medicine
+                                                        ->generic_name
+                                                    );
+                                            }
+
+                                            ?>
+
+                                        </option>
+
+                                    <?php
+
+                                        }
+                                    }
+
+                                    ?>
 
                                 </select>
 
@@ -565,128 +947,86 @@ $availability = [
                         </div>
 
 
-                        <!-- Customer Name -->
-                        <div class="col-md-6">
+
+                        <!-- Unit Price -->
+
+                        <div
+                            class="col-lg-2 col-sm-6 col-12"
+                        >
 
                             <div class="form-group">
 
                                 <label>
-                                    Customer Name
+                                    Unit Price
                                 </label>
 
-                                <input type="text"
-                                       name="customer_name"
-                                       class="form-control"
-                                       placeholder="Enter customer name">
+                                <input
+                                    type="number"
+                                    id="unit_price"
+                                    class="form-control"
+                                    step="0.01"
+                                    readonly
+                                >
 
                             </div>
 
                         </div>
 
 
-                        <!-- Customer Phone -->
-                        <div class="col-md-6">
+
+                        <!-- Quantity -->
+
+                        <div
+                            class="col-lg-2 col-sm-6 col-12"
+                        >
 
                             <div class="form-group">
 
                                 <label>
-                                    Customer Phone
+                                    Quantity
                                 </label>
 
-                                <input type="text"
-                                       name="customer_phone"
-                                       class="form-control"
-                                       placeholder="Enter customer phone">
+                                <input
+                                    type="number"
+                                    id="quantity"
+                                    class="form-control"
+                                    min="1"
+                                    value="1"
+                                >
 
                             </div>
 
                         </div>
 
 
-                        <!-- Notes -->
-                        <div class="col-md-12">
+
+                        <!-- Add Button -->
+
+                        <div
+                            class="col-lg-3 col-sm-6 col-12"
+                        >
 
                             <div class="form-group">
 
                                 <label>
-                                    Sale Notes
+                                    &nbsp;
                                 </label>
 
-                                <textarea name="notes"
-                                          rows="3"
-                                          class="form-control"
-                                          placeholder="Additional notes..."></textarea>
+                                <button
+                                    type="button"
+                                    id="addMedicine"
+                                    class="btn btn-primary w-100"
+                                >
+
+                                    <i class="fa fa-plus"></i>
+
+                                    Add Medicine
+
+                                </button>
 
                             </div>
 
                         </div>
-
-                    </div>
-
-
-                    <!-- Buttons -->
-                    <div class="text-right">
-
-                        <a href="sales.php"
-                           class="btn btn-secondary">
-
-                            Cancel
-
-                        </a>
-
-
-                        <button type="submit"
-                                name="create_sale"
-                                id="createSaleBtn"
-                                class="btn btn-primary">
-
-                            <i class="fa fa-check"></i>
-                            Create Sale
-
-                        </button>
-
-                    </div>
-
-                </form>
-
-            </div>
-
-        </div>
-
-
-        <!-- Important Notice -->
-        <div class="card">
-
-            <div class="card-body">
-
-                <div class="row align-items-center">
-
-                    <div class="col-md-1 text-center">
-
-                        <i class="fa fa-lightbulb-o"
-                           style="
-                           font-size:40px;
-                           color:#f5a623;
-                           ">
-                        </i>
-
-                    </div>
-
-
-                    <div class="col-md-11">
-
-                        <h5>
-                            Smart Stock Validation
-                        </h5>
-
-                        <p class="text-muted mb-0">
-
-                            The system checks the selected branch's
-                            available quantity before allowing a sale.
-                            Staff cannot sell more medicine than the
-                            available branch stock.
-
-                        </p>
 
                     </div>
 
@@ -694,326 +1034,652 @@ $availability = [
 
             </div>
 
-        </div>
+
+
+            <!-- ==========================================
+                 SALE ITEMS
+            =========================================== -->
+
+            <div class="card">
+
+                <div class="card-header">
+
+                    <h4>
+                        Sale Items
+                    </h4>
+
+                </div>
+
+
+                <div class="card-body">
+
+                    <div class="table-responsive">
+
+                        <table
+                            class="table table-bordered"
+                        >
+
+                            <thead>
+
+                                <tr>
+
+                                    <th>
+                                        #
+                                    </th>
+
+                                    <th>
+                                        Medicine
+                                    </th>
+
+                                    <th>
+                                        Unit Price
+                                    </th>
+
+                                    <th>
+                                        Quantity
+                                    </th>
+
+                                    <th>
+                                        Subtotal
+                                    </th>
+
+                                    <th>
+                                        Action
+                                    </th>
+
+                                </tr>
+
+                            </thead>
+
+
+                            <tbody id="saleItemsBody">
+
+                                <tr id="emptyRow">
+
+                                    <td
+                                        colspan="6"
+                                        class="text-center text-muted"
+                                    >
+
+                                        No medicine added yet.
+
+                                    </td>
+
+                                </tr>
+
+                            </tbody>
+
+
+                            <tfoot>
+
+                                <tr>
+
+                                    <th
+                                        colspan="4"
+                                        class="text-right"
+                                    >
+
+                                        Total Amount
+
+                                    </th>
+
+                                    <th>
+
+                                        ৳
+
+                                        <span
+                                            id="totalAmount"
+                                            class="sale-total"
+                                        >
+                                            0.00
+                                        </span>
+
+                                    </th>
+
+                                    <th></th>
+
+                                </tr>
+
+                            </tfoot>
+
+                        </table>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- ==========================================
+                 BUTTONS
+            =========================================== -->
+
+            <div class="card">
+
+                <div class="card-body text-right">
+
+                    <a
+                        href="sales.php"
+                        class="btn btn-secondary"
+                    >
+
+                        Cancel
+
+                    </a>
+
+
+                    <button
+                        type="submit"
+                        name="save_sale"
+                        class="btn btn-success"
+                    >
+
+                        <i class="fa fa-save"></i>
+
+                        Save Sale
+
+                    </button>
+
+                </div>
+
+            </div>
+
+
+        </form>
 
     </div>
-
-
-    <?php
-    require_once "../component/footer.php";
-    ?>
 
 </div>
 
 
+
 <script>
-$(document).ready(function () {
 
-    /*
-    |--------------------------------------------------------------------------
-    | Demo Availability
-    |--------------------------------------------------------------------------
-    */
+// ==================================================
+// MEDICINE CHANGE
+// ==================================================
 
-    var availability = <?= json_encode($availability); ?>;
+document
+    .getElementById("medicine_id")
+    .addEventListener(
+        "change",
+        function () {
 
-    var medicines = <?= json_encode($medicines); ?>;
+            const option =
+                this.options[
+                    this.selectedIndex
+                ];
+
+            const price =
+                option.getAttribute(
+                    "data-price"
+                );
+
+            document
+                .getElementById(
+                    "unit_price"
+                )
+                .value =
+                price || "";
+
+        }
+    );
 
 
-    /*
-    |--------------------------------------------------------------------------
-    | Medicine Select
-    |--------------------------------------------------------------------------
-    */
+// ==================================================
+// ADD MEDICINE
+// ==================================================
 
-    $("#medicineSelect").on("change", function () {
+let itemIndex = 0;
 
-        var medicineId = $(this).val();
 
-        if (medicineId === "") {
+document
+    .getElementById("addMedicine")
+    .addEventListener(
+        "click",
+        function () {
 
-            $("#medicineInfo").hide();
-            $("#availabilityBox").hide();
+            const medicineSelect =
+                document.getElementById(
+                    "medicine_id"
+                );
 
-            $("#unitPrice").val("");
 
+            const medicineId =
+                medicineSelect.value;
+
+
+            if (!medicineId) {
+
+                alert(
+                    "Please select a medicine."
+                );
+
+                return;
+            }
+
+
+            const selectedOption =
+                medicineSelect.options[
+                    medicineSelect.selectedIndex
+                ];
+
+
+            const medicineName =
+                selectedOption.text;
+
+
+            const unitPrice =
+                parseFloat(
+                    document.getElementById(
+                        "unit_price"
+                    ).value
+                );
+
+
+            const quantity =
+                parseInt(
+                    document.getElementById(
+                        "quantity"
+                    ).value
+                );
+
+
+            if (
+                isNaN(unitPrice)
+                ||
+                unitPrice <= 0
+            ) {
+
+                alert(
+                    "Invalid medicine price."
+                );
+
+                return;
+            }
+
+
+            if (
+                isNaN(quantity)
+                ||
+                quantity <= 0
+            ) {
+
+                alert(
+                    "Please enter a valid quantity."
+                );
+
+                return;
+            }
+
+
+            // ======================================
+            // DUPLICATE CHECK
+            // ======================================
+
+            const existing =
+                document.querySelector(
+                    'input[data-medicine-id="' +
+                    medicineId +
+                    '"]'
+                );
+
+
+            if (existing) {
+
+                alert(
+                    "This medicine is already added."
+                );
+
+                return;
+            }
+
+
+            // ======================================
+            // REMOVE EMPTY ROW
+            // ======================================
+
+            const emptyRow =
+                document.getElementById(
+                    "emptyRow"
+                );
+
+
+            if (emptyRow) {
+
+                emptyRow.remove();
+
+            }
+
+
+            const subtotal =
+                unitPrice * quantity;
+
+
+            const row =
+                document.createElement("tr");
+
+
+            row.innerHTML = `
+
+                <td>
+                    ${itemIndex + 1}
+                </td>
+
+                <td>
+
+                    ${escapeHtml(medicineName)}
+
+                    <input
+                        type="hidden"
+                        name="sale_items[${itemIndex}][medicine_id]"
+                        value="${medicineId}"
+                        data-medicine-id="${medicineId}"
+                    >
+
+                </td>
+
+                <td>
+
+                    ৳ ${unitPrice.toFixed(2)}
+
+                    <input
+                        type="hidden"
+                        name="sale_items[${itemIndex}][unit_price]"
+                        value="${unitPrice}"
+                    >
+
+                </td>
+
+                <td>
+
+                    ${quantity}
+
+                    <input
+                        type="hidden"
+                        name="sale_items[${itemIndex}][quantity]"
+                        value="${quantity}"
+                    >
+
+                </td>
+
+                <td>
+
+                    ৳ ${subtotal.toFixed(2)}
+
+                </td>
+
+                <td>
+
+                    <button
+                        type="button"
+                        class="btn btn-danger btn-sm remove-item"
+                    >
+
+                        <i class="fa fa-trash"></i>
+
+                    </button>
+
+                </td>
+
+            `;
+
+
+            document
+                .getElementById(
+                    "saleItemsBody"
+                )
+                .appendChild(row);
+
+
+            itemIndex++;
+
+
+            calculateTotal();
+
+
+            // Reset
+
+            medicineSelect.value = "";
+
+            document
+                .getElementById(
+                    "unit_price"
+                )
+                .value = "";
+
+            document
+                .getElementById(
+                    "quantity"
+                )
+                .value = "1";
+
+        }
+    );
+
+
+// ==================================================
+// REMOVE MEDICINE
+// ==================================================
+
+document.addEventListener(
+    "click",
+    function (event) {
+
+        const button =
+            event.target.closest(
+                ".remove-item"
+            );
+
+
+        if (!button) {
             return;
         }
 
 
-        var medicine = medicines.find(function (item) {
-
-            return item.id == medicineId;
-
-        });
+        const row =
+            button.closest("tr");
 
 
-        if (medicine) {
-
-            $("#genericName").text(
-                medicine.generic
-            );
-
-            $("#medicineForm").text(
-                medicine.form
-            );
-
-            $("#displayPrice").text(
-                parseFloat(medicine.price).toFixed(2)
-            );
-
-            $("#unitPrice").val(
-                medicine.price
-            );
-
-            $("#medicineInfo").slideDown();
-
+        if (row) {
+            row.remove();
         }
 
-
-        updateAvailability();
 
         calculateTotal();
 
-    });
 
-
-    /*
-    |--------------------------------------------------------------------------
-    | Branch Select
-    |--------------------------------------------------------------------------
-    */
-
-    $("#branchSelect").on("change", function () {
-
-        updateAvailability();
-
-    });
-
-
-    /*
-    |--------------------------------------------------------------------------
-    | Quantity Change
-    |--------------------------------------------------------------------------
-    */
-
-    $("#quantity").on(
-        "input",
-        function () {
-
-            validateQuantity();
-
-            calculateTotal();
-
-        }
-    );
-
-
-    /*
-    |--------------------------------------------------------------------------
-    | Discount Change
-    |--------------------------------------------------------------------------
-    */
-
-    $("#discount").on(
-        "input",
-        function () {
-
-            calculateTotal();
-
-        }
-    );
-
-
-    /*
-    |--------------------------------------------------------------------------
-    | Update Availability
-    |--------------------------------------------------------------------------
-    */
-
-    function updateAvailability() {
-
-        var branchId =
-            $("#branchSelect").val();
-
-        var medicineId =
-            $("#medicineSelect").val();
-
-
-        if (
-            branchId === "" ||
-            medicineId === ""
-        ) {
-
-            $("#availabilityBox").hide();
-
-            return;
-
-        }
-
-
-        var quantity = 0;
-
-
-        if (
-            availability[medicineId] &&
-            availability[medicineId][branchId]
-        ) {
-
-            quantity =
-                availability[medicineId][branchId];
-
-        }
-
-
-        $("#availableQuantity").text(
-            quantity
-        );
-
-
-        $("#availabilityBox").slideDown();
-
-
-        validateQuantity();
-
-    }
-
-
-    /*
-    |--------------------------------------------------------------------------
-    | Validate Quantity
-    |--------------------------------------------------------------------------
-    */
-
-    function validateQuantity() {
-
-        var quantity =
-            parseInt($("#quantity").val()) || 0;
-
-        var available =
-            parseInt($("#availableQuantity").text()) || 0;
-
-
-        if (available <= 0) {
-
-            $("#stockWarning")
-                .text("This medicine is out of stock in the selected branch.")
-                .show();
-
-            $("#createSaleBtn").prop(
-                "disabled",
-                true
+        const rows =
+            document.querySelectorAll(
+                "#saleItemsBody tr"
             );
 
-            return false;
 
-        }
+        if (rows.length === 0) {
+
+            const emptyRow =
+                document.createElement(
+                    "tr"
+                );
 
 
-        if (quantity > available) {
+            emptyRow.id =
+                "emptyRow";
 
-            $("#stockWarning")
-                .text(
-                    "Only " +
-                    available +
-                    " units are available."
+
+            emptyRow.innerHTML = `
+
+                <td
+                    colspan="6"
+                    class="text-center text-muted"
+                >
+
+                    No medicine added yet.
+
+                </td>
+
+            `;
+
+
+            document
+                .getElementById(
+                    "saleItemsBody"
                 )
-                .show();
-
-            $("#createSaleBtn").prop(
-                "disabled",
-                true
-            );
-
-            return false;
-
+                .appendChild(
+                    emptyRow
+                );
         }
-
-
-        $("#stockWarning").hide();
-
-        $("#createSaleBtn").prop(
-            "disabled",
-            false
-        );
-
-        return true;
 
     }
+);
 
 
-    /*
-    |--------------------------------------------------------------------------
-    | Calculate Total
-    |--------------------------------------------------------------------------
-    */
+// ==================================================
+// CALCULATE TOTAL
+// ==================================================
 
-    function calculateTotal() {
+function calculateTotal() {
 
-        var quantity =
-            parseFloat($("#quantity").val()) || 0;
-
-        var price =
-            parseFloat($("#unitPrice").val()) || 0;
-
-        var discount =
-            parseFloat($("#discount").val()) || 0;
+    let total = 0;
 
 
-        var subtotal =
-            quantity * price;
+    const rows =
+        document.querySelectorAll(
+            "#saleItemsBody tr"
+        );
 
 
-        var grandTotal =
-            subtotal - discount;
+    rows.forEach(
+        function (row) {
+
+            const priceInput =
+                row.querySelector(
+                    'input[name*="[unit_price]"]'
+                );
 
 
-        if (grandTotal < 0) {
+            const quantityInput =
+                row.querySelector(
+                    'input[name*="[quantity]"]'
+                );
 
-            grandTotal = 0;
+
+            if (
+                priceInput &&
+                quantityInput
+            ) {
+
+                const price =
+                    parseFloat(
+                        priceInput.value
+                    );
+
+
+                const quantity =
+                    parseInt(
+                        quantityInput.value
+                    );
+
+
+                total +=
+                    price * quantity;
+            }
 
         }
+    );
 
 
-        $("#subtotal").text(
-            subtotal.toFixed(2)
+    document
+        .getElementById(
+            "totalAmount"
+        )
+        .innerText =
+        total.toFixed(2);
+
+}
+
+
+// ==================================================
+// ESCAPE HTML
+// ==================================================
+
+function escapeHtml(text) {
+
+    const div =
+        document.createElement(
+            "div"
         );
 
+    div.textContent =
+        text;
 
-        $("#discountDisplay").text(
-            discount.toFixed(2)
-        );
-
-
-        $("#grandTotal").text(
-            grandTotal.toFixed(2)
-        );
+    return div.innerHTML;
+}
 
 
-        $("#totalAmount").val(
-            grandTotal.toFixed(2)
-        );
+// ==================================================
+// FORM VALIDATION
+// ==================================================
 
-    }
+document
+    .getElementById("saleForm")
+    .addEventListener(
+        "submit",
+        function (event) {
+
+            const branch =
+                document.getElementById(
+                    "branch_id"
+                ).value;
 
 
-    /*
-    |--------------------------------------------------------------------------
-    | Form Submit Validation
-    |--------------------------------------------------------------------------
-    */
+            const items =
+                document.querySelectorAll(
+                    '#saleItemsBody input[name*="[medicine_id]"]'
+                );
 
-    $("#saleForm").on("submit", function (event) {
 
-        if (!validateQuantity()) {
+            if (!branch) {
 
-            event.preventDefault();
+                event.preventDefault();
 
-            return false;
+                alert(
+                    "Please select a branch."
+                );
+
+                return;
+            }
+
+
+            if (items.length === 0) {
+
+                event.preventDefault();
+
+                alert(
+                    "Please add at least one medicine."
+                );
+
+                return;
+            }
+
+
+            if (
+                !confirm(
+                    "Are you sure you want to save this sale?"
+                )
+            ) {
+
+                event.preventDefault();
+
+            }
 
         }
+    );
 
-    });
-
-});
 </script>
+
+<?php
+require_once "../component/footer.php";
+?>

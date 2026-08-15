@@ -1,115 +1,100 @@
 <?php
+
 require_once "../component/header.php";
 require_once "../component/sidebar.php";
+require_once "../crud/crud_class.php";
 
-/*
-|--------------------------------------------------------------------------
-| Demo Sales Data
-|--------------------------------------------------------------------------
-| Database ready হলে এই অংশ SQL query দিয়ে replace করা হবে.
-*/
-
-$sales = [
-    [
-        "id" => 1001,
-        "invoice" => "PH-SALE-1001",
-        "branch" => "SHIFA Main Pharmacy",
-        "medicine" => "Napa",
-        "quantity" => 5,
-        "amount" => 50,
-        "payment" => "Paid",
-        "date" => "2026-08-14 10:30 AM"
-    ],
-    [
-        "id" => 1002,
-        "invoice" => "PH-SALE-1002",
-        "branch" => "SHIFA Chattogram Pharmacy",
-        "medicine" => "Seclo",
-        "quantity" => 3,
-        "amount" => 180,
-        "payment" => "Paid",
-        "date" => "2026-08-14 11:15 AM"
-    ],
-    [
-        "id" => 1003,
-        "invoice" => "PH-SALE-1003",
-        "branch" => "SHIFA Agrabad Pharmacy",
-        "medicine" => "Napa Extra",
-        "quantity" => 2,
-        "amount" => 30,
-        "payment" => "Pending",
-        "date" => "2026-08-14 12:10 PM"
-    ],
-    [
-        "id" => 1004,
-        "invoice" => "PH-SALE-1004",
-        "branch" => "SHIFA Main Pharmacy",
-        "medicine" => "Seclo",
-        "quantity" => 4,
-        "amount" => 240,
-        "payment" => "Paid",
-        "date" => "2026-08-13 04:20 PM"
-    ],
-    [
-        "id" => 1005,
-        "invoice" => "PH-SALE-1005",
-        "branch" => "SHIFA Chattogram Pharmacy",
-        "medicine" => "Napa",
-        "quantity" => 10,
-        "amount" => 100,
-        "payment" => "Pending",
-        "date" => "2026-08-13 06:45 PM"
-    ]
-];
+$crud = new crud_class();
 
 
-// Calculate summary
-$total_sales = count($sales);
+// ==========================================
+// SALES DATA
+// ==========================================
 
-$total_revenue = 0;
-$paid_amount = 0;
-$pending_amount = 0;
-$paid_sales = 0;
+$sql = "
+    SELECT
+        ps.sale_id,
+        ps.invoice_no,
+        ps.branch_id,
+        ps.customer_name,
+        ps.customer_phone,
+        ps.sale_date,
+        ps.total_amount,
+        ps.payment_method,
+        ps.status,
+        pb.branch_name
+
+    FROM pharmacy_sales ps
+
+    LEFT JOIN pharmacy_branches pb
+        ON ps.branch_id = pb.branch_id
+
+    WHERE ps.deleted_at IS NULL
+
+    ORDER BY ps.sale_id DESC
+";
+
+$sales = $crud->common_query($sql);
+
+
+// ==========================================
+// SUMMARY
+// ==========================================
+
+$total_sales = 0;
+$completed_sales = 0;
 $pending_sales = 0;
+$total_amount = 0;
 
-foreach ($sales as $sale) {
 
-    $total_revenue += $sale["amount"];
+if ($sales['status'] && !empty($sales['data'])) {
 
-    if ($sale["payment"] == "Paid") {
+    $total_sales = count($sales['data']);
 
-        $paid_amount += $sale["amount"];
-        $paid_sales++;
+    foreach ($sales['data'] as $row) {
 
-    } else {
+        if ($row->status == "Completed") {
+            $completed_sales++;
+        }
 
-        $pending_amount += $sale["amount"];
-        $pending_sales++;
+        if ($row->status == "Pending") {
+            $pending_sales++;
+        }
 
+        $total_amount += $row->total_amount;
     }
 }
+
 ?>
 
 <div class="page-wrapper">
+
     <div class="content">
 
-        <!-- Page Header -->
-        <div class="row">
 
-            <div class="col-sm-7 col-6">
+        <!-- ==========================================
+             PAGE HEADER
+        =========================================== -->
 
-                <h4 class="page-title">
-                    Pharmacy Sales
-                </h4>
+        <div class="page-header">
+
+            <div class="page-title">
+
+                <h4>Pharmacy Sales</h4>
+
+                <h6>
+                    Manage pharmacy sales and invoices
+                </h6>
 
             </div>
 
-            <div class="col-sm-5 col-6 text-right">
 
-                <a href="new_sale.php"
-                   class="btn btn-primary btn-rounded">
+            <div class="page-btn">
 
-                    <i class="fa fa-plus"></i>
+                <a href="new_sale.php" class="btn btn-primary">
+
+                    <i class="fa fa-plus me-1"></i>
+
                     New Sale
 
                 </a>
@@ -119,91 +104,40 @@ foreach ($sales as $sale) {
         </div>
 
 
-        <!-- Summary Cards -->
+
+        <!-- ==========================================
+             SUMMARY CARDS
+        =========================================== -->
+
         <div class="row">
 
+
             <!-- Total Sales -->
-            <div class="col-md-3 col-sm-6">
 
-                <div class="card dash-widget">
+            <div class="col-lg-3 col-sm-6 col-12">
 
-                    <div class="card-body">
+                <div class="dash-widget">
 
-                        <span class="dash-widget-icon bg-info">
-                            <i class="fa fa-shopping-cart"></i>
-                        </span>
+                    <div class="dash-widgetcontent">
 
-                        <div class="dash-widget-info">
+                        <h5>
+                            <?php echo $total_sales; ?>
+                        </h5>
 
-                            <h3>
-                                <?= $total_sales; ?>
-                            </h3>
-
-                            <span>
-                                Total Sales
-                            </span>
-
-                        </div>
+                        <h6>
+                            Total Sales
+                        </h6>
 
                     </div>
 
-                </div>
 
-            </div>
-
-
-            <!-- Revenue -->
-            <div class="col-md-3 col-sm-6">
-
-                <div class="card dash-widget">
-
-                    <div class="card-body">
-
-                        <span class="dash-widget-icon bg-success">
-                            <i class="fa fa-money"></i>
-                        </span>
-
-                        <div class="dash-widget-info">
-
-                            <h3>
-                                ৳<?= number_format($total_revenue, 2); ?>
-                            </h3>
-
-                            <span>
-                                Total Revenue
-                            </span>
-
-                        </div>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-
-            <!-- Paid -->
-            <div class="col-md-3 col-sm-6">
-
-                <div class="card dash-widget">
-
-                    <div class="card-body">
+                    <div class="dash-widgeticon">
 
                         <span class="dash-widget-icon bg-primary">
-                            <i class="fa fa-check-circle"></i>
+
+                            <i class="fa fa-shopping-cart"></i>
+
                         </span>
-
-                        <div class="dash-widget-info">
-
-                            <h3>
-                                ৳<?= number_format($paid_amount, 2); ?>
-                            </h3>
-
-                            <span>
-                                Paid Sales
-                            </span>
-
-                        </div>
 
                     </div>
 
@@ -212,28 +146,105 @@ foreach ($sales as $sale) {
             </div>
 
 
-            <!-- Pending -->
-            <div class="col-md-3 col-sm-6">
 
-                <div class="card dash-widget">
+            <!-- Completed Sales -->
 
-                    <div class="card-body">
+            <div class="col-lg-3 col-sm-6 col-12">
 
-                        <span class="dash-widget-icon bg-warning">
-                            <i class="fa fa-clock-o"></i>
+                <div class="dash-widget">
+
+                    <div class="dash-widgetcontent">
+
+                        <h5>
+                            <?php echo $completed_sales; ?>
+                        </h5>
+
+                        <h6>
+                            Completed Sales
+                        </h6>
+
+                    </div>
+
+
+                    <div class="dash-widgeticon">
+
+                        <span class="dash-widget-icon bg-success">
+
+                            <i class="fa fa-check-circle"></i>
+
                         </span>
 
-                        <div class="dash-widget-info">
+                    </div>
 
-                            <h3>
-                                ৳<?= number_format($pending_amount, 2); ?>
-                            </h3>
+                </div>
 
-                            <span>
-                                Pending Payment
-                            </span>
+            </div>
 
-                        </div>
+
+
+            <!-- Pending Sales -->
+
+            <div class="col-lg-3 col-sm-6 col-12">
+
+                <div class="dash-widget">
+
+                    <div class="dash-widgetcontent">
+
+                        <h5>
+                            <?php echo $pending_sales; ?>
+                        </h5>
+
+                        <h6>
+                            Pending Sales
+                        </h6>
+
+                    </div>
+
+
+                    <div class="dash-widgeticon">
+
+                        <span class="dash-widget-icon bg-warning">
+
+                            <i class="fa fa-clock-o"></i>
+
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- Total Revenue -->
+
+            <div class="col-lg-3 col-sm-6 col-12">
+
+                <div class="dash-widget">
+
+                    <div class="dash-widgetcontent">
+
+                        <h5>
+
+                            ৳ <?php echo number_format($total_amount, 2); ?>
+
+                        </h5>
+
+                        <h6>
+                            Total Revenue
+                        </h6>
+
+                    </div>
+
+
+                    <div class="dash-widgeticon">
+
+                        <span class="dash-widget-icon bg-info">
+
+                            <i class="fa fa-money"></i>
+
+                        </span>
 
                     </div>
 
@@ -244,134 +255,40 @@ foreach ($sales as $sale) {
         </div>
 
 
-        <!-- Sales Table -->
+
+        <!-- ==========================================
+             SALES TABLE
+        =========================================== -->
+
         <div class="card">
+
+
+            <!-- Card Header -->
 
             <div class="card-header">
 
-                <div class="row align-items-center">
+                <div class="card-title">
 
-                    <div class="col-md-6">
-
-                        <h4 class="card-title mb-0">
-
-                            <i class="fa fa-list"></i>
-                            Sales History
-
-                        </h4>
-
-                    </div>
-
-                    <div class="col-md-6 text-right">
-
-                        <span class="badge badge-success"
-                              style="padding:8px;">
-
-                            Paid:
-                            <?= $paid_sales; ?>
-
-                        </span>
-
-                        <span class="badge badge-warning"
-                              style="padding:8px;">
-
-                            Pending:
-                            <?= $pending_sales; ?>
-
-                        </span>
-
-                    </div>
+                    <h4>
+                        Sales List
+                    </h4>
 
                 </div>
 
             </div>
 
 
+
+            <!-- Card Body -->
+
             <div class="card-body">
 
-
-                <!-- Search & Filter -->
-                <div class="row mb-3">
-
-                    <div class="col-md-5">
-
-                        <div class="input-group">
-
-                            <input type="text"
-                                   id="saleSearch"
-                                   class="form-control"
-                                   placeholder="Search invoice, branch or medicine...">
-
-                            <div class="input-group-append">
-
-                                <button class="btn btn-primary">
-
-                                    <i class="fa fa-search"></i>
-
-                                </button>
-
-                            </div>
-
-                        </div>
-
-                    </div>
-
-
-                    <div class="col-md-3">
-
-                        <select id="paymentFilter"
-                                class="form-control">
-
-                            <option value="">
-                                All Payments
-                            </option>
-
-                            <option value="Paid">
-                                Paid
-                            </option>
-
-                            <option value="Pending">
-                                Pending
-                            </option>
-
-                        </select>
-
-                    </div>
-
-
-                    <div class="col-md-4">
-
-                        <select id="branchFilter"
-                                class="form-control">
-
-                            <option value="">
-                                All Branches
-                            </option>
-
-                            <option value="SHIFA Main Pharmacy">
-                                SHIFA Main Pharmacy
-                            </option>
-
-                            <option value="SHIFA Chattogram Pharmacy">
-                                SHIFA Chattogram Pharmacy
-                            </option>
-
-                            <option value="SHIFA Agrabad Pharmacy">
-                                SHIFA Agrabad Pharmacy
-                            </option>
-
-                        </select>
-
-                    </div>
-
-                </div>
-
-
-                <!-- Table -->
                 <div class="table-responsive">
 
-                    <table class="table table-striped custom-table"
-                           id="salesTable">
+                    <table class="table datanew">
+
+
+                        <!-- Table Header -->
 
                         <thead>
 
@@ -379,209 +296,329 @@ foreach ($sales as $sale) {
 
                                 <th>#</th>
 
-                                <th>
-                                    Invoice
-                                </th>
+                                <th>Invoice No</th>
 
-                                <th>
-                                    Branch
-                                </th>
+                                <th>Branch</th>
 
-                                <th>
-                                    Medicine
-                                </th>
+                                <th>Customer</th>
 
-                                <th>
-                                    Qty
-                                </th>
+                                <th>Sale Date</th>
 
-                                <th>
-                                    Amount
-                                </th>
+                                <th>Total</th>
 
-                                <th>
-                                    Payment
-                                </th>
+                                <th>Payment</th>
 
-                                <th>
-                                    Date
-                                </th>
+                                <th>Status</th>
 
-                                <th class="text-right">
-                                    Action
-                                </th>
+                                <th>Action</th>
 
                             </tr>
 
                         </thead>
 
 
+
+                        <!-- Table Body -->
+
                         <tbody>
 
-                            <?php foreach ($sales as $sale): ?>
 
-                                <tr>
+                        <?php
 
-                                    <td>
-                                        <?= $sale["id"]; ?>
-                                    </td>
+                        if (
+                            $sales['status']
+                            &&
+                            !empty($sales['data'])
+                        ) {
 
+                            $sl = 1;
 
-                                    <td>
+                            foreach ($sales['data'] as $row) {
 
-                                        <strong>
-
-                                            <?= htmlspecialchars(
-                                                $sale["invoice"]
-                                            ); ?>
-
-                                        </strong>
-
-                                    </td>
+                        ?>
 
 
-                                    <td>
 
-                                        <i class="fa fa-hospital-o text-muted"></i>
-
-                                        <?= htmlspecialchars(
-                                            $sale["branch"]
-                                        ); ?>
-
-                                    </td>
+                            <tr>
 
 
-                                    <td>
+                                <!-- Serial -->
 
-                                        <i class="fa fa-medkit text-muted"></i>
-
-                                        <?= htmlspecialchars(
-                                            $sale["medicine"]
-                                        ); ?>
-
-                                    </td>
+                                <td>
+                                    <?php echo $sl++; ?>
+                                </td>
 
 
-                                    <td>
 
-                                        <strong>
-                                            <?= $sale["quantity"]; ?>
-                                        </strong>
+                                <!-- Invoice -->
 
-                                    </td>
+                                <td>
 
+                                    <strong>
 
-                                    <td>
+                                        <?php
 
-                                        <strong>
-                                            ৳<?= number_format(
-                                                $sale["amount"],
-                                                2
-                                            ); ?>
-                                        </strong>
+                                        echo htmlspecialchars(
+                                            $row->invoice_no
+                                        );
 
-                                    </td>
+                                        ?>
 
+                                    </strong>
 
-                                    <td>
-
-                                        <?php if ($sale["payment"] == "Paid"): ?>
-
-                                            <span class="badge badge-success">
-
-                                                <i class="fa fa-check"></i>
-                                                Paid
-
-                                            </span>
-
-                                        <?php else: ?>
-
-                                            <span class="badge badge-warning">
-
-                                                <i class="fa fa-clock-o"></i>
-                                                Pending
-
-                                            </span>
-
-                                        <?php endif; ?>
-
-                                    </td>
+                                </td>
 
 
-                                    <td>
 
-                                        <small>
+                                <!-- Branch -->
 
-                                            <?= htmlspecialchars(
-                                                $sale["date"]
-                                            ); ?>
+                                <td>
+
+                                    <?php
+
+                                    echo htmlspecialchars(
+                                        $row->branch_name
+                                        ?? "N/A"
+                                    );
+
+                                    ?>
+
+                                </td>
+
+
+
+                                <!-- Customer -->
+
+                                <td>
+
+                                    <?php
+
+                                    echo htmlspecialchars(
+                                        $row->customer_name
+                                        ?? "Walk-in Customer"
+                                    );
+
+                                    ?>
+
+                                    <?php
+
+                                    if (!empty($row->customer_phone)) {
+
+                                    ?>
+
+                                        <br>
+
+                                        <small class="text-muted">
+
+                                            <?php
+
+                                            echo htmlspecialchars(
+                                                $row->customer_phone
+                                            );
+
+                                            ?>
 
                                         </small>
 
-                                    </td>
+                                    <?php
+
+                                    }
+
+                                    ?>
+
+                                </td>
 
 
-                                    <td class="text-right">
 
-                                        <div class="dropdown dropdown-action">
+                                <!-- Sale Date -->
 
-                                            <a href="#"
-                                               class="action-icon dropdown-toggle"
-                                               data-toggle="dropdown">
+                                <td>
 
-                                                <i class="fa fa-ellipsis-v"></i>
+                                    <?php
 
-                                            </a>
+                                    echo date(
+                                        "d M Y, h:i A",
+                                        strtotime($row->sale_date)
+                                    );
 
+                                    ?>
 
-                                            <div class="dropdown-menu dropdown-menu-right">
-
-                                                <a class="dropdown-item"
-                                                   href="sale_view.php?id=<?= $sale["id"]; ?>">
-
-                                                    <i class="fa fa-eye m-r-5"></i>
-                                                    View Sale
-
-                                                </a>
+                                </td>
 
 
-                                                <a class="dropdown-item"
-                                                   href="sale_view.php?id=<?= $sale["id"]; ?>">
 
-                                                    <i class="fa fa-print m-r-5"></i>
-                                                    Print Invoice
+                                <!-- Total -->
 
-                                                </a>
+                                <td>
 
-                                            </div>
+                                    <strong>
 
-                                        </div>
+                                        ৳
 
-                                    </td>
+                                        <?php
 
-                                </tr>
+                                        echo number_format(
+                                            $row->total_amount,
+                                            2
+                                        );
 
-                            <?php endforeach; ?>
+                                        ?>
+
+                                    </strong>
+
+                                </td>
 
 
-                            <tr id="noSaleMessage"
-                                style="display:none;">
 
-                                <td colspan="9"
-                                    class="text-center text-muted"
-                                    style="padding:30px;">
+                                <!-- Payment -->
 
-                                    <i class="fa fa-shopping-cart"
-                                       style="font-size:30px;">
-                                    </i>
+                                <td>
 
-                                    <br><br>
+                                    <?php
 
-                                    No sales found.
+                                    echo htmlspecialchars(
+                                        $row->payment_method
+                                    );
+
+                                    ?>
+
+                                </td>
+
+
+
+                                <!-- Status -->
+
+                                <td>
+
+
+                                    <?php
+
+                                    if ($row->status == "Completed") {
+
+                                        echo '
+
+                                        <span class="badge bg-success">
+
+                                            Completed
+
+                                        </span>
+
+                                        ';
+
+                                    }
+
+                                    elseif ($row->status == "Pending") {
+
+                                        echo '
+
+                                        <span class="badge bg-warning">
+
+                                            Pending
+
+                                        </span>
+
+                                        ';
+
+                                    }
+
+                                    else {
+
+                                        echo '
+
+                                        <span class="badge bg-danger">
+
+                                            Cancelled
+
+                                        </span>
+
+                                        ';
+
+                                    }
+
+                                    ?>
+
+                                </td>
+
+
+
+                                <!-- Action -->
+
+                                <td>
+
+                                    <a
+                                        href="sale_view.php?id=<?php echo $row->sale_id; ?>"
+                                        class="btn btn-sm btn-info"
+                                        title="View Sale"
+                                    >
+
+                                        <i class="fa fa-eye"></i>
+
+                                    </a>
+
+                                </td>
+
+
+                            </tr>
+
+
+
+                        <?php
+
+                            }
+
+                        }
+
+                        else {
+
+                        ?>
+
+
+
+                            <tr>
+
+                                <td
+                                    colspan="9"
+                                    class="text-center"
+                                >
+
+                                    <div class="py-4">
+
+                                        <i
+                                            class="fa fa-shopping-cart fa-2x text-muted"
+                                        ></i>
+
+                                        <h6 class="mt-2">
+
+                                            No sales found
+
+                                        </h6>
+
+                                        <a
+                                            href="new_sale.php"
+                                            class="btn btn-primary mt-2"
+                                        >
+
+                                            <i class="fa fa-plus me-1"></i>
+
+                                            Create New Sale
+
+                                        </a>
+
+                                    </div>
 
                                 </td>
 
                             </tr>
+
+
+
+                        <?php
+
+                        }
+
+                        ?>
+
+
 
                         </tbody>
 
@@ -593,241 +630,14 @@ foreach ($sales as $sale) {
 
         </div>
 
-
-        <!-- Payment Summary -->
-        <div class="card">
-
-            <div class="card-header">
-
-                <h4 class="card-title">
-                    Payment Summary
-                </h4>
-
-            </div>
-
-
-            <div class="card-body">
-
-                <div class="row">
-
-                    <div class="col-md-6">
-
-                        <div class="alert alert-success">
-
-                            <i class="fa fa-check-circle"></i>
-
-                            <strong>
-                                Paid Amount:
-                            </strong>
-
-                            ৳<?= number_format(
-                                $paid_amount,
-                                2
-                            ); ?>
-
-                        </div>
-
-                    </div>
-
-
-                    <div class="col-md-6">
-
-                        <div class="alert alert-warning">
-
-                            <i class="fa fa-clock-o"></i>
-
-                            <strong>
-                                Pending Amount:
-                            </strong>
-
-                            ৳<?= number_format(
-                                $pending_amount,
-                                2
-                            ); ?>
-
-                        </div>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-        </div>
-
-
-        <!-- Quick Action -->
-        <div class="card">
-
-            <div class="card-body">
-
-                <div class="row align-items-center">
-
-                    <div class="col-md-1 text-center">
-
-                        <i class="fa fa-cart-plus"
-                           style="
-                           font-size:40px;
-                           color:#009efb;
-                           ">
-                        </i>
-
-                    </div>
-
-
-                    <div class="col-md-8">
-
-                        <h5>
-                            Create a New Pharmacy Sale
-                        </h5>
-
-                        <p class="text-muted mb-0">
-
-                            Select a medicine and pharmacy branch,
-                            check availability and create a new sale.
-
-                        </p>
-
-                    </div>
-
-
-                    <div class="col-md-3 text-right">
-
-                        <a href="new_sale.php"
-                           class="btn btn-primary">
-
-                            <i class="fa fa-plus"></i>
-
-                            New Sale
-
-                        </a>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-        </div>
-
     </div>
-
-
-    <?php
-    require_once "../component/footer.php";
-    ?>
 
 </div>
 
 
-<script>
 
-$(document).ready(function () {
+<?php
 
-    function filterSales() {
+require_once "../component/footer.php";
 
-        var searchValue =
-            $("#saleSearch").val().toLowerCase();
-
-        var paymentValue =
-            $("#paymentFilter").val().toLowerCase();
-
-        var branchValue =
-            $("#branchFilter").val().toLowerCase();
-
-        var visibleRows = 0;
-
-
-        $("#salesTable tbody tr").each(function () {
-
-            if ($(this).attr("id") === "noSaleMessage") {
-                return;
-            }
-
-
-            var rowText =
-                $(this).text().toLowerCase();
-
-
-            var paymentText =
-                $(this)
-                .find("td:eq(6)")
-                .text()
-                .trim()
-                .toLowerCase();
-
-
-            var branchText =
-                $(this)
-                .find("td:eq(2)")
-                .text()
-                .trim()
-                .toLowerCase();
-
-
-            var searchMatch =
-                rowText.includes(searchValue);
-
-
-            var paymentMatch =
-                paymentValue === "" ||
-                paymentText === paymentValue;
-
-
-            var branchMatch =
-                branchValue === "" ||
-                branchText === branchValue;
-
-
-            if (
-                searchMatch &&
-                paymentMatch &&
-                branchMatch
-            ) {
-
-                $(this).show();
-
-                visibleRows++;
-
-            } else {
-
-                $(this).hide();
-
-            }
-
-        });
-
-
-        if (visibleRows === 0) {
-
-            $("#noSaleMessage").show();
-
-        } else {
-
-            $("#noSaleMessage").hide();
-
-        }
-
-    }
-
-
-    $("#saleSearch").on(
-        "keyup",
-        filterSales
-    );
-
-
-    $("#paymentFilter").on(
-        "change",
-        filterSales
-    );
-
-
-    $("#branchFilter").on(
-        "change",
-        filterSales
-    );
-
-});
-
-</script>
+?>

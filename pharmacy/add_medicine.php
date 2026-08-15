@@ -1,6 +1,71 @@
 <?php
+
+require_once "../component/connection.php";
 require_once "../component/header.php";
 require_once "../component/sidebar.php";
+
+
+/* =========================
+   Save Medicine
+   ========================= */
+
+if (isset($_POST['save_medicine'])) {
+
+    $medicine_name = $_POST['medicine_name'];
+    $generic_name = $_POST['generic_name'];
+    $brand_name = $_POST['brand_name'];
+    $category = $_POST['category'];
+    $dosage_form = $_POST['dosage_form'];
+    $strength = $_POST['strength'];
+    $unit = $_POST['unit'];
+    $description = $_POST['description'];
+    $status = $_POST['status'];
+
+    $unit_price = $_POST['unit_price'];
+    $reorder_level = $_POST['reorder_level'];
+    $expiry_date = $_POST['expiry_date'];
+
+
+    /* Data for database */
+
+    $data = [
+        "medicine_name" => $medicine_name,
+        "generic_name" => $generic_name,
+        "category" => $category,
+        "dosage_form" => $dosage_form,
+        "strength" => $strength,
+        "unit" => $unit,
+        "manufacturer" => $brand_name,
+        "description" => $description,
+        "unit_price" => $unit_price,
+        "reorder_level" => $reorder_level,
+        "expiry_date" => $expiry_date,
+        "status" => $status
+    ];
+
+
+    /* Insert data into medicines table */
+
+    $result = $crud->common_insert("medicines", $data);
+
+
+    /* Check result */
+
+    if ($result["status"]) {
+
+        echo "<script>
+                alert('Medicine added successfully');
+                window.location.href='medicines.php';
+              </script>";
+
+    } else {
+
+        echo "<script>
+                alert('Error: " . $result["message"] . "');
+              </script>";
+    }
+}
+
 ?>
 
 <div class="page-wrapper">
@@ -8,15 +73,23 @@ require_once "../component/sidebar.php";
 
         <!-- Page Header -->
         <div class="row">
+
             <div class="col-sm-7 col-6">
                 <h4 class="page-title">Add Medicine</h4>
             </div>
 
             <div class="col-sm-5 col-6 text-right">
-                <a href="medicines.php" class="btn btn-secondary btn-rounded">
-                    <i class="fa fa-arrow-left"></i> Back to Medicines
+
+                <a href="medicines.php"
+                   class="btn btn-secondary btn-rounded">
+
+                    <i class="fa fa-arrow-left"></i>
+                    Back to Medicines
+
                 </a>
+
             </div>
+
         </div>
 
 
@@ -24,14 +97,18 @@ require_once "../component/sidebar.php";
         <div class="card">
 
             <div class="card-header">
+
                 <h4 class="card-title">
+
                     <i class="fa fa-medkit"></i>
                     Medicine Information
+
                 </h4>
 
                 <p class="text-muted mb-0">
                     Add a new medicine to the pharmacy system.
                 </p>
+
             </div>
 
 
@@ -39,11 +116,14 @@ require_once "../component/sidebar.php";
 
                 <form method="POST" action="">
 
+
                     <div class="row">
 
                         <!-- Medicine Name -->
                         <div class="col-md-6">
+
                             <div class="form-group">
+
                                 <label>
                                     Medicine Name
                                     <span class="text-danger">*</span>
@@ -54,13 +134,17 @@ require_once "../component/sidebar.php";
                                        class="form-control"
                                        placeholder="e.g. Napa"
                                        required>
+
                             </div>
+
                         </div>
 
 
                         <!-- Generic Name -->
                         <div class="col-md-6">
+
                             <div class="form-group">
+
                                 <label>
                                     Generic Name
                                     <span class="text-danger">*</span>
@@ -71,26 +155,36 @@ require_once "../component/sidebar.php";
                                        class="form-control"
                                        placeholder="e.g. Paracetamol"
                                        required>
+
                             </div>
+
                         </div>
 
 
-                        <!-- Brand -->
+                        <!-- Brand / Manufacturer -->
                         <div class="col-md-6">
+
                             <div class="form-group">
-                                <label>Brand / Manufacturer</label>
+
+                                <label>
+                                    Brand / Manufacturer
+                                </label>
 
                                 <input type="text"
                                        name="brand_name"
                                        class="form-control"
                                        placeholder="e.g. Beximco">
+
                             </div>
+
                         </div>
 
 
                         <!-- Category -->
                         <div class="col-md-6">
+
                             <div class="form-group">
+
                                 <label>
                                     Category
                                     <span class="text-danger">*</span>
@@ -133,13 +227,17 @@ require_once "../component/sidebar.php";
                                     </option>
 
                                 </select>
+
                             </div>
+
                         </div>
 
 
                         <!-- Dosage Form -->
                         <div class="col-md-4">
+
                             <div class="form-group">
+
                                 <label>
                                     Dosage Form
                                     <span class="text-danger">*</span>
@@ -186,27 +284,39 @@ require_once "../component/sidebar.php";
                                     </option>
 
                                 </select>
+
                             </div>
+
                         </div>
 
 
                         <!-- Strength -->
                         <div class="col-md-4">
+
                             <div class="form-group">
-                                <label>Strength</label>
+
+                                <label>
+                                    Strength
+                                </label>
 
                                 <input type="text"
                                        name="strength"
                                        class="form-control"
                                        placeholder="e.g. 500mg">
+
                             </div>
+
                         </div>
 
 
                         <!-- Unit -->
                         <div class="col-md-4">
+
                             <div class="form-group">
-                                <label>Unit</label>
+
+                                <label>
+                                    Unit
+                                </label>
 
                                 <select name="unit"
                                         class="form-control">
@@ -232,28 +342,101 @@ require_once "../component/sidebar.php";
                                     </option>
 
                                 </select>
+
                             </div>
+
+                        </div>
+
+
+                        <!-- Unit Price -->
+                        <div class="col-md-4">
+
+                            <div class="form-group">
+
+                                <label>
+                                    Unit Price
+                                    <span class="text-danger">*</span>
+                                </label>
+
+                                <input type="number"
+                                       name="unit_price"
+                                       class="form-control"
+                                       step="0.01"
+                                       min="0"
+                                       placeholder="e.g. 5.00"
+                                       required>
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- Reorder Level -->
+                        <div class="col-md-4">
+
+                            <div class="form-group">
+
+                                <label>
+                                    Reorder Level
+                                </label>
+
+                                <input type="number"
+                                       name="reorder_level"
+                                       class="form-control"
+                                       min="0"
+                                       value="10"
+                                       placeholder="e.g. 10">
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- Expiry Date -->
+                        <div class="col-md-4">
+
+                            <div class="form-group">
+
+                                <label>
+                                    Expiry Date
+                                </label>
+
+                                <input type="date"
+                                       name="expiry_date"
+                                       class="form-control">
+
+                            </div>
+
                         </div>
 
 
                         <!-- Description -->
                         <div class="col-md-12">
+
                             <div class="form-group">
-                                <label>Description</label>
+
+                                <label>
+                                    Description
+                                </label>
 
                                 <textarea name="description"
                                           rows="4"
                                           class="form-control"
                                           placeholder="Write medicine details..."></textarea>
+
                             </div>
+
                         </div>
 
 
                         <!-- Status -->
                         <div class="col-md-6">
+
                             <div class="form-group">
 
-                                <label>Status</label>
+                                <label>
+                                    Status
+                                </label>
 
                                 <select name="status"
                                         class="form-control">
@@ -269,6 +452,7 @@ require_once "../component/sidebar.php";
                                 </select>
 
                             </div>
+
                         </div>
 
                     </div>
@@ -279,17 +463,23 @@ require_once "../component/sidebar.php";
 
                         <a href="medicines.php"
                            class="btn btn-secondary">
+
                             Cancel
+
                         </a>
+
 
                         <button type="submit"
                                 name="save_medicine"
                                 class="btn btn-primary">
+
                             <i class="fa fa-save"></i>
                             Save Medicine
+
                         </button>
 
                     </div>
+
 
                 </form>
 
@@ -298,7 +488,7 @@ require_once "../component/sidebar.php";
         </div>
 
 
-        <!-- Information -->
+        <!-- Information Card -->
         <div class="card">
 
             <div class="card-body">
@@ -316,14 +506,19 @@ require_once "../component/sidebar.php";
 
                     </div>
 
+
                     <div class="col-md-11">
 
-                        <h5>Medicine & Branch Availability</h5>
+                        <h5>
+                            Medicine & Branch Availability
+                        </h5>
 
                         <p class="text-muted mb-0">
+
                             After adding the medicine, you can manage
                             which pharmacy branches have this medicine
                             available from the Medicine Availability section.
+
                         </p>
 
                     </div>
