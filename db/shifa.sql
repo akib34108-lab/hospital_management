@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Aug 15, 2026 at 07:10 PM
+-- Generation Time: Aug 15, 2026 at 07:15 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -103,6 +103,29 @@ CREATE TABLE `blood_collection` (
 INSERT INTO `blood_collection` (`id`, `donation_id`, `donor_id`, `collection_date`, `collection_volume`, `bag_id`, `blood_group`, `collection_location`, `staff`, `created_at`, `update_at`, `deleted_at`) VALUES
 (3, 'D001', '1', '2026-08-14', 460, 'B001', 'B+', 'CMC', 'Hasan', NULL, NULL, NULL),
 (4, 'D002', '2', '2026-08-14', 360, 'B002', 'A+', 'CMC', 'Rahim', NULL, NULL, NULL);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `branch_medicines`
+--
+
+CREATE TABLE `branch_medicines` (
+  `branch_medicine_id` int(11) NOT NULL,
+  `branch_id` int(11) NOT NULL,
+  `medicine_id` int(11) NOT NULL,
+  `quantity` int(11) DEFAULT 0,
+  `selling_price` decimal(10,2) DEFAULT NULL,
+  `deleted_at` datetime DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `branch_medicines`
+--
+
+INSERT INTO `branch_medicines` (`branch_medicine_id`, `branch_id`, `medicine_id`, `quantity`, `selling_price`, `deleted_at`) VALUES
+(1, 1, 2, 118, 15.00, NULL),
+(2, 1, 1, 50, 12.00, NULL);
 
 -- --------------------------------------------------------
 
@@ -347,6 +370,38 @@ INSERT INTO `lab_category` (`id`, `test_name`, `price`, `test_accessor`, `create
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `medicines`
+--
+
+CREATE TABLE `medicines` (
+  `medicine_id` int(11) NOT NULL,
+  `medicine_name` varchar(150) NOT NULL,
+  `generic_name` varchar(150) DEFAULT NULL,
+  `category` varchar(100) DEFAULT NULL,
+  `dosage_form` varchar(50) DEFAULT NULL,
+  `strength` varchar(50) DEFAULT NULL,
+  `unit` varchar(30) DEFAULT NULL,
+  `description` text DEFAULT NULL,
+  `manufacturer` varchar(150) DEFAULT NULL,
+  `unit_price` decimal(10,2) NOT NULL,
+  `reorder_level` int(11) DEFAULT 10,
+  `expiry_date` date DEFAULT NULL,
+  `status` enum('Active','Inactive') DEFAULT 'Active',
+  `deleted_at` datetime DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `medicines`
+--
+
+INSERT INTO `medicines` (`medicine_id`, `medicine_name`, `generic_name`, `category`, `dosage_form`, `strength`, `unit`, `description`, `manufacturer`, `unit_price`, `reorder_level`, `expiry_date`, `status`, `deleted_at`, `created_at`) VALUES
+(1, 'napa', 'paracetamol', 'Painkiller', 'Tablet', '500', 'Piece', 'tghhgt', 'beximco', 20.00, 10, '2026-08-15', '', NULL, '2026-08-15 14:45:39'),
+(2, 'Frenxit', 'sleep', 'Antihistamine', 'Tablet', '40', 'Piece', 'dffvd', 'square', 15.00, 5, '2026-08-15', '', NULL, '2026-08-15 14:49:24');
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `patients`
 --
 
@@ -437,6 +492,79 @@ INSERT INTO `payments` (`id`, `invoice_id`, `amount`, `payment_method`, `payment
 (1, 2, 2000.00, 'bKash', '2026-08-08', '123', NULL),
 (2, 2, 426.60, 'Cash', '2026-08-08', '456', NULL),
 (3, 7, 7792.98, 'Nagad', '2026-08-12', 'NG26081213706', NULL);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `pharmacy_branches`
+--
+
+CREATE TABLE `pharmacy_branches` (
+  `branch_id` int(11) NOT NULL,
+  `branch_name` varchar(100) NOT NULL,
+  `branch_code` varchar(50) DEFAULT NULL,
+  `location` varchar(255) DEFAULT NULL,
+  `phone` varchar(20) DEFAULT NULL,
+  `status` enum('Active','Inactive') DEFAULT 'Active',
+  `deleted_at` datetime DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `pharmacy_branches`
+--
+
+INSERT INTO `pharmacy_branches` (`branch_id`, `branch_name`, `branch_code`, `location`, `phone`, `status`, `deleted_at`, `created_at`) VALUES
+(1, 'SHIFA Agrabad Branch', NULL, NULL, '019111111111', 'Active', NULL, '2026-08-15 15:21:37');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `pharmacy_sales`
+--
+
+CREATE TABLE `pharmacy_sales` (
+  `sale_id` int(11) NOT NULL,
+  `invoice_no` varchar(50) NOT NULL,
+  `branch_id` int(11) NOT NULL,
+  `customer_name` varchar(150) DEFAULT NULL,
+  `customer_phone` varchar(20) DEFAULT NULL,
+  `sale_date` datetime DEFAULT current_timestamp(),
+  `total_amount` decimal(10,2) DEFAULT 0.00,
+  `payment_method` enum('Cash','Card','Mobile Banking') DEFAULT 'Cash',
+  `status` enum('Completed','Pending','Cancelled') DEFAULT 'Completed',
+  `deleted_at` datetime DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `pharmacy_sales`
+--
+
+INSERT INTO `pharmacy_sales` (`sale_id`, `invoice_no`, `branch_id`, `customer_name`, `customer_phone`, `sale_date`, `total_amount`, `payment_method`, `status`, `deleted_at`) VALUES
+(3, 'INV-20260815184932', 1, 'jamal', '01877777777', '2026-08-15 22:49:32', 30.00, 'Card', 'Completed', NULL);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `pharmacy_sale_items`
+--
+
+CREATE TABLE `pharmacy_sale_items` (
+  `sale_item_id` int(11) NOT NULL,
+  `sale_id` int(11) NOT NULL,
+  `medicine_id` int(11) NOT NULL,
+  `quantity` int(11) NOT NULL,
+  `unit_price` decimal(10,2) NOT NULL,
+  `subtotal` decimal(10,2) NOT NULL,
+  `deleted_at` datetime DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `pharmacy_sale_items`
+--
+
+INSERT INTO `pharmacy_sale_items` (`sale_item_id`, `sale_id`, `medicine_id`, `quantity`, `unit_price`, `subtotal`, `deleted_at`) VALUES
+(1, 3, 2, 2, 15.00, 30.00, NULL);
 
 -- --------------------------------------------------------
 
