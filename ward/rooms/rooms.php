@@ -43,7 +43,12 @@
                                         foreach ($rooms['data'] as $room) { ?>
                                         <td><?= $room->id ?></td>
                                         <td><?= $room->room_number ?></td>
-                                        <td><?= $room->room_type ?></td>
+                                        <td>
+                                        <?php
+                                            $bloodGroups = [1 => 'A+',2 => 'A-',3 => 'B+',4 => 'B-',5 => 'AB+',6 => 'AB-',7 => 'O+',8 => 'O-'];
+                                        ?>
+                                        <?= htmlspecialchars($bloodGroups[(int)$donor->blood_group] ?? 'N/A') ?>
+                                        </td>
                                         <td><?= $room->floor ?></td>
                                         <td><?= $room->capacity ?></td>
                                         <td><?= $room->charge_per_day ?></td>
