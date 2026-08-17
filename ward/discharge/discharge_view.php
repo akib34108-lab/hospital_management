@@ -1,6 +1,6 @@
 <?php
 
-require_once "../component/connection.php";
+require_once "../../component/connection.php";
 
 if (!isset($_GET['id']) || empty($_GET['id'])) {
     header("Location: discharge.php");
@@ -26,8 +26,8 @@ $discharge = $crud->common_query("
     LIMIT 1
 ");
 
-require_once "../component/header.php";
-require_once "../component/sidebar.php";
+require_once "../../component/header.php";
+require_once "../../component/sidebar.php";
 
 ?>
 
@@ -189,5 +189,5 @@ require_once "../component/sidebar.php";
 
     </div>
 
-    <?php require_once "../component/footer.php"; ?>
+    <?php require_once "../../component/footer.php"; ?>
 </div>

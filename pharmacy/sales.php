@@ -1,11 +1,9 @@
 <?php
-
 require_once "../component/header.php";
 require_once "../component/sidebar.php";
 require_once "../crud/crud_class.php";
 
 $crud = new crud_class();
-
 
 // ==========================================
 // SALES DATA
@@ -23,19 +21,14 @@ $sql = "
         ps.payment_method,
         ps.status,
         pb.branch_name
-
     FROM pharmacy_sales ps
-
     LEFT JOIN pharmacy_branches pb
         ON ps.branch_id = pb.branch_id
-
     WHERE ps.deleted_at IS NULL
-
     ORDER BY ps.sale_id DESC
 ";
 
 $sales = $crud->common_query($sql);
-
 
 // ==========================================
 // SUMMARY
@@ -46,13 +39,10 @@ $completed_sales = 0;
 $pending_sales = 0;
 $total_amount = 0;
 
-
 if ($sales['status'] && !empty($sales['data'])) {
-
     $total_sales = count($sales['data']);
 
     foreach ($sales['data'] as $row) {
-
         if ($row->status == "Completed") {
             $completed_sales++;
         }
@@ -64,17 +54,13 @@ if ($sales['status'] && !empty($sales['data'])) {
         $total_amount += $row->total_amount;
     }
 }
-
 ?>
 
 <div class="page-wrapper">
 
     <div class="content">
 
-
-        <!-- ==========================================
-             PAGE HEADER
-        =========================================== -->
+        <!-- PAGE HEADER -->
 
         <div class="page-header">
 
@@ -88,10 +74,12 @@ if ($sales['status'] && !empty($sales['data'])) {
 
             </div>
 
-
             <div class="page-btn">
 
-                <a href="new_sale.php" class="btn btn-primary">
+                <a
+                    href="new_sale.php"
+                    class="btn btn-primary"
+                >
 
                     <i class="fa fa-plus me-1"></i>
 
@@ -103,14 +91,9 @@ if ($sales['status'] && !empty($sales['data'])) {
 
         </div>
 
-
-
-        <!-- ==========================================
-             SUMMARY CARDS
-        =========================================== -->
+        <!-- SUMMARY CARDS -->
 
         <div class="row">
-
 
             <!-- Total Sales -->
 
@@ -130,7 +113,6 @@ if ($sales['status'] && !empty($sales['data'])) {
 
                     </div>
 
-
                     <div class="dash-widgeticon">
 
                         <span class="dash-widget-icon bg-primary">
@@ -144,8 +126,6 @@ if ($sales['status'] && !empty($sales['data'])) {
                 </div>
 
             </div>
-
-
 
             <!-- Completed Sales -->
 
@@ -165,7 +145,6 @@ if ($sales['status'] && !empty($sales['data'])) {
 
                     </div>
 
-
                     <div class="dash-widgeticon">
 
                         <span class="dash-widget-icon bg-success">
@@ -179,8 +158,6 @@ if ($sales['status'] && !empty($sales['data'])) {
                 </div>
 
             </div>
-
-
 
             <!-- Pending Sales -->
 
@@ -200,7 +177,6 @@ if ($sales['status'] && !empty($sales['data'])) {
 
                     </div>
 
-
                     <div class="dash-widgeticon">
 
                         <span class="dash-widget-icon bg-warning">
@@ -214,8 +190,6 @@ if ($sales['status'] && !empty($sales['data'])) {
                 </div>
 
             </div>
-
-
 
             <!-- Total Revenue -->
 
@@ -237,7 +211,6 @@ if ($sales['status'] && !empty($sales['data'])) {
 
                     </div>
 
-
                     <div class="dash-widgeticon">
 
                         <span class="dash-widget-icon bg-info">
@@ -254,16 +227,9 @@ if ($sales['status'] && !empty($sales['data'])) {
 
         </div>
 
-
-
-        <!-- ==========================================
-             SALES TABLE
-        =========================================== -->
+        <!-- SALES TABLE -->
 
         <div class="card">
-
-
-            <!-- Card Header -->
 
             <div class="card-header">
 
@@ -277,18 +243,11 @@ if ($sales['status'] && !empty($sales['data'])) {
 
             </div>
 
-
-
-            <!-- Card Body -->
-
             <div class="card-body">
 
                 <div class="table-responsive">
 
                     <table class="table datanew">
-
-
-                        <!-- Table Header -->
 
                         <thead>
 
@@ -316,12 +275,7 @@ if ($sales['status'] && !empty($sales['data'])) {
 
                         </thead>
 
-
-
-                        <!-- Table Body -->
-
                         <tbody>
-
 
                         <?php
 
@@ -337,18 +291,13 @@ if ($sales['status'] && !empty($sales['data'])) {
 
                         ?>
 
-
-
                             <tr>
-
 
                                 <!-- Serial -->
 
                                 <td>
                                     <?php echo $sl++; ?>
                                 </td>
-
-
 
                                 <!-- Invoice -->
 
@@ -368,8 +317,6 @@ if ($sales['status'] && !empty($sales['data'])) {
 
                                 </td>
 
-
-
                                 <!-- Branch -->
 
                                 <td>
@@ -384,8 +331,6 @@ if ($sales['status'] && !empty($sales['data'])) {
                                     ?>
 
                                 </td>
-
-
 
                                 <!-- Customer -->
 
@@ -428,8 +373,6 @@ if ($sales['status'] && !empty($sales['data'])) {
 
                                 </td>
 
-
-
                                 <!-- Sale Date -->
 
                                 <td>
@@ -444,8 +387,6 @@ if ($sales['status'] && !empty($sales['data'])) {
                                     ?>
 
                                 </td>
-
-
 
                                 <!-- Total -->
 
@@ -468,8 +409,6 @@ if ($sales['status'] && !empty($sales['data'])) {
 
                                 </td>
 
-
-
                                 <!-- Payment -->
 
                                 <td>
@@ -484,12 +423,9 @@ if ($sales['status'] && !empty($sales['data'])) {
 
                                 </td>
 
-
-
                                 <!-- Status -->
 
                                 <td>
-
 
                                     <?php
 
@@ -539,8 +475,6 @@ if ($sales['status'] && !empty($sales['data'])) {
 
                                 </td>
 
-
-
                                 <!-- Action -->
 
                                 <td>
@@ -557,10 +491,7 @@ if ($sales['status'] && !empty($sales['data'])) {
 
                                 </td>
 
-
                             </tr>
-
-
 
                         <?php
 
@@ -571,8 +502,6 @@ if ($sales['status'] && !empty($sales['data'])) {
                         else {
 
                         ?>
-
-
 
                             <tr>
 
@@ -610,15 +539,11 @@ if ($sales['status'] && !empty($sales['data'])) {
 
                             </tr>
 
-
-
                         <?php
 
                         }
 
                         ?>
-
-
 
                         </tbody>
 
@@ -633,8 +558,6 @@ if ($sales['status'] && !empty($sales['data'])) {
     </div>
 
 </div>
-
-
 
 <?php
 

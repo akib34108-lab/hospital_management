@@ -1,8 +1,8 @@
 <?php
 
-require_once "../component/connection.php";
-require_once "../component/header.php";
-require_once "../component/sidebar.php";
+require_once "../../component/connection.php";
+require_once "../../component/header.php";
+require_once "../../component/sidebar.php";
 
 $discharges = $crud->common_select("discharges", "*", [], "AND", "discharge_id", "DESC");
 
@@ -155,5 +155,5 @@ $discharges = $crud->common_select("discharges", "*", [], "AND", "discharge_id",
 
     </div>
 
-    <?php require_once "../component/footer.php"; ?>
+    <?php require_once "../../component/footer.php" ?> 
 </div>
