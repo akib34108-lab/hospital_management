@@ -1,6 +1,14 @@
 <?php require_once "../../component/header.php"; ?>
 <!-- sidebar -->
 <?php require_once "../../component/sidebar.php"; ?>
+<?php
+    // get last admission number
+    $query = "SELECT count(*) as total FROM blood_collection ORDER BY id DESC";
+    $result = $crud->common_query($query);
+    $last_admission_no = str_pad($result['data'][0]->total + 1 ?? '0001', 4, '0', STR_PAD_LEFT);
+    $admission_no = "DID" . $last_admission_no;
+?>
+
 
         <div class="page-wrapper">
             <div class="content">
@@ -18,7 +26,7 @@
                         <form action="<?= $base_url; ?>blood_bank/blood_collection/store_collection.php" method="POST">
 							<div class="form-group">
 								<label for="donation_id">Donation ID:</label>
-								<input class="form-control" type="text" id="donation_id" name="donation_id" required>
+								<input class="form-control" type="text" id="donation_id" name="donation_id" value="<?= $admission_no; ?>" readonly>
 							</div>
                     </div>
                     <div class="col-sm-3">
