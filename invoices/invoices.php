@@ -172,7 +172,7 @@ if($edit_id != ''){
         <div class="row">
             <div class="col-md-12">
                 <div class="card-box">
-                    <h4 class="card-title"><?php echo $edit_id ? 'Edit Invoice' : 'Add Invoice'; ?></h4> 
+                    <h4 class="card-title"><?php echo $edit_id ? 'Diagnosis' : 'Add Invoice'; ?></h4> 
                     <form method="post" action="" id="invoiceForm">
                         <input type="hidden" name="invoice_id" value="<?php echo $edit_id; ?>"> 
                         
