@@ -26,7 +26,7 @@
 										<th>supplier info</th>
 										<th>supplier contact</th>
 										<th>listing date</th>
-										
+                                        <th class="text-right">Action</th>
 									</tr>
 								</thead>
 								<tbody>

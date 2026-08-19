@@ -96,7 +96,7 @@
                             <a href="<?= $base_url; ?>shift/shift.php"><i class="fa fa-clock-o" style="color: #fff;"></i> <span style="color: #fff;">Shift</span></a>
                         </li>
                         <li>
-                            <a href="<?= $base_url; ?>inventory_management/inventory.php"><i class="fa fa-clock-o" style="color: #fff;"></i> <span style="color: #fff;">Inventory</span></a>
+                            <a href="<?= $base_url; ?>inventory_management/inventory.php"><i class="fa fa-cube" style="color: #fff;"></i> <span style="color: #fff;">Inventory</span></a>
                         </li>
                     </div>
             </div>
