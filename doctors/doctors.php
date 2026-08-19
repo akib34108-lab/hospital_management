@@ -13,7 +13,7 @@
                         <span style="display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;background:rgba(255,255,255,.18);border-radius:50%;"><i class="fa fa-plus" style="font-size:11px;color:#fff;"></i></span>Add Doctor</a>
                     </div>
                 </div>
-                <div class="row">
+                <div class="row"> 
                     <?php
                     $doctors = $crud->common_query("SELECT doctors.*,departments.department_name,designation.designation_name,shift.shift_name FROM doctors LEFT JOIN departments ON doctors.department_id = departments.id LEFT JOIN designation ON doctors.designation_id = designation.id LEFT JOIN shift ON doctors.shift_id = shift.id");
                     if ($doctors['status']) {

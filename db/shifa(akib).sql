@@ -3,9 +3,9 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Aug 16, 2026 at 08:55 AM
+-- Generation Time: Aug 18, 2026 at 08:13 PM
 -- Server version: 10.4.32-MariaDB
--- PHP Version: 8.0.30
+-- PHP Version: 8.2.12
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -88,7 +88,7 @@ CREATE TABLE `blood_collection` (
   `collection_date` date DEFAULT NULL,
   `collection_volume` int(16) DEFAULT NULL,
   `bag_id` varchar(25) DEFAULT NULL,
-  `blood_group` int(4) DEFAULT NULL COMMENT '1=o+',
+  `blood_group` varchar(25) DEFAULT NULL,
   `collection_location` varchar(40) DEFAULT NULL,
   `staff` varchar(255) DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
@@ -101,9 +101,8 @@ CREATE TABLE `blood_collection` (
 --
 
 INSERT INTO `blood_collection` (`id`, `donation_id`, `donor_id`, `collection_date`, `collection_volume`, `bag_id`, `blood_group`, `collection_location`, `staff`, `created_at`, `update_at`, `deleted_at`) VALUES
-(0, 'D003', '3', '2026-08-02', 750, 'B003', 0, 'CMC', 'Karim', NULL, NULL, NULL),
-(3, 'D001', '1', '2026-08-14', 460, 'B001', 0, 'CMC', 'Hasan', NULL, NULL, NULL),
-(4, 'D002', '2', '2026-08-14', 360, 'B002', 0, 'CMC', 'Rahim', NULL, NULL, NULL);
+(3, 'D001', '1', '2026-08-14', 460, 'B001', 'B+', 'CMC', 'Hasan', NULL, NULL, NULL),
+(4, 'D002', '2', '2026-08-14', 360, 'B002', 'A+', 'CMC', 'Rahim', NULL, NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -125,6 +124,8 @@ CREATE TABLE `branch_medicines` (
 --
 
 INSERT INTO `branch_medicines` (`branch_medicine_id`, `branch_id`, `medicine_id`, `quantity`, `selling_price`, `deleted_at`) VALUES
+(1, 1, 2, 118, 15.00, NULL),
+(2, 1, 1, 50, 12.00, NULL),
 (1, 1, 2, 118, 15.00, NULL),
 (2, 1, 1, 50, 12.00, NULL);
 
@@ -231,7 +232,9 @@ INSERT INTO `doctors` (`id`, `department_id`, `designation_id`, `shift_id`, `nam
 (7, 1, 1, 1, 'Dr. Rezaul Karim', 1, 'General Surgery', 'MBBS, FCPS (Surgery)', 14, '01700000007', 'rezaul.karim@example.com', 'Barishal, Bangladesh', 1, '2026-08-13 03:19:30', '2026-08-13 04:00:56', NULL),
 (8, 8, 7, 3, 'Dr. Samia Sultana', 0, 'Ophthalmology', 'MBBS, DO, MS (Ophthalmology)', 11, '01700000008', 'samia.sultana@example.com', 'Mymensingh, Bangladesh', 0, '2026-08-13 03:19:30', '2026-08-13 03:19:30', NULL),
 (9, 9, 8, 1, 'Dr. Imran Kabir', 0, 'ENT', 'MBBS, DLO, FCPS (ENT)', 13, '01700000009', 'imran.kabir@example.com', 'Cumilla, Bangladesh', 0, '2026-08-13 03:19:30', '2026-08-13 03:19:30', NULL),
-(10, 10, 9, 2, 'Dr. Tania Islam', 0, 'Psychiatry', 'MBBS, FCPS (Psychiatry)', 6, '01700000010', 'tania.islam@example.com', 'Rangpur, Bangladesh', 0, '2026-08-13 03:19:30', '2026-08-13 03:19:30', NULL);
+(10, 6, 9, 9, 'Dr. Tania Islam', 2, 'Psychiatry', 'MBBS, FCPS (Psychiatry)', 6, '01700000010', 'tania.islam@example.com', 'Rangpur, Bangladesh', 1, '2026-08-13 03:19:30', '2026-08-13 18:50:55', NULL),
+(11, 7, 5, 5, 'Dr. Sanjana Sharmin', 2, 'Fever, diabetes, hypertension, respiratory problems, general health issues', 'MBBS', 3, '01545678925', 'sanjanasharmin@yahoo.com', 'Dhaka, Bangladesh', 1, '2026-08-13 17:42:48', '2026-08-13 17:50:42', NULL),
+(12, 4, 5, 5, 'DR. Amjad Hossain', 1, 'Child health, fever, common infections, nutrition, vaccination advice', 'BDS', 5, '01774185296', 'amjad@yahoo.com', 'Rajshahi', 0, '2026-08-13 17:45:32', '2026-08-13 17:45:32', NULL);
 
 -- --------------------------------------------------------
 
@@ -246,7 +249,7 @@ CREATE TABLE `donor` (
   `gender` int(4) DEFAULT NULL COMMENT '1=male, 2=female',
   `phone` varchar(11) DEFAULT NULL,
   `address` varchar(255) DEFAULT NULL,
-  `blood_group` varchar(10) DEFAULT NULL,
+  `blood_group` int(4) DEFAULT NULL COMMENT '1=A+, 2=A-, 3=B+, 4=B-, 5=AB+, 6=AB-, 7=O+, 8=O-',
   `last_donation` date DEFAULT NULL,
   `donor_eligibility` int(4) DEFAULT NULL COMMENT '1=Eligible, 2=\r\nNot Eligible',
   `created_at` timestamp NULL DEFAULT NULL,
@@ -259,29 +262,207 @@ CREATE TABLE `donor` (
 --
 
 INSERT INTO `donor` (`id`, `donor_name`, `age`, `gender`, `phone`, `address`, `blood_group`, `last_donation`, `donor_eligibility`, `created_at`, `updated_at`, `deleted_at`) VALUES
-(1, 'Mahtab', 29, 1, '01878945612', 'Satkania, Chattogram', 'O+', '2026-07-21', 1, NULL, NULL, NULL),
-(3, 'Imtiaz', 32, 1, '01842194963', 'GPO circle, new market', 'A+', '2026-07-22', 1, NULL, NULL, NULL),
-(4, 'Ashfa', 19, 0, '01412365485', 'Gachbaria', 'B+', '2026-02-17', 1, NULL, NULL, NULL),
-(5, 'Rahim', 22, 1, '01712345678', 'Chittagong', 'A+', NULL, 1, NULL, NULL, NULL),
-(6, 'Karim', 25, 1, '01812345679', 'Dhaka', 'O+', NULL, 2, NULL, NULL, NULL),
-(7, 'Nusrat', 21, 2, '01912345680', 'Comilla', 'B+', NULL, 1, NULL, NULL, NULL),
-(8, 'Jannat', 24, 2, '01612345681', 'Feni', 'AB+', NULL, 2, NULL, NULL, NULL),
-(9, 'Sakib', 20, 1, '01512345682', 'Noakhali', 'O-', NULL, 1, NULL, NULL, NULL),
-(10, 'Mim', 23, 2, '01412345683', 'Gachbaria', 'A-', NULL, 2, NULL, NULL, NULL),
-(11, 'Tanvir', 27, 1, '01312345684', 'Chandpur', 'B-', NULL, 1, NULL, NULL, NULL),
-(12, 'Sumaiya', 26, 2, '01212345685', 'Cox\'s Bazar', 'AB-', NULL, 2, NULL, NULL, NULL),
-(0, 'Samina', 28, 1, '01878945623', 'Agrabad', 'AB+', '2026-02-04', 1, NULL, NULL, NULL),
-(1, 'Mahtab', 29, 1, '01878945612', 'Satkania, Chattogram', '7', '2026-07-21', 1, NULL, NULL, NULL),
-(3, 'Imtiaz', 32, 1, '01842194963', 'GPO circle, new market', '4', '2026-07-22', 1, NULL, NULL, NULL),
-(4, 'Ashfa', 19, 0, '01412365485', 'Gachbaria', '3', '2026-02-17', 1, NULL, NULL, NULL),
-(5, 'Rahim', 22, 1, '01712345678', 'Chittagong', '3', '2026-07-06', 1, NULL, NULL, NULL),
-(6, 'Karim', 25, 1, '01812345679', 'Dhaka', '7', '2026-08-02', 1, NULL, NULL, NULL),
-(7, 'Nusrat', 21, 0, '01912345680', 'Comilla', '5', '2026-08-07', 1, NULL, NULL, NULL),
-(8, 'Jannat', 24, 0, '01612345681', 'Feni', '3', '2026-08-07', 1, NULL, NULL, NULL),
-(9, 'Sakib', 20, 1, '01512345682', 'Noakhali', '8', '2026-04-15', 1, NULL, NULL, NULL),
-(10, 'Mim', 23, 0, '01412345683', 'Gachbaria', '2', '2026-08-01', 1, NULL, NULL, NULL),
-(11, 'Tanvir', 27, 1, '01312345684', 'Chandpur', '0', NULL, 1, NULL, NULL, NULL),
-(12, 'Sumaiya', 26, 2, '01212345685', 'Cox\'s Bazar', '0', NULL, 2, NULL, NULL, NULL);
+(1, 'Mahtab', 29, 1, '01878945612', 'Satkania, Chattogram', 7, '2026-07-21', 1, NULL, NULL, NULL),
+(3, 'Imtiaz', 32, 1, '01842194963', 'GPO circle, new market', 4, '2026-07-22', 1, NULL, NULL, NULL),
+(4, 'Ashfa', 19, 0, '01412365485', 'Gachbaria', 3, '2026-02-17', 1, NULL, NULL, NULL),
+(5, 'Rahim', 22, 1, '01712345678', 'Chittagong', 3, '2026-07-06', 1, NULL, NULL, NULL),
+(6, 'Karim', 25, 1, '01812345679', 'Dhaka', 7, '2026-08-02', 1, NULL, NULL, NULL),
+(7, 'Nusrat', 21, 0, '01912345680', 'Comilla', 5, '2026-08-07', 1, NULL, NULL, NULL),
+(8, 'Jannat', 24, 0, '01612345681', 'Feni', 3, '2026-08-07', 1, NULL, NULL, NULL),
+(9, 'Sakib', 20, 1, '01512345682', 'Noakhali', 8, '2026-04-15', 1, NULL, NULL, NULL),
+(10, 'Mim', 23, 0, '01412345683', 'Gachbaria', 2, '2026-08-01', 1, NULL, NULL, NULL),
+(11, 'Tanvir', 27, 1, '01312345684', 'Chandpur', 0, NULL, 1, NULL, NULL, NULL),
+(12, 'Sumaiya', 26, 2, '01212345685', 'Cox\'s Bazar', 0, NULL, 2, NULL, NULL, NULL);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `inventory_adjustments`
+--
+
+CREATE TABLE `inventory_adjustments` (
+  `adjustment_id` int(11) NOT NULL,
+  `item_id` int(11) NOT NULL,
+  `location_id` int(11) NOT NULL,
+  `adjustment_type` enum('Increase','Decrease') NOT NULL,
+  `quantity` int(11) NOT NULL,
+  `reason` varchar(255) NOT NULL,
+  `adjusted_by` int(11) DEFAULT NULL,
+  `adjustment_date` datetime NOT NULL DEFAULT current_timestamp(),
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `inventory_categories`
+--
+
+CREATE TABLE `inventory_categories` (
+  `category_id` int(11) NOT NULL,
+  `category_name` varchar(100) NOT NULL,
+  `description` varchar(255) DEFAULT NULL,
+  `status` enum('Active','Inactive') NOT NULL DEFAULT 'Active',
+  `deleted_at` datetime DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `inventory_categories`
+--
+
+INSERT INTO `inventory_categories` (`category_id`, `category_name`, `description`, `status`, `deleted_at`, `created_at`) VALUES
+(1, 'Gloves', 'Medical gloves', 'Active', NULL, '2026-08-16 14:33:53'),
+(2, 'Surgical Items', 'Surgical and operation-related items', 'Active', NULL, '2026-08-16 14:33:53'),
+(3, 'Equipment', 'Hospital equipment', 'Active', NULL, '2026-08-16 14:33:53');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `inventory_issues`
+--
+
+CREATE TABLE `inventory_issues` (
+  `issue_id` int(11) NOT NULL,
+  `issue_no` varchar(50) NOT NULL,
+  `department_id` int(11) DEFAULT NULL,
+  `location_id` int(11) NOT NULL,
+  `issue_date` datetime NOT NULL DEFAULT current_timestamp(),
+  `issued_by` int(11) DEFAULT NULL,
+  `status` enum('Issued','Pending','Cancelled') NOT NULL DEFAULT 'Pending',
+  `notes` text DEFAULT NULL,
+  `deleted_at` datetime DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `inventory_issue_items`
+--
+
+CREATE TABLE `inventory_issue_items` (
+  `issue_item_id` int(11) NOT NULL,
+  `issue_id` int(11) NOT NULL,
+  `item_id` int(11) NOT NULL,
+  `quantity` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `inventory_items`
+--
+
+CREATE TABLE `inventory_items` (
+  `item_id` int(11) NOT NULL,
+  `category_id` int(11) NOT NULL,
+  `item_code` varchar(50) NOT NULL,
+  `item_name` varchar(150) NOT NULL,
+  `brand_name` varchar(100) DEFAULT NULL,
+  `unit` varchar(30) NOT NULL,
+  `reorder_level` int(11) NOT NULL DEFAULT 0,
+  `unit_cost` decimal(10,2) NOT NULL DEFAULT 0.00,
+  `expiry_date` date DEFAULT NULL,
+  `description` text DEFAULT NULL,
+  `status` enum('Active','Inactive') NOT NULL DEFAULT 'Active',
+  `deleted_at` datetime DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `inventory_locations`
+--
+
+CREATE TABLE `inventory_locations` (
+  `location_id` int(11) NOT NULL,
+  `location_name` varchar(100) NOT NULL,
+  `location_type` enum('Central Store','Department Store','Emergency Store') NOT NULL,
+  `address` varchar(255) DEFAULT NULL,
+  `status` enum('Active','Inactive') NOT NULL DEFAULT 'Active',
+  `deleted_at` datetime DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `inventory_locations`
+--
+
+INSERT INTO `inventory_locations` (`location_id`, `location_name`, `location_type`, `address`, `status`, `deleted_at`, `created_at`) VALUES
+(1, 'Main Store', 'Central Store', NULL, 'Active', NULL, '2026-08-16 14:33:53'),
+(2, 'OT Store', 'Department Store', NULL, 'Active', NULL, '2026-08-16 14:33:53'),
+(3, 'Emergency Store', 'Emergency Store', NULL, 'Active', NULL, '2026-08-16 14:33:53');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `inventory_purchases`
+--
+
+CREATE TABLE `inventory_purchases` (
+  `purchase_id` int(11) NOT NULL,
+  `purchase_no` varchar(50) NOT NULL,
+  `supplier_id` int(11) NOT NULL,
+  `location_id` int(11) NOT NULL,
+  `purchase_date` datetime NOT NULL DEFAULT current_timestamp(),
+  `total_amount` decimal(10,2) NOT NULL DEFAULT 0.00,
+  `payment_status` enum('Paid','Pending','Partial') NOT NULL DEFAULT 'Pending',
+  `status` enum('Received','Pending','Cancelled') NOT NULL DEFAULT 'Pending',
+  `notes` text DEFAULT NULL,
+  `deleted_at` datetime DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `inventory_purchase_items`
+--
+
+CREATE TABLE `inventory_purchase_items` (
+  `purchase_item_id` int(11) NOT NULL,
+  `purchase_id` int(11) NOT NULL,
+  `item_id` int(11) NOT NULL,
+  `quantity` int(11) NOT NULL,
+  `unit_cost` decimal(10,2) NOT NULL,
+  `subtotal` decimal(10,2) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `inventory_stock`
+--
+
+CREATE TABLE `inventory_stock` (
+  `stock_id` int(11) NOT NULL,
+  `item_id` int(11) NOT NULL,
+  `location_id` int(11) NOT NULL,
+  `quantity` int(11) NOT NULL DEFAULT 0,
+  `reserved_quantity` int(11) NOT NULL DEFAULT 0,
+  `available_quantity` int(11) NOT NULL DEFAULT 0,
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `inventory_suppliers`
+--
+
+CREATE TABLE `inventory_suppliers` (
+  `supplier_id` int(11) NOT NULL,
+  `supplier_name` varchar(150) NOT NULL,
+  `contact_person` varchar(100) DEFAULT NULL,
+  `phone` varchar(20) DEFAULT NULL,
+  `email` varchar(100) DEFAULT NULL,
+  `address` varchar(255) DEFAULT NULL,
+  `status` enum('Active','Inactive') NOT NULL DEFAULT 'Active',
+  `deleted_at` datetime DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -408,6 +589,8 @@ CREATE TABLE `medicines` (
 
 INSERT INTO `medicines` (`medicine_id`, `medicine_name`, `generic_name`, `category`, `dosage_form`, `strength`, `unit`, `description`, `manufacturer`, `unit_price`, `reorder_level`, `expiry_date`, `status`, `deleted_at`, `created_at`) VALUES
 (1, 'napa', 'paracetamol', 'Painkiller', 'Tablet', '500', 'Piece', 'tghhgt', 'beximco', 20.00, 10, '2026-08-15', '', NULL, '2026-08-15 14:45:39'),
+(2, 'Frenxit', 'sleep', 'Antihistamine', 'Tablet', '40', 'Piece', 'dffvd', 'square', 15.00, 5, '2026-08-15', '', NULL, '2026-08-15 14:49:24'),
+(1, 'napa', 'paracetamol', 'Painkiller', 'Tablet', '500', 'Piece', 'tghhgt', 'beximco', 20.00, 10, '2026-08-15', '', NULL, '2026-08-15 14:45:39'),
 (2, 'Frenxit', 'sleep', 'Antihistamine', 'Tablet', '40', 'Piece', 'dffvd', 'square', 15.00, 5, '2026-08-15', '', NULL, '2026-08-15 14:49:24');
 
 -- --------------------------------------------------------
@@ -457,7 +640,7 @@ CREATE TABLE `patient_admissions` (
   `admission_no` varchar(30) DEFAULT NULL,
   `patient_id` int(11) DEFAULT NULL,
   `doctor_id` int(11) DEFAULT NULL,
-  `room_id` int(11) DEFAULT NULL,
+  `room_id` varchar(11) DEFAULT NULL,
   `bed_id` int(11) DEFAULT NULL,
   `admission_date` date DEFAULT NULL,
   `admission_time` time DEFAULT NULL,
@@ -475,9 +658,9 @@ CREATE TABLE `patient_admissions` (
 --
 
 INSERT INTO `patient_admissions` (`id`, `admission_no`, `patient_id`, `doctor_id`, `room_id`, `bed_id`, `admission_date`, `admission_time`, `discharge_date`, `discharge_time`, `reason`, `status`, `created_at`, `updated_at`, `deleted_at`) VALUES
-(1, 'ADM-0001', 1, 8, 1, 3, '2026-08-16', NULL, NULL, NULL, ' health problem', NULL, NULL, NULL, NULL),
-(2, 'ADM-0002', 5, 3, 2, 5, '2026-08-15', NULL, NULL, NULL, 'mental problem', NULL, NULL, NULL, NULL),
-(3, 'ADM-0003', 6, 10, 1, 3, '2026-08-18', NULL, NULL, NULL, 'health issue', NULL, NULL, NULL, NULL);
+(1, 'ADM-0001', 1, 8, '1', 3, '2026-08-16', NULL, NULL, NULL, ' health problem', NULL, NULL, NULL, NULL),
+(2, 'ADM-0002', 5, 3, '2', 5, '2026-08-15', NULL, NULL, NULL, 'mental problem', NULL, NULL, NULL, NULL),
+(3, 'ADM-0003', 6, 10, '1', 3, '2026-08-18', NULL, NULL, NULL, 'health issue', NULL, NULL, NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -526,6 +709,7 @@ CREATE TABLE `pharmacy_branches` (
 --
 
 INSERT INTO `pharmacy_branches` (`branch_id`, `branch_name`, `branch_code`, `location`, `phone`, `status`, `deleted_at`, `created_at`) VALUES
+(1, 'SHIFA Agrabad Branch', NULL, NULL, '019111111111', 'Active', NULL, '2026-08-15 15:21:37'),
 (1, 'SHIFA Agrabad Branch', NULL, NULL, '019111111111', 'Active', NULL, '2026-08-15 15:21:37');
 
 -- --------------------------------------------------------
@@ -552,6 +736,7 @@ CREATE TABLE `pharmacy_sales` (
 --
 
 INSERT INTO `pharmacy_sales` (`sale_id`, `invoice_no`, `branch_id`, `customer_name`, `customer_phone`, `sale_date`, `total_amount`, `payment_method`, `status`, `deleted_at`) VALUES
+(3, 'INV-20260815184932', 1, 'jamal', '01877777777', '2026-08-15 22:49:32', 30.00, 'Card', 'Completed', NULL),
 (3, 'INV-20260815184932', 1, 'jamal', '01877777777', '2026-08-15 22:49:32', 30.00, 'Card', 'Completed', NULL);
 
 -- --------------------------------------------------------
@@ -575,6 +760,7 @@ CREATE TABLE `pharmacy_sale_items` (
 --
 
 INSERT INTO `pharmacy_sale_items` (`sale_item_id`, `sale_id`, `medicine_id`, `quantity`, `unit_price`, `subtotal`, `deleted_at`) VALUES
+(1, 3, 2, 2, 15.00, 30.00, NULL),
 (1, 3, 2, 2, 15.00, 30.00, NULL);
 
 -- --------------------------------------------------------
@@ -665,15 +851,25 @@ INSERT INTO `roles` (`id`, `role_name`, `access`, `status`, `created_at`, `updat
 CREATE TABLE `rooms` (
   `id` int(11) NOT NULL,
   `room_number` varchar(40) DEFAULT NULL,
-  `room_type` int(4) DEFAULT NULL COMMENT '1=general,2=semi-private,3=private,4=deluxe,5=vip,6=icu,7ccu=,8=nicu,9=isolation,10=ot,11=observation,12=delivery',
-  `floor` int(4) DEFAULT NULL COMMENT '1=1st, 2=2nd, 3=3th, 4=4th, 5=5th, 6=6th',
-  `capacity` int(11) DEFAULT NULL,
-  `charge_per_day` double(10,2) DEFAULT NULL,
-  `status` int(2) DEFAULT NULL COMMENT '0=inactive, 1=active',
+  `patient_id` int(40) DEFAULT NULL,
+  `room_type` int(4) DEFAULT NULL COMMENT '1=general, 2=semi-private, 3=private, 4=deluxe, 5=vip, 6=icu, 7=ccu, 8=nicu, 9=isolation, 10=ot, 11=observation, 12=delivery',
+  `room_variant` int(4) NOT NULL COMMENT '1=general, 2=ac, 3=non-ac, 4=single-cabin, 5=double-cabin',
+  `floor` varchar(40) DEFAULT NULL COMMENT '1=1st, 2=2nd, 3=3rd, 4=4th, 5=5th, 6=6th, 7=7th',
+  `available_beds` varchar(40) DEFAULT NULL,
+  `room_charge` double(10,2) DEFAULT NULL,
+  `status` int(2) DEFAULT NULL COMMENT '1=available, 2=occupied, 3=under-maintenance ',
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   `deleted_at` datetime DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `rooms`
+--
+
+INSERT INTO `rooms` (`id`, `room_number`, `patient_id`, `room_type`, `room_variant`, `floor`, `available_beds`, `room_charge`, `status`, `created_at`, `updated_at`, `deleted_at`) VALUES
+(6, 'RM-0001', 1, 1, 1, '1', 'BED-0001', 1200.00, 2, NULL, NULL, NULL),
+(7, 'RM-0002', 5, 2, 1, '1', 'BED-0002', 1200.00, 2, NULL, NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -707,6 +903,42 @@ INSERT INTO `schedules` (`id`, `doctor_id`, `day_of_week`, `start_time`, `end_ti
 (8, 8, 'Sunday', '09:00:00', '13:00:00', 20, 'Active', NULL),
 (9, 9, 'Monday', '15:00:00', '19:00:00', 20, 'Active', NULL),
 (10, 10, 'Tuesday', '09:00:00', '13:00:00', 20, 'Active', NULL);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `screening`
+--
+
+CREATE TABLE `screening` (
+  `id` int(11) NOT NULL,
+  `bag_id` varchar(11) DEFAULT NULL,
+  `abo_group` int(4) DEFAULT NULL COMMENT '1=A, 2=B, 3=AB, 4=O',
+  `rh_type` int(4) DEFAULT NULL COMMENT '1=positive(+), 2=negative(-)',
+  `hiv` int(4) DEFAULT NULL COMMENT '1=pending, 2=non-reactive, 3=reactive, 4=invalid',
+  `hbsag` int(4) DEFAULT NULL COMMENT '1=pending, 2=non-reactive, 3=reactive, 4=invalid',
+  `hcv` int(4) DEFAULT NULL COMMENT '1=pending, 2=non-reactive, 3=reactive, 4=invalid',
+  `syphilis` int(4) DEFAULT NULL COMMENT '1=pending, 2=non-reactive, 3=reactive, 4=invalid',
+  `malaria` int(4) DEFAULT NULL COMMENT '1=pending, 2=non-reactive, 3=reactive, 4=invalid',
+  `other` int(4) DEFAULT NULL COMMENT '1=positive(+), 2=negative(-)',
+  `status` int(4) DEFAULT NULL COMMENT '1=pending, 2=passed, 3=quarantined, 4=reactive, 5=invalid, 6=discarded, 7=released',
+  `tested_by` varchar(40) DEFAULT NULL,
+  `tested_at` datetime DEFAULT NULL,
+  `verified_by` varchar(40) DEFAULT NULL,
+  `verified_at` datetime DEFAULT NULL,
+  `remarks` text DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  `deleted_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `screening`
+--
+
+INSERT INTO `screening` (`id`, `bag_id`, `abo_group`, `rh_type`, `hiv`, `hbsag`, `hcv`, `syphilis`, `malaria`, `other`, `status`, `tested_by`, `tested_at`, `verified_by`, `verified_at`, `remarks`, `created_at`, `updated_at`, `deleted_at`) VALUES
+(1, 'B001', 2, 1, 1, 1, 1, 1, 1, 1, 3, 'Rahim', '2026-08-03 19:55:00', 'Karim', '2026-08-10 16:09:00', 'aada', NULL, NULL, NULL),
+(2, 'B002', 3, 1, 1, 1, 1, 1, 1, 2, 1, 'Akbar', '2026-08-07 12:00:00', 'Dr. Nizam', '2026-08-10 14:45:00', 'asfsaf', NULL, NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -773,17 +1005,7 @@ INSERT INTO `users` (`id`, `full_name`, `email`, `phone`, `password`, `role_id`,
 (3, 'akib', 'akib@yahoo.com', '123456', '7110eda4d09e062aa5e4a390b0a572ac0d2c0220', 1, 1, '2026-07-29 17:19:29', '2026-07-29 17:19:29', NULL),
 (4, 'Faruq', 'faruq@yahoo.com', '015', '232758d2b2310c93c7a3fb207558f22b331793e4', 1, 1, '2026-07-29 18:24:59', '2026-07-29 18:24:59', NULL),
 (5, 'Akibul Islam', 'akib34108@gmail.com', '01533198825', '6bb0e3b82a69a2bdf7139d17eeb5f79818b92a4d', 1, 1, '2026-08-01 16:24:13', '2026-08-01 16:24:13', NULL),
-(0, 'Akib', 'akib3410@gmail.com', '01533198825', '7c4a8d09ca3762af61e59520943dc26494f8941b', 1, 1, '2026-08-13 03:04:46', '2026-08-13 03:04:46', NULL),
-(1, 'kamal', 'kamal@yahoo.com', '0105', '7c4a8d09ca3762af61e59520943dc26494f8941b', 1, 1, '2026-07-25 06:19:50', '2026-07-25 06:19:50', NULL),
-(3, 'akib', 'akib@yahoo.com', '123456', '7110eda4d09e062aa5e4a390b0a572ac0d2c0220', 1, 1, '2026-07-29 17:19:29', '2026-07-29 17:19:29', NULL),
-(4, 'Faruq', 'faruq@yahoo.com', '015', '232758d2b2310c93c7a3fb207558f22b331793e4', 1, 1, '2026-07-29 18:24:59', '2026-07-29 18:24:59', NULL),
-(5, 'Akibul Islam', 'akib34108@gmail.com', '01533198825', '6bb0e3b82a69a2bdf7139d17eeb5f79818b92a4d', 1, 1, '2026-08-01 16:24:13', '2026-08-01 16:24:13', NULL),
-(1, 'kamal', 'kamal@yahoo.com', '0105', '7c4a8d09ca3762af61e59520943dc26494f8941b', 1, 1, '2026-07-25 06:19:50', '2026-07-25 06:19:50', NULL),
-(3, 'akib', 'akib@yahoo.com', '123456', '7110eda4d09e062aa5e4a390b0a572ac0d2c0220', 1, 1, '2026-07-29 17:19:29', '2026-07-29 17:19:29', NULL),
-(4, 'Faruq', 'faruq@yahoo.com', '015', '232758d2b2310c93c7a3fb207558f22b331793e4', 1, 1, '2026-07-29 18:24:59', '2026-07-29 18:24:59', NULL),
-(5, 'Akibul Islam', 'akib34108@gmail.com', '01533198825', '6bb0e3b82a69a2bdf7139d17eeb5f79818b92a4d', 1, 1, '2026-08-01 16:24:13', '2026-08-01 16:24:13', NULL),
-(0, 'Akib', 'akib3410@gmail.com', '01533198825', '7c4a8d09ca3762af61e59520943dc26494f8941b', 1, 1, '2026-08-13 03:04:46', '2026-08-13 03:04:46', NULL),
-(0, 'Pritam', 'pritam@outlook.com', '01578945610', '6bb0e3b82a69a2bdf7139d17eeb5f79818b92a4d', 1, 1, '2026-08-15 03:21:30', '2026-08-15 03:21:30', NULL);
+(0, 'Akib', 'akib3410@gmail.com', '01533198825', '7c4a8d09ca3762af61e59520943dc26494f8941b', 1, 1, '2026-08-13 03:04:46', '2026-08-13 03:04:46', NULL);
 
 --
 -- Indexes for dumped tables
@@ -826,6 +1048,87 @@ ALTER TABLE `designation`
 ALTER TABLE `doctors`
   ADD PRIMARY KEY (`id`),
   ADD KEY `department_id` (`department_id`);
+
+--
+-- Indexes for table `donor`
+--
+ALTER TABLE `donor`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `inventory_adjustments`
+--
+ALTER TABLE `inventory_adjustments`
+  ADD PRIMARY KEY (`adjustment_id`),
+  ADD KEY `fk_adjustment_item` (`item_id`),
+  ADD KEY `fk_adjustment_location` (`location_id`);
+
+--
+-- Indexes for table `inventory_categories`
+--
+ALTER TABLE `inventory_categories`
+  ADD PRIMARY KEY (`category_id`);
+
+--
+-- Indexes for table `inventory_issues`
+--
+ALTER TABLE `inventory_issues`
+  ADD PRIMARY KEY (`issue_id`),
+  ADD UNIQUE KEY `issue_no` (`issue_no`),
+  ADD KEY `fk_issue_location` (`location_id`);
+
+--
+-- Indexes for table `inventory_issue_items`
+--
+ALTER TABLE `inventory_issue_items`
+  ADD PRIMARY KEY (`issue_item_id`),
+  ADD KEY `fk_issue_items_issue` (`issue_id`),
+  ADD KEY `fk_issue_items_item` (`item_id`);
+
+--
+-- Indexes for table `inventory_items`
+--
+ALTER TABLE `inventory_items`
+  ADD PRIMARY KEY (`item_id`),
+  ADD UNIQUE KEY `item_code` (`item_code`),
+  ADD KEY `fk_items_category` (`category_id`);
+
+--
+-- Indexes for table `inventory_locations`
+--
+ALTER TABLE `inventory_locations`
+  ADD PRIMARY KEY (`location_id`);
+
+--
+-- Indexes for table `inventory_purchases`
+--
+ALTER TABLE `inventory_purchases`
+  ADD PRIMARY KEY (`purchase_id`),
+  ADD UNIQUE KEY `purchase_no` (`purchase_no`),
+  ADD KEY `fk_purchase_supplier` (`supplier_id`),
+  ADD KEY `fk_purchase_location` (`location_id`);
+
+--
+-- Indexes for table `inventory_purchase_items`
+--
+ALTER TABLE `inventory_purchase_items`
+  ADD PRIMARY KEY (`purchase_item_id`),
+  ADD KEY `fk_purchase_items_purchase` (`purchase_id`),
+  ADD KEY `fk_purchase_items_item` (`item_id`);
+
+--
+-- Indexes for table `inventory_stock`
+--
+ALTER TABLE `inventory_stock`
+  ADD PRIMARY KEY (`stock_id`),
+  ADD UNIQUE KEY `uq_stock_item_location` (`item_id`,`location_id`),
+  ADD KEY `fk_stock_location` (`location_id`);
+
+--
+-- Indexes for table `inventory_suppliers`
+--
+ALTER TABLE `inventory_suppliers`
+  ADD PRIMARY KEY (`supplier_id`);
 
 --
 -- Indexes for table `invoices`
@@ -899,6 +1202,12 @@ ALTER TABLE `schedules`
   ADD KEY `doctor_id` (`doctor_id`);
 
 --
+-- Indexes for table `screening`
+--
+ALTER TABLE `screening`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- Indexes for table `shift`
 --
 ALTER TABLE `shift`
@@ -921,6 +1230,12 @@ ALTER TABLE `beds`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
+-- AUTO_INCREMENT for table `blood_collection`
+--
+ALTER TABLE `blood_collection`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+
+--
 -- AUTO_INCREMENT for table `departments`
 --
 ALTER TABLE `departments`
@@ -936,7 +1251,73 @@ ALTER TABLE `designation`
 -- AUTO_INCREMENT for table `doctors`
 --
 ALTER TABLE `doctors`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+
+--
+-- AUTO_INCREMENT for table `donor`
+--
+ALTER TABLE `donor`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+
+--
+-- AUTO_INCREMENT for table `inventory_adjustments`
+--
+ALTER TABLE `inventory_adjustments`
+  MODIFY `adjustment_id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `inventory_categories`
+--
+ALTER TABLE `inventory_categories`
+  MODIFY `category_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+
+--
+-- AUTO_INCREMENT for table `inventory_issues`
+--
+ALTER TABLE `inventory_issues`
+  MODIFY `issue_id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `inventory_issue_items`
+--
+ALTER TABLE `inventory_issue_items`
+  MODIFY `issue_item_id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `inventory_items`
+--
+ALTER TABLE `inventory_items`
+  MODIFY `item_id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `inventory_locations`
+--
+ALTER TABLE `inventory_locations`
+  MODIFY `location_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+
+--
+-- AUTO_INCREMENT for table `inventory_purchases`
+--
+ALTER TABLE `inventory_purchases`
+  MODIFY `purchase_id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `inventory_purchase_items`
+--
+ALTER TABLE `inventory_purchase_items`
+  MODIFY `purchase_item_id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `inventory_stock`
+--
+ALTER TABLE `inventory_stock`
+  MODIFY `stock_id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `inventory_suppliers`
+--
+ALTER TABLE `inventory_suppliers`
+  MODIFY `supplier_id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `invoices`
@@ -996,7 +1377,7 @@ ALTER TABLE `roles`
 -- AUTO_INCREMENT for table `rooms`
 --
 ALTER TABLE `rooms`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT for table `schedules`
@@ -1005,10 +1386,67 @@ ALTER TABLE `schedules`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
+-- AUTO_INCREMENT for table `screening`
+--
+ALTER TABLE `screening`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+
+--
 -- AUTO_INCREMENT for table `shift`
 --
 ALTER TABLE `shift`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+
+--
+-- Constraints for dumped tables
+--
+
+--
+-- Constraints for table `inventory_adjustments`
+--
+ALTER TABLE `inventory_adjustments`
+  ADD CONSTRAINT `fk_adjustment_item` FOREIGN KEY (`item_id`) REFERENCES `inventory_items` (`item_id`) ON UPDATE CASCADE,
+  ADD CONSTRAINT `fk_adjustment_location` FOREIGN KEY (`location_id`) REFERENCES `inventory_locations` (`location_id`) ON UPDATE CASCADE;
+
+--
+-- Constraints for table `inventory_issues`
+--
+ALTER TABLE `inventory_issues`
+  ADD CONSTRAINT `fk_issue_location` FOREIGN KEY (`location_id`) REFERENCES `inventory_locations` (`location_id`) ON UPDATE CASCADE;
+
+--
+-- Constraints for table `inventory_issue_items`
+--
+ALTER TABLE `inventory_issue_items`
+  ADD CONSTRAINT `fk_issue_items_issue` FOREIGN KEY (`issue_id`) REFERENCES `inventory_issues` (`issue_id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `fk_issue_items_item` FOREIGN KEY (`item_id`) REFERENCES `inventory_items` (`item_id`) ON UPDATE CASCADE;
+
+--
+-- Constraints for table `inventory_items`
+--
+ALTER TABLE `inventory_items`
+  ADD CONSTRAINT `fk_items_category` FOREIGN KEY (`category_id`) REFERENCES `inventory_categories` (`category_id`) ON UPDATE CASCADE;
+
+--
+-- Constraints for table `inventory_purchases`
+--
+ALTER TABLE `inventory_purchases`
+  ADD CONSTRAINT `fk_purchase_location` FOREIGN KEY (`location_id`) REFERENCES `inventory_locations` (`location_id`) ON UPDATE CASCADE,
+  ADD CONSTRAINT `fk_purchase_supplier` FOREIGN KEY (`supplier_id`) REFERENCES `inventory_suppliers` (`supplier_id`) ON UPDATE CASCADE;
+
+--
+-- Constraints for table `inventory_purchase_items`
+--
+ALTER TABLE `inventory_purchase_items`
+  ADD CONSTRAINT `fk_purchase_items_item` FOREIGN KEY (`item_id`) REFERENCES `inventory_items` (`item_id`) ON UPDATE CASCADE,
+  ADD CONSTRAINT `fk_purchase_items_purchase` FOREIGN KEY (`purchase_id`) REFERENCES `inventory_purchases` (`purchase_id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Constraints for table `inventory_stock`
+--
+ALTER TABLE `inventory_stock`
+  ADD CONSTRAINT `fk_stock_item` FOREIGN KEY (`item_id`) REFERENCES `inventory_items` (`item_id`) ON UPDATE CASCADE,
+  ADD CONSTRAINT `fk_stock_location` FOREIGN KEY (`location_id`) REFERENCES `inventory_locations` (`location_id`) ON UPDATE CASCADE;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

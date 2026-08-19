@@ -46,7 +46,7 @@
                                         foreach ($patient_admissions['data'] as $admission) { ?>
                                         <td><?= $admission->id ?></td>
                                         <td><?= $admission->admission_no ?></td>
-                                        <td><?= $admission->patient_name ?></td>
+                                        <td><?= $admission->patient_id ?></td>
                                         <td><?= $admission->doctor_name ?></td>
                                         <td><?= $admission->room_id ?></td>
                                         <td><?= $admission->bed_id ?></td>
