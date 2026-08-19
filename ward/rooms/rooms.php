@@ -45,11 +45,16 @@
                                         <td><?= $room->room_number ?></td>
                                         <td>
                                         <?php
-                                            $bloodGroups = [1 => 'A+',2 => 'A-',3 => 'B+',4 => 'B-',5 => 'AB+',6 => 'AB-',7 => 'O+',8 => 'O-'];
+                                            $roomType = [1=>'general',2=>'semi-private',3=>'private',4=>'deluxe',5=>'vip',6=>'icu',7=>'ccu',8=>'nicu',9=>'isolation',10=>'ot',11=>'observation',12=>'delivery'];
                                         ?>
-                                        <?= htmlspecialchars($bloodGroups[(int)$donor->blood_group] ?? 'N/A') ?>
+                                        <?= htmlspecialchars($roomType[(int)$rooms->room_type] ?? 'N/A') ?>
                                         </td>
-                                        <td><?= $room->floor ?></td>
+                                        <td>
+                                        <?php
+                                            $floor = [1=>'1st',2=>'2nd',3=>'3rd',4=>'4th',5=>'5th',6=>'6th'];
+                                        ?>
+                                        <?= htmlspecialchars($floor[(int)$rooms->floor] ?? 'N/A') ?>
+                                        </td>
                                         <td><?= $room->capacity ?></td>
                                         <td><?= $room->charge_per_day ?></td>
                                         <td>
