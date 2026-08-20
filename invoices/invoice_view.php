@@ -171,31 +171,48 @@ if(isset($_POST['save_payment'])){
 </div>
 </div>
 
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
-// Auto TRX ID Generate
-function generateTRX(method) {
-    if(method == 'Cash' || method == '') return ''; 
+    // Auto TRX ID Generate
+    function generateTRX(method) {
 
-    let prefix = {bKash:'BK', Nagad:'NG', Card:'CD', Bank:'BN'}[method];
-    let now = new Date();
-    let ymd = now.getFullYear().toString().substr(-2) +
-              ('0' + (now.getMonth()+1)).slice(-2) +
-              ('0' + now.getDate()).slice(-2);
-    let rand = Math.floor(10000 + Math.random() * 90000);
+        if (method === 'Cash' || method === '') {
+            return '';
+        }
 
-    return prefix + ymd + rand; // Example: BK26080948213
-}
+        const prefix = {
+            bKash: 'BK',
+            Nagad: 'NG',
+            Card: 'CD',
+            Bank: 'BN'
+        }[method];
 
-$(document).ready(function(){
-    // Page load e auto TRX
-    $('#transaction_id').val(generateTRX($('#payment_method').val()));
-    
-    // Method change korle auto TRX
-    $('#payment_method').on('change', function(){
-        $('#transaction_id').val(generateTRX($(this).val()));
+        const now = new Date();
+
+        const ymd =
+            now.getFullYear().toString().slice(-2) +
+            ('0' + (now.getMonth() + 1)).slice(-2) +
+            ('0' + now.getDate()).slice(-2);
+
+        const rand = Math.floor(10000 + Math.random() * 90000);
+
+        return prefix + ymd + rand;
+    }
+
+
+    document.addEventListener('DOMContentLoaded', function () {
+
+        const paymentMethod = document.getElementById('payment_method');
+        const transactionId = document.getElementById('transaction_id');
+
+        // Page load এ auto TRX
+        transactionId.value = generateTRX(paymentMethod.value);
+
+        // Payment method change করলে auto TRX
+        paymentMethod.addEventListener('change', function () {
+            transactionId.value = generateTRX(this.value);
+        });
+
     });
-});
 </script>
 
 <?php require_once "../component/footer.php"?>
