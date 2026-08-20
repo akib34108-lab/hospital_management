@@ -29,13 +29,13 @@
                         <form action="<?= $base_url; ?>blood_bank/blood_collection/update_collection.php?id=<?= $blood_collection->id ?>" method="POST">
 							<div class="form-group">
 								<label for="donation_id">Donation ID:</label>
-								<input class="form-control" type="text" id="donation_id" name="donation_id" value="<?= $blood_collection->donation_id ?>" required>
+								<input class="form-control" type="text" id="donation_id" name="donation_id" value="<?= $blood_collection->donation_id ?>" readonly>
 							</div>
                     </div>
                     <div class="col-sm-3">
                         <div class="form-group">
                             <label for="donor_id">Donor ID:</label>
-                            <input class="form-control" type="text" id="donor_id" name="donor_id" value="<?= $blood_collection->donor_id ?>" required>
+                            <input class="form-control" type="text" id="donor_id" name="donor_id" value="<?= $blood_collection->donor_id ?>" readonly>
                         </div>
                     </div>
                     <div class="col-sm-3">
@@ -63,12 +63,6 @@
                         </div>
                     </div>
                     <div class="col-sm-3 offset-sm-2">
-                        <div class="form-group">
-                            <label for="blood_group">Blood Group:</label>
-                            <input class="form-control" type="text" id="blood_group" name="blood_group" value="<?= $blood_collection->blood_group ?>" required>
-                        </div>
-                    </div>
-                    <div class="col-sm-3">
                         <div class="form-group">
                             <label for="staff">Phlebotomist:</label>
                             <input class="form-control" type="text" id="staff" name="staff" value="<?= $blood_collection->staff ?>" required>

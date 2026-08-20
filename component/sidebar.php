@@ -4,7 +4,7 @@
 			<div class="header-left">
 				<a href="<?= $base_url; ?>dashboard.php" class="logo">
 					<img src="<?= $base_url; ?>assets/assets/img/logo.png" width="35" height="35" alt=""> <span style="font-size: 20px;">SHIFA</span>
-                    <span style="color: #fff; font-size: 12px; position: absolute; top: 34px; left: 90px;">Hospital Management</span>
+                    <span style="color: #fff; font-size: 12px; position: absolute; top: 32px; left: 92px;">Hospital Management</span>
 				</a>
                 
 			</div>
@@ -65,6 +65,7 @@
 								<li><a href="<?= $base_url; ?>blood_bank/donor/donor.php">Donors List</a></li>
 								<li><a href="<?= $base_url; ?>blood_bank/blood_collection/collection.php">Blood Collection</a></li>
 								<li><a href="<?= $base_url; ?>blood_bank/screening/screening.php">Screening</a></li>
+								<li><a href="<?= $base_url; ?>blood_bank/component/component.php">Components</a></li>
                                 </ul>
 						</li>
                         <li>

@@ -35,16 +35,36 @@
                             </tr>
                         </thead>
                         <tbody>
+                            <?php
+                                $collection = $crud->common_select("donor", "*", ['id' => $blood_collection->donor_id]);
+                                if ($collection['status'] && !empty($collection['data'])) { $donor = $collection['data'][0]; ?>
                             <tr>
-                            <?php if (!empty($blood_collection)) { ?>
                                 <td class="font-weight-bold">Name:</td>
-                                <td><?= $blood_collection->donor_id ?></td>
+                                <td><?= $donor->donor_name ?></td>
                             </tr>
                             <tr>
                                 <td class="font-weight-bold">Blood Group:</td>
-                                <td><?= $blood_collection->blood_group ?></td>
+                                <td><?php $bloodGroups = [1 => 'A+',2 => 'A-',3 => 'B+',4 => 'B-',5 => 'AB+',6 => 'AB-',7 => 'O+',8 => 'O-']; ?>
+                                        <?= htmlspecialchars($bloodGroups[(int)$donor->blood_group] ?? 'N/A') ?>
+                                </td>
                             </tr>
                             <?php } ?>
+                            <tr>
+                                <td class="font-weight-bold">Age:</td>
+                                <td><?= $donor->age ?></td>
+                            </tr>
+                            <tr>
+                                <td class="font-weight-bold">Phone:</td>
+                                <td><?= $donor->phone ?></td>
+                            </tr>
+                            <tr>
+                                <td class="font-weight-bold">Address:</td>
+                                <td><?= $donor->address ?></td>
+                            </tr>
+                            <tr>
+                                <td class="font-weight-bold">Last Donation Date:</td>
+                                <td><?= $donor->last_donation ?></td>
+                            </tr>
                         </tbody>
                     </table>
                 </div>
@@ -118,4 +138,5 @@
                     </table>
                 </div>
             </div>
+        </div>
 <?php require_once "../../component/footer.php" ?>   

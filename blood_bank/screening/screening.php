@@ -36,8 +36,7 @@
                                         } else {
                                             $page = 1;
                                         }
-                                        $screening = $crud->common_select("screening",'*',[],'AND','id','ASC',10,($page-1)*10);
-                                        
+                                        $screening = $crud->common_query("SELECT screening.*,doctors.name from screening join doctors on screening.doctor_id = doctors.id LIMIT 10 OFFSET " . ($page - 1) * 10);
                                         if($screening['status']){
                                         foreach ($screening['data'] as $screening) { ?>
                                         <td><?= $screening->bag_id ?></td>
@@ -45,10 +44,11 @@
                                             <?= htmlspecialchars($screeningStatuses[(int)$screening->status] ?? 'N/A') ?></td>
                                         <td><?= $screening->remarks ?></td>
                                         <td><?= $screening->tested_by ?></td>
-                                        <td><?= $screening->verified_by ?></td>
+                                        <td><?= $screening->name ?></td>
                                         <td>
-                                            <a href="<?= $base_url ?>blood_bank/screening/view_screening.php?id=<?= $screening->id ?>"><i class="fa fa-list-alt pl-2" style="font-size: 22px;"></i></a>
-                                            <a href="<?= $base_url ?>blood_bank/screening/edit_screening.php?id=<?= $screening->id ?>"><i class="fa fa-edit pl-2" style="font-size: 22px;"></i></a>
+                                            <a href="<?= $base_url ?>blood_bank/screening/view_screening.php?id=<?= $screening->id ?>"><i class="fa fa-list-alt pl-2" style="color: #d6bf11; font-size: 24px;"></i></a>
+                                            <a href="<?= $base_url ?>blood_bank/screening/edit_screening.php?id=<?= $screening->id ?>"><i class="fa fa-edit pl-2" style="color: #20865f; font-size: 24px;"></i></a>
+                                            <a onclick="return confirm('Are you sure you want to delete this screening?');" href="<?= $base_url ?>blood_bank/screening/delete_screening.php?id=<?= $screening->id ?>"><i class="fa fa-trash pl-2" style="color: #dc3545; font-size: 24px;"></i></a>
                                         </td>
                                     </tr>
                                             <?php } } ?>

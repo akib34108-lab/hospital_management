@@ -127,8 +127,20 @@
                     </div>
                     <div class="col-sm-4 offset-sm-2">
                         <div class="form-group">
-                            <label for="verified_by">Verified by:</label>
-                            <input class="form-control" type="text" id="verified_by" name="verified_by" required>
+                            <label for="doctor_id">Verified by:</label>
+                            <select name="doctor_id" class="form-select form-control">
+                                        <option value="">Select Verified by</option>
+                                        <?php
+                                        // Fetch all doctors for the dropdown
+                                    $verified_by = $crud->common_select('doctors', '*');
+                                    if($verified_by['status']){
+                                        foreach($verified_by['data'] as $doctor) { ?>
+                                        <option value="<?php echo $doctor->id; ?>"><?php echo htmlspecialchars($doctor->name); ?></option>
+                                    <?php   }
+                                    } else { ?>
+                                    <option value="">No doctors available</option>
+                                    <?php } ?>
+                            </select>
                         </div>
                     </div>
                     <div class="col-sm-4">

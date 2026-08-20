@@ -31,8 +31,20 @@
                     </div>
                     <div class="col-sm-3">
                         <div class="form-group">
-                            <label for="donor_id">Donor ID:</label>
-                            <input class="form-control" type="text" id="donor_id" name="donor_id" required>
+                            <label for="donor_id">Donor Name:</label>
+                            <select name="donor_id" class="form-select form-control">
+                                        <option value="">Select Donor</option>
+                                        <?php
+                                        // Fetch all donors for the dropdown
+                                    $donors = $crud->common_select('donor', '*');
+                                    if($donors['status']){
+                                        foreach($donors['data'] as $donor) { ?>
+                                        <option value="<?php echo $donor->id; ?>"><?php echo htmlspecialchars($donor->donor_name); ?></option>
+                                    <?php   }
+                                    } else { ?>
+                                    <option value="">No donors available</option>
+                                    <?php } ?>
+                            </select>
                         </div>
                     </div>
                     <div class="col-sm-3">
@@ -61,13 +73,7 @@
                     </div>
                     <div class="col-sm-3 offset-sm-2">
                         <div class="form-group">
-                            <label for="blood_group">Blood Group:</label>
-                            <input class="form-control" type="text" id="blood_group" name="blood_group" required>
-                        </div>
-                    </div>
-                    <div class="col-sm-3">
-                        <div class="form-group">
-                            <label for="staff">Phlebotomist:</label>
+                            <label for="staff">Phlebotomist Name:</label>
                             <input class="form-control" type="text" id="staff" name="staff" required>
                         </div>
                     </div>

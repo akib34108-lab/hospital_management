@@ -55,7 +55,24 @@
                             </tr>
                             <tr>
                                 <td class="font-weight-bold">Blood Group:</td>
-                                <td><?= $donor->blood_group ?></td>
+                                <td> <?php if($donor->blood_group == '1') { ?>
+                                    <span>A+</span>
+                                    <?php } elseif($donor->blood_group == '2') { ?>
+                                    <span>A-</span>
+                                    <?php } elseif($donor->blood_group == '3') { ?>
+                                    <span>B+</span>
+                                    <?php } elseif($donor->blood_group == '4') { ?>
+                                    <span>B-</span>
+                                    <?php } elseif($donor->blood_group == '5') { ?>
+                                    <span>AB+</span>
+                                    <?php } elseif($donor->blood_group == '6') { ?>
+                                    <span>AB-</span>
+                                    <?php } elseif($donor->blood_group == '7') { ?>
+                                    <span>O+</span>
+                                    <?php } else { ?>
+                                    <span>O-</span>
+                                    <?php } ?>
+                                </td>
                             </tr>
                             <tr>
                                 <td class="font-weight-bold">Phone:</td>

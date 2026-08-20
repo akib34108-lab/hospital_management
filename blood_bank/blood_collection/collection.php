@@ -36,19 +36,20 @@
                                         } else {
                                             $page = 1;
                                         }
-                                        $blood_collection = $crud->common_select("blood_collection",'*',[],'AND','id','ASC',10,($page-1)*10);
-                                        
+                                        $blood_collection = $crud->common_query("SELECT blood_collection.*,donor.blood_group, donor.donor_name from blood_collection join donor on blood_collection.donor_id = donor.id LIMIT 10 OFFSET " . ($page - 1) * 10);
                                         if($blood_collection['status']){
                                         foreach ($blood_collection['data'] as $collection) { ?>
                                         <td><?= $collection->donation_id ?></td>
-                                        <td><?= $collection->donor_id ?></td>
+                                        <td><?= $collection->donor_name ?></td>
                                         <td><?= $collection->collection_date ?></td>
                                         <td><?= $collection->collection_volume ?></td>
-                                        <td><?= $collection->blood_group ?></td>
+                                        <td><?php $bloodGroups = [1 => 'A+',2 => 'A-',3 => 'B+',4 => 'B-',5 => 'AB+',6 => 'AB-',7 => 'O+',8 => 'O-']; ?>
+                                        <?= htmlspecialchars($bloodGroups[(int)$collection->blood_group] ?? 'N/A') ?>
+                                        </td>
                                         <td>
-                                            <a href="<?= $base_url ?>blood_bank/blood_collection/view_collection.php?id=<?= $collection->id ?>"><i class="fa fa-list-alt pl-2" style="font-size: 22px;"></i></a>
-                                            <a href="<?= $base_url ?>blood_bank/blood_collection/edit_collection.php?id=<?= $collection->id ?>"><i class="fa fa-edit pl-2" style="font-size: 22px;"></i></a>
-                                            <a onclick="return confirm('Are you sure you want to delete this collection?');" href="<?= $base_url ?>blood_bank/blood_collection/delete_collection.php?id=<?= $collection->id ?>"><i class="fa fa-trash pl-2" style="font-size: 22px;"></i></a>
+                                            <a href="<?= $base_url ?>blood_bank/blood_collection/view_collection.php?id=<?= $collection->id ?>"><i class="fa fa-list-alt pl-2" style="color: #d6bf11; font-size: 24px;"></i></a>
+                                            <a href="<?= $base_url ?>blood_bank/blood_collection/edit_collection.php?id=<?= $collection->id ?>"><i class="fa fa-edit pl-2" style="color: #20865f; font-size: 22px;"></i></a>
+                                            <a onclick="return confirm('Are you sure you want to delete this collection?');" href="<?= $base_url ?>blood_bank/blood_collection/delete_collection.php?id=<?= $collection->id ?>"><i class="fa fa-trash pl-2" style="color: #dc3545; font-size: 22px;"></i></a>
                                         </td>
                                     </tr>
                                             <?php } } ?>

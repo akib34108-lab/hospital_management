@@ -80,7 +80,7 @@
                                     <a class="page-link" href="#" aria-label="Previous">Previous</a>
                                     </li>
                                     <?php for ($i = 1; $i <= $total_pages; $i++) { ?>
-                                    <li class="page-item <?= ($i == $page) ? 'active' : '' ?>"><a class="page-link" href="<?= $base_url ?>rooms/rooms.php?page=<?= $i ?>"><?= $i ?></a></li>
+                                    <li class="page-item <?= ($i == $page) ? 'active' : '' ?>"><a class="page-link" href="<?= $base_url ?>ward/rooms/rooms.php?page=<?= $i ?>"><?= $i ?></a></li>
                                     <?php } ?>
                                     
                                     <li class="page-item">

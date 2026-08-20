@@ -16,7 +16,7 @@
             <div class="content">
                 <div class="row">
                     <div class="col-sm-5 col-5">
-                        <h4 style="color: #104d6f; font-size: 24px;">Add Blood Screening</h4>
+                        <h4 style="color: #104d6f; font-size: 24px;">Edit Blood Screening</h4>
                     </div>
                     <div class="col-sm-7 col-7 text-right m-b-30">
                         <a href="screening.php" style="display:inline-flex;align-items:center;gap:9px;padding:9px 17px;background:#104d6f;color:#fff;border-radius:7px;text-decoration:none;font-size:14px;font-weight:600;box-shadow:0 3px 8px rgba(13,110,253,.22);">
@@ -137,8 +137,20 @@
                     </div>
                     <div class="col-sm-4 offset-sm-2">
                         <div class="form-group">
-                            <label for="verified_by">Verified by:</label>
-                            <input class="form-control" type="text" id="verified_by" name="verified_by" value="<?= $screening->verified_by ?>" required>
+                            <label for="doctor_id">Verified by:</label>
+                            <select name="doctor_id" class="form-select form-control">
+                                <option value="">Select Verified by</option>
+                                <?php
+                                // Fetch all doctors for the dropdown
+                                $verified_by = $crud->common_select('doctors', '*');
+                                if($verified_by['status']){
+                                    foreach($verified_by['data'] as $doctor) { ?>
+                                        <option value="<?php echo $doctor->id; ?>" <?= $screening->doctor_id == $doctor->id ? 'selected' : '' ?>><?php echo htmlspecialchars($doctor->name); ?></option>
+                                    <?php   }
+                                } else { ?>
+                                    <option value="">No doctors available</option>
+                                <?php } ?>
+                            </select>
                         </div>
                     </div>
                     <div class="col-sm-4">
@@ -165,12 +177,12 @@
                     <div class="col-sm-4">
                         <div class="form-group">
                             <label for="remarks">Remarks:</label>
-                            <input class="form-control" type="text" id="remarks" name="remarks" required>
+                            <input class="form-control" type="text" id="remarks" name="remarks" value="<?= $screening->remarks ?>" required>
                         </div>
                     </div>
                     <div class="col-sm-12">
                         <div class="m-t-20 text-center">
-                            <button type="submit" style="display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:10px 35px;background:#104d6f;color:#fff;border:1px solid #104d6f;border-radius:7px;font-size:14px;font-weight:600;box-shadow:0 3px 8px rgba(13,110,253,.22);"><span style="display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;background:rgba(255,255,255,.18);border-radius:50%;"><i class="fa fa-check" style="font-size:12px;"></i></span> Create Collection</button>
+                            <button type="submit" style="display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:10px 35px;background:#104d6f;color:#fff;border:1px solid #104d6f;border-radius:7px;font-size:14px;font-weight:600;box-shadow:0 3px 8px rgba(13,110,253,.22);"><span style="display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;background:rgba(255,255,255,.18);border-radius:50%;"><i class="fa fa-check" style="font-size:12px;"></i></span> Update Collection</button>
                         </div>
                     </div>
                 </form>

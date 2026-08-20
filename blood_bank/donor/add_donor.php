@@ -30,13 +30,23 @@
                     <div class="col-sm-3">
                         <div class="form-group">
                             <label for="phone">Phone:</label>
-                            <input class="form-control" type="number" id="phone" name="phone" required>
+                            <input class="form-control" type="text" id="phone" name="phone" required>
                         </div>
                     </div>
                     <div class="col-sm-3 offset-sm-2">
                         <div class="form-group">
                             <label for="blood_group">Blood Group:</label>
-                            <input class="form-control" type="text" id="blood_group" name="blood_group" required>
+                            <select class="form-control" id="blood_group" name="blood_group" required>
+                                <option value="">Select Blood Group</option>
+                                <option value="1">A+</option>
+                                <option value="2">A-</option>
+                                <option value="3">B+</option>
+                                <option value="4">B-</option>
+                                <option value="5">AB+</option>
+                                <option value="6">AB-</option>
+                                <option value="7">O+</option>
+                                <option value="8">O-</option>
+                            </select>
                         </div>
                     </div>
                     <div class="col-sm-3">

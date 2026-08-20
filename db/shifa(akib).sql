@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Aug 18, 2026 at 08:13 PM
+-- Generation Time: Aug 20, 2026 at 07:39 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -88,7 +88,6 @@ CREATE TABLE `blood_collection` (
   `collection_date` date DEFAULT NULL,
   `collection_volume` int(16) DEFAULT NULL,
   `bag_id` varchar(25) DEFAULT NULL,
-  `blood_group` varchar(25) DEFAULT NULL,
   `collection_location` varchar(40) DEFAULT NULL,
   `staff` varchar(255) DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
@@ -100,9 +99,9 @@ CREATE TABLE `blood_collection` (
 -- Dumping data for table `blood_collection`
 --
 
-INSERT INTO `blood_collection` (`id`, `donation_id`, `donor_id`, `collection_date`, `collection_volume`, `bag_id`, `blood_group`, `collection_location`, `staff`, `created_at`, `update_at`, `deleted_at`) VALUES
-(3, 'D001', '1', '2026-08-14', 460, 'B001', 'B+', 'CMC', 'Hasan', NULL, NULL, NULL),
-(4, 'D002', '2', '2026-08-14', 360, 'B002', 'A+', 'CMC', 'Rahim', NULL, NULL, NULL);
+INSERT INTO `blood_collection` (`id`, `donation_id`, `donor_id`, `collection_date`, `collection_volume`, `bag_id`, `collection_location`, `staff`, `created_at`, `update_at`, `deleted_at`) VALUES
+(2, 'DID0001', '7', '2026-08-04', 750, 'B001', 'CMC', 'Karim', NULL, NULL, NULL),
+(3, 'DID0002', '10', '2026-08-10', 750, 'B002', 'CMC', 'Karim', NULL, NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -127,7 +126,36 @@ INSERT INTO `branch_medicines` (`branch_medicine_id`, `branch_id`, `medicine_id`
 (1, 1, 2, 118, 15.00, NULL),
 (2, 1, 1, 50, 12.00, NULL),
 (1, 1, 2, 118, 15.00, NULL),
-(2, 1, 1, 50, 12.00, NULL);
+(2, 1, 1, 50, 12.00, NULL),
+(1, 1, 2, 118, 15.00, NULL),
+(2, 1, 1, 50, 12.00, NULL),
+(3, 3, 2, 35, 15.00, NULL),
+(4, 3, 3, 38, 40.00, NULL);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `components`
+--
+
+CREATE TABLE `components` (
+  `id` int(11) NOT NULL,
+  `bag_id` int(16) DEFAULT NULL,
+  `component_type` int(4) DEFAULT NULL COMMENT '1=wb, 2=rbc, 3=ffp, 4=plasma, 5=plt, 6=cryo',
+  `processing_date` date DEFAULT NULL,
+  `expiry_date` date DEFAULT NULL,
+  `storage_location` varchar(40) DEFAULT NULL COMMENT '1=RefrigeratorA_Rack01_slot01,2=RefrigeratorA_Rack01_slot02, 3=RefrigeratorA_Rack01_slot03,4=RefrigeratorA_Rack02_slot01, 5=RefrigeratorA_Rack02_slot02,6=RefrigeratorA_Rack02_slot03',
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  `deleted_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `components`
+--
+
+INSERT INTO `components` (`id`, `bag_id`, `component_type`, `processing_date`, `expiry_date`, `storage_location`, `created_at`, `updated_at`, `deleted_at`) VALUES
+(1, 0, 6, '2026-08-03', '2026-10-29', '3', NULL, NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -192,6 +220,99 @@ INSERT INTO `designation` (`id`, `designation_name`, `description`, `status`, `c
 (8, 'Specialist', 'Physician with advanced expertise and training in a specific medical specialty.', 0, NULL, NULL, NULL),
 (9, 'Senior Specialist', 'Highly experienced specialist providing advanced diagnosis and treatment in a specific field.', 0, NULL, NULL, NULL),
 (10, 'Chief Consultant', 'Senior-most consultant responsible for specialized patient care and clinical supervision.', 0, NULL, NULL, NULL);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `discharges`
+--
+
+CREATE TABLE `discharges` (
+  `discharge_id` int(10) UNSIGNED NOT NULL,
+  `patient_id` int(10) UNSIGNED NOT NULL,
+  `admission_id` int(10) UNSIGNED NOT NULL,
+  `doctor_id` int(10) UNSIGNED DEFAULT NULL,
+  `discharge_date` datetime NOT NULL,
+  `discharge_type` varchar(50) NOT NULL DEFAULT 'Normal',
+  `diagnosis` text DEFAULT NULL,
+  `treatment_summary` text DEFAULT NULL,
+  `discharge_condition` varchar(50) DEFAULT NULL,
+  `advice` text DEFAULT NULL,
+  `follow_up_date` date DEFAULT NULL,
+  `notes` text DEFAULT NULL,
+  `created_at` datetime NOT NULL DEFAULT current_timestamp(),
+  `updated_at` datetime DEFAULT NULL ON UPDATE current_timestamp(),
+  `deleted_at` datetime DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `discharges`
+--
+
+INSERT INTO `discharges` (`discharge_id`, `patient_id`, `admission_id`, `doctor_id`, `discharge_date`, `discharge_type`, `diagnosis`, `treatment_summary`, `discharge_condition`, `advice`, `follow_up_date`, `notes`, `created_at`, `updated_at`, `deleted_at`) VALUES
+(1, 5, 2, 3, '2026-08-16 19:06:00', 'Normal', 'weakness', 'good', 'Stable', 'rest', '2026-09-16', 'rest', '2026-08-16 23:07:46', '2026-08-16 23:17:03', NULL);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `discharge_invoices`
+--
+
+CREATE TABLE `discharge_invoices` (
+  `invoice_id` int(10) UNSIGNED NOT NULL,
+  `discharge_id` int(10) UNSIGNED NOT NULL,
+  `patient_id` int(10) UNSIGNED NOT NULL,
+  `invoice_no` varchar(50) NOT NULL,
+  `bed_bill` decimal(12,2) NOT NULL DEFAULT 0.00,
+  `doctor_fee` decimal(12,2) NOT NULL DEFAULT 0.00,
+  `test_bill` decimal(12,2) NOT NULL DEFAULT 0.00,
+  `medicine_bill` decimal(12,2) NOT NULL DEFAULT 0.00,
+  `service_bill` decimal(12,2) NOT NULL DEFAULT 0.00,
+  `other_bill` decimal(12,2) NOT NULL DEFAULT 0.00,
+  `discount` decimal(12,2) NOT NULL DEFAULT 0.00,
+  `total_amount` decimal(12,2) NOT NULL DEFAULT 0.00,
+  `paid_amount` decimal(12,2) NOT NULL DEFAULT 0.00,
+  `due_amount` decimal(12,2) NOT NULL DEFAULT 0.00,
+  `payment_status` varchar(30) NOT NULL DEFAULT 'Due',
+  `payment_method` varchar(30) DEFAULT NULL,
+  `created_at` datetime NOT NULL DEFAULT current_timestamp(),
+  `updated_at` datetime DEFAULT NULL ON UPDATE current_timestamp(),
+  `deleted_at` datetime DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `discharge_invoices`
+--
+
+INSERT INTO `discharge_invoices` (`invoice_id`, `discharge_id`, `patient_id`, `invoice_no`, `bed_bill`, `doctor_fee`, `test_bill`, `medicine_bill`, `service_bill`, `other_bill`, `discount`, `total_amount`, `paid_amount`, `due_amount`, `payment_status`, `payment_method`, `created_at`, `updated_at`, `deleted_at`) VALUES
+(1, 1, 5, 'INV-20260816193037', 1500.72, 1000.00, 6800.00, 1500.00, 1000.00, 779.98, 375.00, 12205.70, 12205.70, 0.00, 'Paid', 'Card', '2026-08-16 23:30:37', '2026-08-17 22:07:04', NULL),
+(2, 1, 5, 'DIN-20260816195225', 1500.72, 1000.00, 6800.00, 1500.00, 1000.00, 779.98, 375.00, 12205.70, 12205.70, 0.00, 'Paid', 'Card', '2026-08-16 23:52:25', NULL, NULL),
+(3, 1, 5, 'DIN-20260816195535', 1500.72, 1000.00, 6800.00, 1500.00, 1000.00, 779.98, 375.00, 12205.70, 0.00, 12205.70, 'Unpaid', 'Card', '2026-08-16 23:55:35', NULL, NULL),
+(4, 1, 5, 'DIN-20260817171531', 1500.72, 1000.00, 6800.00, 1500.00, 1000.00, 779.98, 375.00, 12205.70, 0.00, 12205.70, 'Unpaid', 'Card', '2026-08-17 21:15:31', NULL, NULL),
+(5, 1, 5, 'DIN-20260817171622', 1500.72, 1000.00, 6800.00, 1500.00, 1000.00, 779.98, 375.00, 12205.70, 12205.70, 0.00, 'Paid', 'Card', '2026-08-17 21:16:22', NULL, NULL),
+(6, 1, 5, 'DIN-20260817174630', 1500.72, 1000.00, 6800.00, 1500.00, 1000.00, 779.98, 375.00, 12205.70, 0.00, 12205.70, 'Unpaid', 'Card', '2026-08-17 21:46:30', NULL, NULL),
+(7, 1, 5, 'DIN-20260817174653', 1500.72, 1000.00, 6800.00, 1500.00, 1000.00, 779.98, 375.00, 12205.70, 12205.70, 0.00, 'Paid', 'Card', '2026-08-17 21:46:53', NULL, NULL),
+(8, 1, 5, 'DIN-20260817175849', 1500.72, 1000.00, 6800.00, 1500.00, 1000.00, 779.98, 375.00, 12205.70, 0.00, 12205.70, 'Unpaid', 'Card', '2026-08-17 21:58:49', NULL, NULL),
+(9, 1, 5, 'DIN-20260817175911', 1500.72, 1000.00, 6800.00, 1500.00, 1000.00, 779.98, 375.00, 12205.70, 12205.70, 0.00, 'Paid', 'Cash', '2026-08-17 21:59:11', NULL, NULL);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `discharge_reports`
+--
+
+CREATE TABLE `discharge_reports` (
+  `report_id` int(10) UNSIGNED NOT NULL,
+  `discharge_id` int(10) UNSIGNED NOT NULL,
+  `patient_id` int(10) UNSIGNED NOT NULL,
+  `test_name` varchar(150) NOT NULL,
+  `test_date` date DEFAULT NULL,
+  `result` text DEFAULT NULL,
+  `normal_range` varchar(100) DEFAULT NULL,
+  `remarks` text DEFAULT NULL,
+  `created_at` datetime NOT NULL DEFAULT current_timestamp(),
+  `deleted_at` datetime DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -263,7 +384,6 @@ CREATE TABLE `donor` (
 
 INSERT INTO `donor` (`id`, `donor_name`, `age`, `gender`, `phone`, `address`, `blood_group`, `last_donation`, `donor_eligibility`, `created_at`, `updated_at`, `deleted_at`) VALUES
 (1, 'Mahtab', 29, 1, '01878945612', 'Satkania, Chattogram', 7, '2026-07-21', 1, NULL, NULL, NULL),
-(3, 'Imtiaz', 32, 1, '01842194963', 'GPO circle, new market', 4, '2026-07-22', 1, NULL, NULL, NULL),
 (4, 'Ashfa', 19, 0, '01412365485', 'Gachbaria', 3, '2026-02-17', 1, NULL, NULL, NULL),
 (5, 'Rahim', 22, 1, '01712345678', 'Chittagong', 3, '2026-07-06', 1, NULL, NULL, NULL),
 (6, 'Karim', 25, 1, '01812345679', 'Dhaka', 7, '2026-08-02', 1, NULL, NULL, NULL),
@@ -869,7 +989,8 @@ CREATE TABLE `rooms` (
 
 INSERT INTO `rooms` (`id`, `room_number`, `patient_id`, `room_type`, `room_variant`, `floor`, `available_beds`, `room_charge`, `status`, `created_at`, `updated_at`, `deleted_at`) VALUES
 (6, 'RM-0001', 1, 1, 1, '1', 'BED-0001', 1200.00, 2, NULL, NULL, NULL),
-(7, 'RM-0002', 5, 2, 1, '1', 'BED-0002', 1200.00, 2, NULL, NULL, NULL);
+(7, 'RM-0002', 5, 2, 1, '1', 'BED-0002', 1200.00, 2, NULL, NULL, NULL),
+(8, 'RM-0003', 0, 2, 2, '2', 'BED-003', 1200.00, 2, NULL, NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -924,7 +1045,7 @@ CREATE TABLE `screening` (
   `status` int(4) DEFAULT NULL COMMENT '1=pending, 2=passed, 3=quarantined, 4=reactive, 5=invalid, 6=discarded, 7=released',
   `tested_by` varchar(40) DEFAULT NULL,
   `tested_at` datetime DEFAULT NULL,
-  `verified_by` varchar(40) DEFAULT NULL,
+  `doctor_id` int(16) DEFAULT NULL,
   `verified_at` datetime DEFAULT NULL,
   `remarks` text DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
@@ -936,9 +1057,9 @@ CREATE TABLE `screening` (
 -- Dumping data for table `screening`
 --
 
-INSERT INTO `screening` (`id`, `bag_id`, `abo_group`, `rh_type`, `hiv`, `hbsag`, `hcv`, `syphilis`, `malaria`, `other`, `status`, `tested_by`, `tested_at`, `verified_by`, `verified_at`, `remarks`, `created_at`, `updated_at`, `deleted_at`) VALUES
-(1, 'B001', 2, 1, 1, 1, 1, 1, 1, 1, 3, 'Rahim', '2026-08-03 19:55:00', 'Karim', '2026-08-10 16:09:00', 'aada', NULL, NULL, NULL),
-(2, 'B002', 3, 1, 1, 1, 1, 1, 1, 2, 1, 'Akbar', '2026-08-07 12:00:00', 'Dr. Nizam', '2026-08-10 14:45:00', 'asfsaf', NULL, NULL, NULL);
+INSERT INTO `screening` (`id`, `bag_id`, `abo_group`, `rh_type`, `hiv`, `hbsag`, `hcv`, `syphilis`, `malaria`, `other`, `status`, `tested_by`, `tested_at`, `doctor_id`, `verified_at`, `remarks`, `created_at`, `updated_at`, `deleted_at`) VALUES
+(1, 'B001', 2, 1, 1, 1, 1, 1, 1, 1, 1, 'Kamal', '2026-08-06 14:44:00', 10, '2026-08-14 17:12:00', 'Still some tests need to do', NULL, NULL, NULL),
+(2, 'B002', 3, 2, 1, 2, 2, 1, 1, 2, 4, 'Kamal', '2026-08-03 12:00:00', 9, '2026-08-07 14:00:00', 'Test again', NULL, NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -1028,6 +1149,12 @@ ALTER TABLE `beds`
 -- Indexes for table `blood_collection`
 --
 ALTER TABLE `blood_collection`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `components`
+--
+ALTER TABLE `components`
   ADD PRIMARY KEY (`id`);
 
 --
@@ -1233,7 +1360,13 @@ ALTER TABLE `beds`
 -- AUTO_INCREMENT for table `blood_collection`
 --
 ALTER TABLE `blood_collection`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+
+--
+-- AUTO_INCREMENT for table `components`
+--
+ALTER TABLE `components`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `departments`
@@ -1377,7 +1510,7 @@ ALTER TABLE `roles`
 -- AUTO_INCREMENT for table `rooms`
 --
 ALTER TABLE `rooms`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- AUTO_INCREMENT for table `schedules`
@@ -1389,7 +1522,7 @@ ALTER TABLE `schedules`
 -- AUTO_INCREMENT for table `screening`
 --
 ALTER TABLE `screening`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `shift`
