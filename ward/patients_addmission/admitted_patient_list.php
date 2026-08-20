@@ -61,6 +61,7 @@
                                         </td>
                                         <td class="d-flex justify-content-end">
                                             <a href="<?= $base_url ?>ward/patients_addmission/edit_admitted_patient.php?id=<?= $admission->id ?>" class="btn btn-sm btn-primary mb-2 mb-lg-0 me-0 me-lg-2">Edit</a>
+                                            <a href="<?= $base_url ?>ward/discharge/add_discharge.php?admission_id=<?= $admission->id ?>" class="btn btn-sm btn-success mb-2 mb-lg-0 me-0 me-lg-2"><i class="fa fa-sign-out"></i> Discharge</a>
                                             <a onclick="return confirm('Are you sure you want to delete this patient admission?');" href="<?= $base_url ?>ward/patients_addmission/delete_admitted_patient.php?id=<?= $admission->id ?>" class="btn btn-sm btn-danger">Delete</a>
                                         </td>
                                     </tr>
