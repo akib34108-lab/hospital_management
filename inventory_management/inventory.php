@@ -10,7 +10,8 @@
                         <h4 class="page-title">Inventory overview</h4>
                     </div>
                     <div class="col-sm-8 col-9 text-right m-b-20">
-                        <a href="add_inventory.php" class="btn btn btn-primary btn-rounded float-right"><i class="fa fa-plus"></i> Add Inventory</a>
+                        <a href="inventory_issues.php" class="btn btn btn-warning btn-rounded float-right">Issues</a>
+                        <a href="add_inventory.php" class="btn btn btn-primary btn-rounded float-right" style="margin-right: 10px;"><i class="fa fa-plus"></i> Add Inventory</a>
                     </div>
                 </div>
 				<div class="row">
@@ -51,7 +52,7 @@
                                         <td><?= $inventory->date ?></td>                    
                                         <td class="text-center">
                                             <a href="<?= $base_url ?>inventory_management/inventory_edit.php?id=<?= $inventory->id ?>" class="btn btn-sm btn-primary mb-2 mb-lg-0 me-0 me-lg-2">Edit</a>
-                                            <a href="<?= $base_url ?>inventory_management/inventory_issues.php?id=<?= $inventory->id ?>" class="btn btn-sm btn-danger">Issues</a>
+                                            <a href="<?= $base_url ?>inventory_management/inventory_delete.php?id=<?= $inventory->id ?>" class="btn btn-sm btn-danger">Delete</a>
                                         </td>
                                     </tr>
                                     <?php } } ?>
