@@ -84,14 +84,27 @@
                             </tr>
                             <tr>
                                 <td class="font-weight-bold">Last Donated:</td>
-                                <td><?= !empty($donor->last_donated) ? htmlspecialchars($donor->last_donated) : 'Not donated yet' ?></td>
+                                <td><?= !empty($donor->last_donation) ? htmlspecialchars($donor->last_donation) : 'Not donated yet' ?></td>
                             </tr>
                             <tr>
                                 <td class="font-weight-bold">Donor Eligibility:</td>
-                                <td> <?php if($donor->donor_eligibility == '1'){ ?>
-                                    <span>Eligible</span>
+                                <td> <?php
+                                    $isEligible = true;
+                                    if (!empty($donor->last_donation)) {
+                                        $today = new DateTime();
+                                        $lastDonation = new DateTime($donor->last_donation);
+
+                                        $eligibleDate = clone $lastDonation;
+                                        $eligibleDate->modify('+3 months');
+                                        if ($today < $eligibleDate) {
+                                            $isEligible = false;
+                                        }
+                                    }
+                                    ?>
+                                    <?php if ($isEligible) { ?>
+                                    <span class="badge badge-success">Eligible</span>
                                     <?php } else { ?>
-                                    <span>Not Eligible</span>
+                                    <span class="badge badge-warning">Not Eligible</span>
                                     <?php } ?>
                                 </td>
                             </tr>

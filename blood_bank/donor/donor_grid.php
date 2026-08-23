@@ -28,8 +28,22 @@
         <div class="col-sm-6 col-md-3 mb-3">
             <table class="w-100" style="border: 1px solid #dee2e6; border-radius: 5px; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);">
                 <tr>
-                    <td colspan="2" class="text-right pr-2"><?php if ($donor->donor_eligibility == '1') { ?><span style="display:inline-block;width:8px;height:8px;background:#28a745;border-radius:50%;"></span> Eligible
-                    <?php } else { ?><span style="display:inline-block;width:8px;height:8px;background:#dc3545;border-radius:50%;"></span> Not Eligible<?php } ?></td>
+                    <td colspan="2" class="text-right pr-2"><?php
+                        $today = new DateTime();
+                        $isEligible = true;
+                        if (!empty($donor->last_donation)) {
+                            $lastDonation = new DateTime($donor->last_donation);
+                            $eligibleDate = clone $lastDonation;
+                            $eligibleDate->modify('+3 months');
+                            if ($today < $eligibleDate) {
+                                $isEligible = false;
+                            }
+                        }
+                        ?>
+                        <?php if ($isEligible) { ?>
+                        <span style="display:inline-block;width:8px;height:8px;background:#28a745;border-radius:50%;"></span>Eligible <?php } else { ?>
+                        <span style="display:inline-block;width:8px;height:8px;background:#dc3545;border-radius:50%;cursor: pointer;" title="Eligible after 3 months from last donation"></span> Not Eligible <?php } ?>
+                    </td>
                 </tr>
                 <tr>
                     <th class="text-center" colspan="2" style="font-size: 18px; color: #009efb;"><?= htmlspecialchars($donor->donor_name) ?><br>
