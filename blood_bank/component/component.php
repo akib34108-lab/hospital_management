@@ -36,7 +36,7 @@
                                         } else {
                                             $page = 1;
                                         }
-                                        $component = $crud->common_query("SELECT components.*,screening.bag_id from components join screening on components.bag_id = screening.bag_id LIMIT 10 OFFSET " . ($page - 1) * 10);
+                                        $component = $crud->common_query("SELECT components.*,screening.bag_id from components left join screening on components.bag_id = screening.bag_id LIMIT 10 OFFSET " . ($page - 1) * 10);
                                         if($component['status']){
                                         foreach ($component['data'] as $component) { ?>
                                         <td><?= $component->bag_id ?></td>
