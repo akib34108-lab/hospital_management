@@ -52,7 +52,7 @@
                                         <td><?= $inventory->date ?></td>                    
                                         <td class="text-center">
                                             <a href="<?= $base_url ?>inventory_management/inventory_edit.php?id=<?= $inventory->id ?>" class="btn btn-sm btn-primary mb-2 mb-lg-0 me-0 me-lg-2">Edit</a>
-                                            <a href="<?= $base_url ?>inventory_management/inventory_delete.php?id=<?= $inventory->id ?>" class="btn btn-sm btn-danger">Delete</a>
+                                            <a href="<?= $base_url ?>inventory_management/delete_inventory.php?id=<?= $inventory->id ?>" class="btn btn-sm btn-danger">Delete</a>
                                         </td>
                                     </tr>
                                     <?php } } ?>

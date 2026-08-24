@@ -5,7 +5,7 @@
 $id = $_GET['id'];
   $EditPatient = $crud->common_select("patients", "*", ['id' => $id]);
   if (!$EditPatient['status'] || empty($EditPatient['data'])) {
-    $_SESSION['message'] = array('danger','Error', 'Shift not found.');
+    $_SESSION['message'] = array('danger','Error', 'patient not found.');
     echo "<script>window.location.href = '".$base_url."patients/patients.php';</script>";
     exit;
   }
