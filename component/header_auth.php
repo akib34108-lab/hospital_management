@@ -1,7 +1,14 @@
 <?php
-    require_once "connection.php";
+        // Define a list of known local environments
+    $local_hosts = ['localhost', '127.0.0.1', '::1'];
+
+    if (in_array($_SERVER['HTTP_HOST'], $local_hosts) || in_array($_SERVER['REMOTE_ADDR'], $local_hosts)) {
+        require_once $_SERVER['DOCUMENT_ROOT'] . "/shifa/component/connection.php";
+    } else {
+        require_once $_SERVER['DOCUMENT_ROOT'] . "/component/connection.php";
+    }
     if(isset($_SESSION['is_logged_in']) && $_SESSION['is_logged_in']){
-        echo "<script>window.location='{$base_url}dashboard.php'</script>";
+        echo "<script>window.location='{$base_url}index.php'</script>";
         exit;
     }
 ?>

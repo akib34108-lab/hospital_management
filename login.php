@@ -58,7 +58,7 @@
                             $_SESSION['access'] = $user->access; // Store user access in session
                             $_SESSION['is_logged_in'] = true; // Set a flag to indicate the user is logged in
                             // Redirect to dashboard or home page
-                            echo '<script>window.location.href = "dashboard.php";</script>';
+                            echo '<script>window.location.href = "index.php";</script>';
                         } else {
                             echo '<div class="alert alert-danger">Invalid email or password.</div>';
                         }
