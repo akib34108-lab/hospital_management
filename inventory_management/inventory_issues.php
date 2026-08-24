@@ -28,8 +28,7 @@
 									</tr>
 								</thead>
 								<tbody>
-                                    <tr>
-                                        <?php
+                                     <?php
                                         // Fetch department from the database
                                         if(isset($_GET['page']) && is_numeric($_GET['page'])){
                                             $page = (int)$_GET['page'];
@@ -39,14 +38,15 @@
                                         $problems = $crud->common_select("issues",'*',[],'AND','id','ASC',10,($page-1)*10);
                                         
                                         if($problems['status']){
-                                        foreach ($problems['data'] as $issues) { ?>
-                                        <td><?= $issues->id ?></td>
-                                        <td><?= $issues->name ?></td>
-                                        <td><?= $issues->category ?></td>
-                                        <td><?= $issues->quantity ?></td>            
-                                        <td><?= $issues->problem ?></td>              
+                                        foreach ($problems['data'] as $problem) { ?>
+                                    <tr>
+                                        <td><?= $problem->id ?></td>
+                                        <td><?= $problem->name ?></td>
+                                        <td><?= $problem->category ?></td>
+                                        <td><?= $problem->quantity ?></td>            
+                                        <td><?= $problem->problem ?></td>              
                                         <td class="text-center">
-                                            <a href="<?= $base_url ?>inventory_management/inventory_issues.php?id=<?= $issues->id ?>" class="btn btn-sm btn-danger">delete</a>
+                                            <a href="<?= $base_url ?>inventory_management/inventory_issues.php?id=<?= $problem->id ?>" class="btn btn-sm btn-danger">delete</a>
                                         </td>
                                     </tr>
                                     <?php } } ?>

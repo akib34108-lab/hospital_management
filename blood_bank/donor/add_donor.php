@@ -52,7 +52,7 @@
                     <div class="col-sm-3">
                         <div class="form-group">
                             <label for="last_donation">Last Donate:</label>
-                            <input class="form-control" type="date" id="last_donation" name="last_donation" required>
+                            <input class="form-control" type="date" id="last_donation" name="last_donation">
                         </div>
                     </div>
                     <div class="col-sm-3">
@@ -63,15 +63,9 @@
                     </div>
                     <div class="col-sm-3 offset-sm-2">
                         <div class="form-group">
-                            <label class="display-block">Eligibility</label>
-							<div class="form-check form-check-inline">
-								<input class="form-check-input" type="radio" name="donor_eligibility" id="eligible" value="1" checked>
-								<label class="form-check-label" for="eligible">Eligible</label>
-							</div>
-							<div class="form-check form-check-inline">
-								<input class="form-check-input" type="radio" name="donor_eligibility" id="not-eligible" value="2">
-								<label class="form-check-label" for="not-eligible">Not Eligible</label>
-							</div>
+                            <label>Eligibility:</label>
+                            <span style="color: #28a745; display: inline-block;">Eligible</span><br>
+                            <small>New donor is eligible until the first blood donation.</small>
                         </div>
                     </div>
                     <div class="col-sm-3">

@@ -1,8 +1,7 @@
 <?php
     require_once "../component/connection.php";
 
-    $id = $_POST['id'];
-    $result = $crud->common_update("inventory_list", $_POST, ['id' => $id]);
+    $result = $crud->common_delete("inventory_list", ['id' => $_GET['id']]);
     if ($result['status']) {
         $_SESSION['message'] = array('success','Success', $result['message']);
     } else {

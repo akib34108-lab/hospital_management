@@ -2,7 +2,7 @@
     <div class="main-wrapper">
         <div class="header" style="background-color: #427996;">
 			<div class="header-left">
-				<a href="<?= $base_url; ?>dashboard.php" class="logo">
+				<a href="<?= $base_url; ?>index.php" class="logo">
 					<img src="<?= $base_url; ?>assets/assets/img/logo.png" width="35" height="35" alt=""> <span style="font-size: 20px;">SHIFA</span>
                     <span style="color: #fff; font-size: 12px; position: absolute; top: 32px; left: 92px;">Hospital Management</span>
 				</a>
@@ -39,7 +39,7 @@
                     <ul>
                         <li class="menu-title" style="color: #fff;">Main</li>
                         <li>
-                            <a href="<?= $base_url; ?>dashboard.php"><i class="fa fa-dashboard" style="color: #fff;"></i> <span style="color: #fff;">Dashboard</span></a>
+                            <a href="<?= $base_url; ?>index.php"><i class="fa fa-dashboard" style="color: #fff;"></i> <span style="color: #fff;">Dashboard</span></a>
                         </li>
 						<li>
                             <a href="<?= $base_url; ?>doctors/doctors.php"><i class="fa fa-user-md" style="color: #fff;"></i> <span style="color: #fff;">Doctors</span></a>
@@ -81,6 +81,12 @@
 							</ul>
 						</li>
                         <li>
+                            <a href="<?= $base_url; ?>inventory_management/inventory.php"><i class="fa fa-cube" style="color: #fff;"></i> <span style="color: #fff;">Inventory</span></a>
+                        </li>
+                        <li>
+                            <a href="<?= $base_url; ?>stocks/list.php"><i class="fa fa-line-chart" style="color: #fff;"></i> <span style="color: #fff;">stocks</span></a>
+                        </li>
+                        <li>
                             <a href="<?= $base_url; ?>departments/departments.php"><i class="fa fa-hospital-o" style="color: #fff;"></i> <span style="color: #fff;">Departments</span></a>
                         </li>
                         <li class="submenu">
@@ -95,9 +101,6 @@
                         </li>
                         <li>
                             <a href="<?= $base_url; ?>shift/shift.php"><i class="fa fa-clock-o" style="color: #fff;"></i> <span style="color: #fff;">Shift</span></a>
-                        </li>
-                        <li>
-                            <a href="<?= $base_url; ?>inventory_management/inventory.php"><i class="fa fa-cube" style="color: #fff;"></i> <span style="color: #fff;">Inventory</span></a>
                         </li>
                     </div>
             </div>

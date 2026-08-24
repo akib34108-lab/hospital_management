@@ -29,6 +29,8 @@
                                         <th>Gender</th>
                                         <th>Phone</th>
                                         <th>Blood Group</th>
+                                        <th>Last Donation</th>
+                                        <th>Eligibility</th>
                                         <th>Action</th>
                                     </tr>
                                 </thead>
@@ -54,6 +56,27 @@
                                             $bloodGroups = [1 => 'A+',2 => 'A-',3 => 'B+',4 => 'B-',5 => 'AB+',6 => 'AB-',7 => 'O+',8 => 'O-'];
                                             ?>
                                             <?= htmlspecialchars($bloodGroups[(int)$donor->blood_group] ?? 'N/A') ?>
+                                        </td>
+                                        <td><?= htmlspecialchars($donor->last_donation) ?></td>
+                                        <td><?php
+                                            $today = new DateTime();
+                                            $status = 'Eligible';
+
+                                            if (!empty($donor->last_donation)) {
+
+                                                $lastDonation = new DateTime($donor->last_donation);
+                                                $eligibleDate = clone $lastDonation;
+                                                $eligibleDate->modify('+3 months');
+
+                                                if ($today < $eligibleDate) {
+                                                    $status = 'Not Eligible';
+                                                }
+                                            }?>
+                                            <?php if ($status === 'Eligible') { ?>
+                                            <span style="color: green;">Eligible</span>
+                                        <?php } else { ?>
+                                            <span  style="color: orange; cursor: pointer;" title="Eligible after 3 months from last donation">Not Eligible</span>
+                                        <?php } ?>
                                         </td>
                                         <td>
                                             <a href="<?= $base_url ?>blood_bank/donor/view_donor.php?id=<?= $donor->id ?>"><i class="fa fa-list-alt pl-2" style="color: #d6bf11; font-size: 24px;"></i></a>
