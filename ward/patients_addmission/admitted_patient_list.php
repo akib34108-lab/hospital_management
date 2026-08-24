@@ -27,7 +27,7 @@
                                         <th>Admit Date</th>
                                         <th>Admit Time</th>
                                         <th>Status</th>
-                                        <th class="text-right">Action</th>
+                                        <th class="text-center">Action</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -46,7 +46,7 @@
                                         foreach ($patient_admissions['data'] as $admission) { ?>
                                         <td><?= $admission->id ?></td>
                                         <td><?= $admission->admission_no ?></td>
-                                        <td><?= $admission->patient_name ?></td>
+                                        <td><?= $admission->patient_id ?></td>
                                         <td><?= $admission->doctor_name ?></td>
                                         <td><?= $admission->room_id ?></td>
                                         <td><?= $admission->bed_id ?></td>
@@ -60,7 +60,8 @@
                                             <?php } ?>
                                         </td>
                                         <td class="d-flex justify-content-end">
-                                            <a href="<?= $base_url ?>ward/patients_addmission/edit_admitted_patient.php?id=<?= $admission->id ?>" class="btn btn-sm btn-primary mb-2 mb-lg-0 me-0 me-lg-2">Edit</a>
+                                            <a href="<?= $base_url ?>ward/patients_addmission/edit_admitted_patient.php?id=<?= $admission->id ?>" class="btn btn-sm btn-primary mb-2 mb-lg-0">Edit</a>
+                                            <a href="<?= $base_url ?>ward/discharge/add_discharge.php?admission_id=<?= $admission->id ?>" class="btn btn-sm btn-success mb-2 mb-lg-0 me-0 me-lg-2"><i class="fa fa-sign-out"></i> Discharge</a>
                                             <a onclick="return confirm('Are you sure you want to delete this patient admission?');" href="<?= $base_url ?>ward/patients_addmission/delete_admitted_patient.php?id=<?= $admission->id ?>" class="btn btn-sm btn-danger">Delete</a>
                                         </td>
                                     </tr>

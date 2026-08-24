@@ -1,38 +1,37 @@
 <?php require_once "component/header_auth.php"; ?>
-    <div class="main-wrapper  account-wrapper">
+    <div class="main-wrapper account-wrapper" style="background-image: url('<?= $base_url; ?>assets/assets/img/login-bg.png'); background-size: cover; background-position: center; min-height: 100vh;">
         <div class="account-page">
-            <div class="account-center">
-                <div class="account-box">
+			<div class="account-center">
+				<div class="account-box" style="border: 1px solid #0b5884; padding: 20px; border-radius: 10px; background-color: rgba(255, 255, 255, 0.9); box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
                     <form action="" method="post" class="form-signin">
 						<div class="account-logo">
-                            <a href="index-2.html"><img src="assets/img/logo-dark.png" alt=""></a>
+                            <a href="index-2.html"><img src="<?= $base_url; ?>assets/assets/img/logo-dark.png" alt=""></a>
+                            <div style="margin-top: 15px;">
+                                <span class="font-weight-bold">SHIFA</span><br>
+                                <span style="font-size: 12px;">Hospital Management</span>
+                            </div>
                         </div>
                         <div class="form-group">
-                            <label>Username</label>
-                            <input type="text" required name="full_name" class="form-control">
+                            <label class="font-weight-bold" style="color: #0b5884;">Username</label>
+                            <input type="text" name="full_name" autofocus class="form-control" style="border: 1px solid #d9e2e8; border-radius: 50px; padding: 10px 15px; font-size: 15px; background: #f8fafc; transition: 0.3s;" onfocus="this.style.borderColor='#0b5884'; this.style.boxShadow='0 0 0 3px rgba(11,88,132,0.15)'; this.style.background='#fff';" onblur="this.style.borderColor='#d9e2e8'; this.style.boxShadow='none'; this.style.background='#f8fafc';">
                         </div>
                         <div class="form-group">
-                            <label>Email Address</label>
-                            <input type="email" required name="email" class="form-control">
+                            <label class="font-weight-bold" style="color: #0b5884;">Email</label>
+                            <input type="text" name="email" autofocus class="form-control" style="border: 1px solid #d9e2e8; border-radius: 50px; padding: 10px 15px; font-size: 15px; background: #f8fafc; transition: 0.3s;" onfocus="this.style.borderColor='#0b5884'; this.style.boxShadow='0 0 0 3px rgba(11,88,132,0.15)'; this.style.background='#fff';" onblur="this.style.borderColor='#d9e2e8'; this.style.boxShadow='none'; this.style.background='#f8fafc';">
                         </div>
                         <div class="form-group">
-                            <label>Phone</label>
-                            <input type="tel" required name="phone" class="form-control">
+                            <label class="font-weight-bold" style="color: #0b5884;">Phone</label>
+                            <input type="tel" name="phone" autofocus class="form-control" style="border: 1px solid #d9e2e8; border-radius: 50px; padding: 10px 15px; font-size: 15px; background: #f8fafc; transition: 0.3s;" onfocus="this.style.borderColor='#0b5884'; this.style.boxShadow='0 0 0 3px rgba(11,88,132,0.15)'; this.style.background='#fff';" onblur="this.style.borderColor='#d9e2e8'; this.style.boxShadow='none'; this.style.background='#f8fafc';">
                         </div>
                         <div class="form-group">
-                            <label>Password</label>
-                            <input type="password" required name="password" class="form-control">
-                        </div>
-                        <div class="form-group checkbox">
-                            <label>
-                                <input type="checkbox"> I have read and agree the Terms & Conditions
-                            </label>
+                            <label class="font-weight-bold" style="color: #0b5884;">Password</label>
+                            <input type="password" name="password" autofocus class="form-control" style="border: 1px solid #d9e2e8; border-radius: 50px; padding: 10px 15px; font-size: 15px; background: #f8fafc; transition: 0.3s;" onfocus="this.style.borderColor='#0b5884'; this.style.boxShadow='0 0 0 3px rgba(11,88,132,0.15)'; this.style.background='#fff';" onblur="this.style.borderColor='#d9e2e8'; this.style.boxShadow='none'; this.style.background='#f8fafc';">
                         </div>
                         <div class="form-group text-center">
-                            <button class="btn btn-primary account-btn" type="submit">Signup</button>
+                            <button type="submit" class="btn btn-primary account-btn font-weight-bold">Sign Up</button>
                         </div>
-                        <div class="text-center login-link">
-                            Already have an account? <a href="login.php">Login</a>
+                        <div class="text-left font-weight-bold" style="color: #0b5884;">
+                            Already have an account? <a href="login.php" class="font-weight-bold" style="color: #0b5884;">Login</a>
                         </div>
                     </form>
                     <?php

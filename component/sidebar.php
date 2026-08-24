@@ -1,99 +1,25 @@
 <body>
     <div class="main-wrapper">
-        <div class="header">
+        <div class="header" style="background-color: #427996;">
 			<div class="header-left">
 				<a href="<?= $base_url; ?>dashboard.php" class="logo">
-					<img src="<?= $base_url; ?>assets/assets/img/logo.png" width="35" height="35" alt=""> <span >SHIFA</span>
+					<img src="<?= $base_url; ?>assets/assets/img/logo.png" width="35" height="35" alt=""> <span style="font-size: 20px;">SHIFA</span>
+                    <span style="color: #fff; font-size: 12px; position: absolute; top: 32px; left: 92px;">Hospital Management</span>
 				</a>
+                
 			</div>
 			<a id="toggle_btn" href="javascript:void(0);"><i class="fa fa-bars"></i></a>
             <a id="mobile_btn" class="mobile_btn float-left" href="#sidebar"><i class="fa fa-bars"></i></a>
             <ul class="nav user-menu float-right">
-                <li class="nav-item dropdown d-none d-sm-block">
-                    <a href="#" class="dropdown-toggle nav-link" data-toggle="dropdown"><i class="fa fa-bell-o"></i> <span class="badge badge-pill bg-danger float-right">3</span></a>
-                    <div class="dropdown-menu notifications">
-                        <div class="topnav-dropdown-header">
-                            <span>Notifications</span>
-                        </div>
-                        <div class="drop-scroll">
-                            <ul class="notification-list">
-                                <li class="notification-message">
-                                    <a href="activities.html">
-                                        <div class="media">
-											<span class="avatar">
-												<img alt="John Doe" src="assets/assets/img/user.jpg" class="img-fluid">
-											</span>
-											<div class="media-body">
-												<p class="noti-details"><span class="noti-title">John Doe</span> added new task <span class="noti-title">Patient appointment booking</span></p>
-												<p class="noti-time"><span class="notification-time">4 mins ago</span></p>
-											</div>
-                                        </div>
-                                    </a>
-                                </li>
-                                <li class="notification-message">
-                                    <a href="activities.html">
-                                        <div class="media">
-											<span class="avatar">V</span>
-											<div class="media-body">
-												<p class="noti-details"><span class="noti-title">Tarah Shropshire</span> changed the task name <span class="noti-title">Appointment booking with payment gateway</span></p>
-												<p class="noti-time"><span class="notification-time">6 mins ago</span></p>
-											</div>
-                                        </div>
-                                    </a>
-                                </li>
-                                <li class="notification-message">
-                                    <a href="activities.html">
-                                        <div class="media">
-											<span class="avatar">L</span>
-											<div class="media-body">
-												<p class="noti-details"><span class="noti-title">Misty Tison</span> added <span class="noti-title">Domenic Houston</span> and <span class="noti-title">Claire Mapes</span> to project <span class="noti-title">Doctor available module</span></p>
-												<p class="noti-time"><span class="notification-time">8 mins ago</span></p>
-											</div>
-                                        </div>
-                                    </a>
-                                </li>
-                                <li class="notification-message">
-                                    <a href="activities.html">
-                                        <div class="media">
-											<span class="avatar">G</span>
-											<div class="media-body">
-												<p class="noti-details"><span class="noti-title">Rolland Webber</span> completed task <span class="noti-title">Patient and Doctor video conferencing</span></p>
-												<p class="noti-time"><span class="notification-time">12 mins ago</span></p>
-											</div>
-                                        </div>
-                                    </a>
-                                </li>
-                                <li class="notification-message">
-                                    <a href="activities.html">
-                                        <div class="media">
-											<span class="avatar">V</span>
-											<div class="media-body">
-												<p class="noti-details"><span class="noti-title">Bernardo Galaviz</span> added new task <span class="noti-title">Private chat module</span></p>
-												<p class="noti-time"><span class="notification-time">2 days ago</span></p>
-											</div>
-                                        </div>
-                                    </a>
-                                </li>
-                            </ul>
-                        </div>
-                        <div class="topnav-dropdown-footer">
-                            <a href="activities.html">View all Notifications</a>
-                        </div>
-                    </div>
-                </li>
-                <li class="nav-item dropdown d-none d-sm-block">
-                    <a href="javascript:void(0);" id="open_msg_box" class="hasnotifications nav-link"><i class="fa fa-comment-o"></i> <span class="badge badge-pill bg-danger float-right">8</span></a>
-                </li>
                 <li class="nav-item dropdown has-arrow">
                     <a href="#" class="dropdown-toggle nav-link user-link" data-toggle="dropdown">
-                        <span class="auth-name"><?= $_SESSION['user_name']; ?></span>
-                      <!--  <span class="d-block auth-role"><?= $_SESSION['user_role']; ?></span>  -->
+                        <i class="fa fa-user pr-2"></i><span class="auth-role" style="padding-right: 5px;"><?= $_SESSION['user_role']; ?></span>[<span class="auth-name"><?= $_SESSION['user_name']; ?></span>]
                     </a>
 					<div class="dropdown-menu">
-						<a class="dropdown-item" href="profile.html">My Profile</a>
-						<a class="dropdown-item" href="edit-profile.html">Edit Profile</a>
-						<a class="dropdown-item" href="settings.html">Settings</a>
-						<a class="dropdown-item" onclick="return confirm('Are you sure want to log out?')" href="<?= $base_url; ?>logout.php">Logout</a>
+						<a class="dropdown-item" href="profile.html"><i class="fa fa-user-circle"></i> My Profile</a>
+						<a class="dropdown-item" href="edit-profile.html"><i class="fa fa-edit"></i> Edit Profile</a>
+						<a class="dropdown-item" href="settings.html"><i class="fa fa-cog"></i> Settings</a>
+						<a class="dropdown-item" onclick="return confirm('Are you sure want to log out?')" href="<?= $base_url; ?>logout.php"><i class="fa fa-sign-out"></i> Logout</a>
 					</div>
                 </li>
             </ul>
@@ -107,186 +33,72 @@
                 </div>
             </div>
         </div>
-<div class="sidebar" id="sidebar">
+<div class="sidebar" id="sidebar" style="background-color: #104d6f;">
             <div class="sidebar-inner slimscroll">
                 <div id="sidebar-menu" class="sidebar-menu">
                     <ul>
-                        <li class="menu-title">Main</li>
-                        <li class="active">
-                            <a href="<?= $base_url; ?>dashboard.php"><i class="fa fa-dashboard"></i> <span>Dashboard</span></a>
+                        <li class="menu-title" style="color: #fff;">Main</li>
+                        <li>
+                            <a href="<?= $base_url; ?>dashboard.php"><i class="fa fa-dashboard" style="color: #fff;"></i> <span style="color: #fff;">Dashboard</span></a>
                         </li>
 						<li>
-                            <a href="<?= $base_url; ?>doctors/doctors.php"><i class="fa fa-user-md"></i> <span>Doctors</span></a>
+                            <a href="<?= $base_url; ?>doctors/doctors.php"><i class="fa fa-user-md" style="color: #fff;"></i> <span style="color: #fff;">Doctors</span></a>
                         </li>
                         <li>
-                            <a href="<?=$base_url; ?>patients/patients.php"><i class="fa fa-wheelchair"></i> <span>Patients</span></a>
+                            <a href="<?=$base_url; ?>patients/patients.php"><i class="fa fa-wheelchair" style="color: #fff;"></i> <span style="color: #fff;">Patients</span></a>
                         </li>
                         <li>
-                            <a href="<?=$base_url; ?>appointment/appointment_list.php"><i class="fa fa-calendar"></i> <span>Appointments</span></a>
+                            <a href="<?=$base_url; ?>appointment/appointment_list.php"><i class="fa fa-calendar" style="color: #fff;"></i> <span style="color: #fff;">Appointments</span></a>
                         </li>
                         <li>
-                            <a href="<?= $base_url; ?>schedule/schedule.php"><i class="fa fa-calendar-check-o"></i> <span>Doctor Schedule</span></a>
+                            <a href="<?= $base_url; ?>schedule/schedule.php"><i class="fa fa-calendar-check-o" style="color: #fff;"></i> <span style="color: #fff;">Doctor Schedule</span></a>
                         </li>
                         <li>
-                            <a href="<?=$base_url; ?>prescription/prescription_list.php"><i class="fa fa-file-text-o"></i> <span>Prescriptions</span></a>
+                            <a href="<?=$base_url; ?>prescription/prescription_list.php"><i class="fa fa-file-text-o" style="color: #fff;"></i> <span style="color: #fff;">Prescriptions</span></a>
                         </li>
                         <li>
-                            <a href="<?=$base_url; ?>lab/lab_category/lab.php"><i class="fa fa-flask"></i> <span>Test Lab</span></a>
+                            <a href="<?= $base_url; ?>pharmacy/pharmacy.php"><i class="fa fa-medkit" style="color: #fff;"></i> <span style="color: #fff;">Pharmacy</span></a>
                         </li>
                         <li class="submenu">
-							<a href="#"><i class="fa fa-bed"></i> <span> Ward </span> <span class="menu-arrow"></span></a>
+							<a href="#"><i class="fa fa-tint" style="color: #fff;"></i> <span style="color: #fff;"> Blood Bank </span> <span class="menu-arrow" style="color: #fff;"></span></a>
+							<ul style="display: none;">
+								<li><a href="<?= $base_url; ?>blood_bank/donor/donor.php">Donors List</a></li>
+								<li><a href="<?= $base_url; ?>blood_bank/blood_collection/collection.php">Blood Collection</a></li>
+								<li><a href="<?= $base_url; ?>blood_bank/screening/screening.php">Screening</a></li>
+								<li><a href="<?= $base_url; ?>blood_bank/component/component.php">Components</a></li>
+                                </ul>
+						</li>
+                        <li>
+                            <a href="<?=$base_url; ?>lab/lab_category/lab.php"><i class="fa fa-flask" style="color: #fff;"></i> <span style="color: #fff;">Test Lab</span></a>
+                        </li>
+                        <li class="submenu">
+							<a href="#"><i class="fa fa-bed" style="color: #fff;"></i> <span style="color: #fff;"> Ward </span> <span class="menu-arrow" style="color: #fff;"></span></a>
 							<ul style="display: none;">
 								<li><a href="<?= $base_url; ?>ward/rooms/rooms.php">Rooms</a></li>
 								<li><a href="<?= $base_url; ?>ward/beds/beds.php">Beds</a></li>
 								<li><a href="<?= $base_url; ?>ward/patients_addmission/admitted_patient_list.php">Patient Admission</a></li>
+								<li><a href="<?= $base_url; ?>ward/discharge/discharge.php">Patient Discharge</a></li>
 							</ul>
 						</li>
                         <li>
-                            <a href="<?= $base_url; ?>departments/departments.php"><i class="fa fa-hospital-o"></i> <span>Departments</span></a>
-                        </li>
-						<li class="submenu">
-							<a href="#"><i class="fa fa-user"></i> <span> Employees </span> <span class="menu-arrow"></span></a>
-							<ul style="display: none;">
-								<li><a href="employees.html">Employees List</a></li>
-								<li><a href="leaves.html">Leaves</a></li>
-								<li><a href="holidays.html">Holidays</a></li>
-								<li><a href="attendance.html">Attendance</a></li>
-							</ul>
-						</li>
-                        <li>
-                            <a href="<?= $base_url; ?>designation/designation.php"><i class="fa fa-id-badge"></i> <span>Designation</span></a>
+                            <a href="<?= $base_url; ?>inventory_management/inventory.php"><i class="fa fa-cube" style="color: #fff;"></i> <span style="color: #fff;">Inventory</span></a>
                         </li>
                         <li>
-                            <a href="<?= $base_url; ?>shift/shift.php"><i class="fa fa-clock-o"></i> <span>Shift</span></a>
+                            <a href="<?= $base_url; ?>departments/departments.php"><i class="fa fa-hospital-o" style="color: #fff;"></i> <span style="color: #fff;">Departments</span></a>
                         </li>
-						<li class="submenu">
-							<a href="#"><i class="fa fa-money"></i> <span> Accounts </span> <span class="menu-arrow"></span></a>
+                        <li class="submenu">
+							<a href="#"><i class="fa fa-money" style="color: #fff;"></i> <span style="color: #fff;"> Accounts </span> <span class="menu-arrow" style="color: #fff;"></span></a>
 							<ul style="display: none;">
 								<li><a href="<?= $base_url; ?>invoices/invoice_list.php">Invoices</a></li>
 								<li><a href="<?= $base_url; ?>payments/payments_list.php">Payments</a></li>
-								<li><a href="expenses.html">Expenses</a></li>
-								<li><a href="taxes.html">Taxes</a></li>
-								<li><a href="provident-fund.html">Provident Fund</a></li>
-							</ul>
-						</li>
-						<li class="submenu">
-							<a href="#"><i class="fa fa-book"></i> <span> Payroll </span> <span class="menu-arrow"></span></a>
-							<ul style="display: none;">
-								<li><a href="salary.html"> Employee Salary </a></li>
-								<li><a href="salary-view.html"> Payslip </a></li>
-							</ul>
+                                </ul>
 						</li>
                         <li>
-                            <a href="chat.html"><i class="fa fa-comments"></i> <span>Chat</span> <span class="badge badge-pill bg-primary float-right">5</span></a>
-                        </li>
-                        <li class="submenu">
-                            <a href="#"><i class="fa fa-video-camera camera"></i> <span> Calls</span> <span class="menu-arrow"></span></a>
-                            <ul style="display: none;">
-                                <li><a href="voice-call.html">Voice Call</a></li>
-                                <li><a href="video-call.html">Video Call</a></li>
-                                <li><a href="incoming-call.html">Incoming Call</a></li>
-                            </ul>
-                        </li>
-                        <li class="submenu">
-                            <a href="#"><i class="fa fa-envelope"></i> <span> Email</span> <span class="menu-arrow"></span></a>
-                            <ul style="display: none;">
-                                <li><a href="compose.html">Compose Mail</a></li>
-                                <li><a href="inbox.html">Inbox</a></li>
-                                <li><a href="mail-view.html">Mail View</a></li>
-                            </ul>
-                        </li>
-                        <li class="submenu">
-                            <a href="#"><i class="fa fa-commenting-o"></i> <span> Blog</span> <span class="menu-arrow"></span></a>
-                            <ul style="display: none;">
-                                <li><a href="blog.html">Blog</a></li>
-                                <li><a href="blog-details.html">Blog View</a></li>
-                                <li><a href="add-blog.html">Add Blog</a></li>
-                                <li><a href="edit-blog.html">Edit Blog</a></li>
-                            </ul>
-                        </li>
-						<li>
-							<a href="assets.html"><i class="fa fa-cube"></i> <span>Assets</span></a>
-						</li>
-						<li>
-							<a href="activities.html"><i class="fa fa-bell-o"></i> <span>Activities</span></a>
-						</li>
-						<li class="submenu">
-							<a href="#"><i class="fa fa-flag-o"></i> <span> Reports </span> <span class="menu-arrow"></span></a>
-							<ul style="display: none;">
-								<li><a href="expense-reports.html"> Expense Report </a></li>
-								<li><a href="invoice-reports.html"> Invoice Report </a></li>
-							</ul>
-						</li>
-                        <li>
-                            <a href="settings.html"><i class="fa fa-cog"></i> <span>Settings</span></a>
-                        </li>
-                        <li class="menu-title">UI Elements</li>
-                        <li class="submenu">
-                            <a href="#"><i class="fa fa-laptop"></i> <span> Components</span> <span class="menu-arrow"></span></a>
-                            <ul style="display: none;">
-                                <li><a href="uikit.html">UI Kit</a></li>
-                                <li><a href="typography.html">Typography</a></li>
-                                <li><a href="tabs.html">Tabs</a></li>
-                            </ul>
-                        </li>
-                        <li class="submenu">
-                            <a href="#"><i class="fa fa-edit"></i> <span> Forms</span> <span class="menu-arrow"></span></a>
-                            <ul style="display: none;">
-                                <li><a href="form-basic-inputs.html">Basic Inputs</a></li>
-                                <li><a href="form-input-groups.html">Input Groups</a></li>
-                                <li><a href="form-horizontal.html">Horizontal Form</a></li>
-                                <li><a href="form-vertical.html">Vertical Form</a></li>
-                            </ul>
-                        </li>
-                        <li class="submenu">
-                            <a href="#"><i class="fa fa-table"></i> <span> Tables</span> <span class="menu-arrow"></span></a>
-                            <ul style="display: none;">
-                                <li><a href="tables-basic.html">Basic Tables</a></li>
-                                <li><a href="tables-datatables.html">Data Table</a></li>
-                            </ul>
+                            <a href="<?= $base_url; ?>designation/designation.php"><i class="fa fa-id-badge" style="color: #fff;"></i> <span style="color: #fff;">Designation</span></a>
                         </li>
                         <li>
-                            <a href="calendar.html"><i class="fa fa-calendar"></i> <span>Calendar</span></a>
+                            <a href="<?= $base_url; ?>shift/shift.php"><i class="fa fa-clock-o" style="color: #fff;"></i> <span style="color: #fff;">Shift</span></a>
                         </li>
-                        <li class="menu-title">Extras</li>
-                        <li class="submenu">
-                            <a href="#"><i class="fa fa-columns"></i> <span>Pages</span> <span class="menu-arrow"></span></a>
-                            <ul style="display: none;">
-                                <li><a href="login.php"> Login </a></li>
-                                <li><a href="register.html"> Register </a></li>
-                                <li><a href="forgot-password.html"> Forgot Password </a></li>
-                                <li><a href="change-password2.html"> Change Password </a></li>
-                                <li><a href="lock-screen.html"> Lock Screen </a></li>
-                                <li><a href="profile.html"> Profile </a></li>
-                                <li><a href="gallery.html"> Gallery </a></li>
-                                <li><a href="error-404.html">404 Error </a></li>
-                                <li><a href="error-500.html">500 Error </a></li>
-                                <li><a href="blank-page.html"> Blank Page </a></li>
-                            </ul>
-                        </li>
-                        <li class="submenu">
-                            <a href="javascript:void(0);"><i class="fa fa-share-alt"></i> <span>Multi Level</span> <span class="menu-arrow"></span></a>
-                            <ul style="display: none;">
-                                <li class="submenu">
-                                    <a href="javascript:void(0);"><span>Level 1</span> <span class="menu-arrow"></span></a>
-                                    <ul style="display: none;">
-                                        <li><a href="javascript:void(0);"><span>Level 2</span></a></li>
-                                        <li class="submenu">
-                                            <a href="javascript:void(0);"> <span> Level 2</span> <span class="menu-arrow"></span></a>
-                                            <ul style="display: none;">
-                                                <li><a href="javascript:void(0);">Level 3</a></li>
-                                                <li><a href="javascript:void(0);">Level 3</a></li>
-                                            </ul>
-                                        </li>
-                                        <li><a href="javascript:void(0);"><span>Level 2</span></a></li>
-                                    </ul>
-                                </li>
-                                <li>
-                                    <a href="javascript:void(0);"><span>Level 1</span></a>
-                                </li>
-                            </ul>
-                        </li>
-                    </ul>
-                </div>
+                    </div>
             </div>
-        </div>
+        </div> 

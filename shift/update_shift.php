@@ -8,5 +8,5 @@
     } else {
         $_SESSION['message'] = array('danger','Error', $result['message']);
     }
-    echo "<script>window.location.href = '".$base_url."/shift.php';</script>";
+    echo "<script>window.location.href = 'shift.php';</script>";
 ?>  

@@ -124,13 +124,13 @@
                         <!-- MEDICINE TABLE -->
                         <div class="card-box">
                             <h4 class="text-blue h4">Medicines</h4>
-                            <button type="button" id="addMedicine" class="btn btn-primary mb-3">+ Add Medicine</button>
+                            <button type="button" id="addMedicine" class="btn btn-primary mb-3"><i class="fa fa-plus"></i> Add Medicine</button>
 
                             <div class="table-responsive">
                             <table class="table table-bordered" id="medicineTable">
                                 <thead class="bg-light">
                                     <tr>
-                                        <th>Medicine Name</th>
+                                        <th>Medicine Name *</th>
                                         <th>Dosage</th>
                                         <th>Frequency</th>
                                         <th>Duration</th>
@@ -145,7 +145,7 @@
                                         <td><input type="text" name="frequency[]" class="form-control" placeholder="after meal"></td>
                                         <td><input type="text" name="duration[]" class="form-control" placeholder="7 days"></td>
                                         <td><input type="text" name="instructions[]" class="form-control" placeholder="regular"></td>
-                                        <td><button type="button" class="btn btn-danger btn-sm removeRow">X</button></td>
+                                        <td class="text-center"><button type="button" class="btn btn-danger btn-sm removeRow"><i class="fa fa-trash"></i></button></td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -154,7 +154,7 @@
 
                         <div class="form-group row">
                             <div class="col-md-12 text-right">
-                                <button type="submit" name="save" class="btn btn-primary">Save Prescription</button>
+                                <button type="submit" name="save" class="btn btn-primary btn-lg">Save Prescription</button>
                             </div>
                         </div>
                     </form>
@@ -165,21 +165,72 @@
 </div>
 
 <script>
-$(document).ready(function(){
-    // Notun row add
-    $("#addMedicine").click(function(){
-        var newRow = $("#medicineTable tbody tr:first").clone();
-        newRow.find("input").val('');
-        $("#medicineTable tbody").append(newRow);
+document.addEventListener("DOMContentLoaded", function () {
+
+    const addMedicineBtn = document.getElementById("addMedicine");
+    const medicineTableBody = document.querySelector("#medicineTable tbody");
+
+    // Add Medicine Row
+    addMedicineBtn.addEventListener("click", function () {
+
+        const newRow = document.createElement("tr");
+
+        newRow.innerHTML = `
+            <td>
+                <input type="text" name="medicine_name[]" 
+                       class="form-control" required>
+            </td>
+
+            <td>
+                <input type="text" name="dosage[]" 
+                       class="form-control" placeholder="0+0+1">
+            </td>
+
+            <td>
+                <input type="text" name="frequency[]" 
+                       class="form-control" placeholder="after meal">
+            </td>
+
+            <td>
+                <input type="text" name="duration[]" 
+                       class="form-control" placeholder="7 days">
+            </td>
+
+            <td>
+                <input type="text" name="instructions[]" 
+                       class="form-control" placeholder="regular">
+            </td>
+
+            <td class="text-center">
+                <button type="button" 
+                        class="btn btn-danger btn-sm removeRow">
+                    <i class="fa fa-trash"></i>
+                </button>
+            </td>
+        `;
+
+        medicineTableBody.appendChild(newRow);
     });
 
-    // Row delete
-    $(document).on('click', '.removeRow', function(){
-        if($("#medicineTable tbody tr").length > 1){
-            $(this).closest('tr').remove();
+
+    // Remove Medicine Row
+    medicineTableBody.addEventListener("click", function (e) {
+
+        const removeButton = e.target.closest(".removeRow");
+
+        if (!removeButton) {
+            return;
+        }
+
+        const rows = medicineTableBody.querySelectorAll("tr");
+
+        if (rows.length > 1) {
+            removeButton.closest("tr").remove();
+        } else {
+            alert("Minimum 1 ta medicine thaktei hobe");
         }
     });
+
 });
 </script>
-
 <?php require_once "../component/footer.php" ?>

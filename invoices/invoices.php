@@ -172,7 +172,7 @@ if($edit_id != ''){
         <div class="row">
             <div class="col-md-12">
                 <div class="card-box">
-                    <h4 class="card-title"><?php echo $edit_id ? 'Edit Invoice' : 'Add Invoice'; ?></h4> 
+                    <h4 class="card-title"><?php echo $edit_id ? 'Diagnosis' : 'Add Invoice'; ?></h4> 
                     <form method="post" action="" id="invoiceForm">
                         <input type="hidden" name="invoice_id" value="<?php echo $edit_id; ?>"> 
                         
@@ -275,78 +275,214 @@ if($edit_id != ''){
     </div>
 </div>
 
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
-$(document).ready(function(){
-    
-    $('#patient_id').on('change', function(){
-        let patient_discount = $(this).find(':selected').data('discount') || 0;
-        $('.item_discount').val(patient_discount);
+document.addEventListener('DOMContentLoaded', function () {
+
+    const patientId = document.getElementById('patient_id');
+    const itemTable = document.getElementById('itemTable');
+    const addItemBtn = document.getElementById('addItem');
+
+    // Patient change
+    patientId.addEventListener('change', function () {
+
+        const selectedOption = this.options[this.selectedIndex];
+        const patientDiscount = parseFloat(
+            selectedOption.getAttribute('data-discount')
+        ) || 0;
+
+        document.querySelectorAll('.item_discount').forEach(function (input) {
+            input.value = patientDiscount;
+        });
+
         calculateTotal();
     });
 
-    $(window).on('load', function(){
-        let patient_discount = $('#patient_id').find(':selected').data('discount') || 0;
-        if(patient_discount > 0 && $('.item_discount').val() == 0){
-            $('.item_discount').val(patient_discount);
+
+    // Page load
+    window.addEventListener('load', function () {
+
+        const selectedOption = patientId.options[patientId.selectedIndex];
+
+        const patientDiscount = parseFloat(
+            selectedOption.getAttribute('data-discount')
+        ) || 0;
+
+        const firstDiscount = document.querySelector('.item_discount');
+
+        if (
+            patientDiscount > 0 &&
+            firstDiscount &&
+            parseFloat(firstDiscount.value) === 0
+        ) {
+            firstDiscount.value = patientDiscount;
         }
+
         calculateTotal();
     });
 
-    $(document).on('change', '.item_name', function(){
-        let price = $(this).find(':selected').data('price') || 0;
-        $(this).closest('tr').find('.item_price').val(price);
-        calculateTotal();
+
+    // Item change
+    itemTable.addEventListener('change', function (e) {
+
+        if (e.target.classList.contains('item_name')) {
+
+            const select = e.target;
+            const selectedOption = select.options[select.selectedIndex];
+
+            const price = parseFloat(
+                selectedOption.getAttribute('data-price')
+            ) || 0;
+
+            const row = select.closest('tr');
+            const priceInput = row.querySelector('.item_price');
+
+            priceInput.value = price;
+
+            calculateTotal();
+        }
     });
 
-    function calculateTotal(){
+
+    // Calculate Total
+    function calculateTotal() {
+
         let sub_amount = 0;
         let total_discount_tk = 0;
         let total_tax_tk = 0;
 
-        $("#itemTable tbody tr").each(function(){
-            let row = $(this);
-            let price = parseFloat(row.find('.item_price').val()) || 0;
-            let dis_per = parseFloat(row.find('.item_discount').val()) || 0;
-            let tax_per = parseFloat(row.find('.item_tax').val()) || 0;
+        const rows = itemTable.querySelectorAll('tbody tr');
 
-            let dis_tk = (price * dis_per) / 100;
-            let tax_tk = ((price - dis_tk) * tax_per) / 100; // discount er por tax
-            
-            let total = (price - dis_tk) + tax_tk;
-            row.find('.item_total').val(total.toFixed(2));
-            
+        rows.forEach(function (row) {
+
+            const priceInput = row.querySelector('.item_price');
+            const discountInput = row.querySelector('.item_discount');
+            const taxInput = row.querySelector('.item_tax');
+            const totalInput = row.querySelector('.item_total');
+
+            const price = parseFloat(priceInput?.value) || 0;
+            const dis_per = parseFloat(discountInput?.value) || 0;
+            const tax_per = parseFloat(taxInput?.value) || 0;
+
+            // Discount
+            const dis_tk = (price * dis_per) / 100;
+
+            // Discount এর পরে Tax
+            const tax_tk = ((price - dis_tk) * tax_per) / 100;
+
+            // Row total
+            const total = (price - dis_tk) + tax_tk;
+
+            if (totalInput) {
+                totalInput.value = total.toFixed(2);
+            }
+
             sub_amount += price;
             total_discount_tk += dis_tk;
             total_tax_tk += tax_tk;
         });
 
-        let grand_total = sub_amount - total_discount_tk + total_tax_tk;
 
-        $("#sub_amount").val(sub_amount.toFixed(2));
-        $("#discount_tk").val(total_discount_tk.toFixed(2));
-        $("#tax_tk").val(total_tax_tk.toFixed(2));
-        $("#grand_total").val(grand_total.toFixed(2));
+        // Grand Total
+        const grand_total =
+            sub_amount -
+            total_discount_tk +
+            total_tax_tk;
+
+
+        document.getElementById('sub_amount').value =
+            sub_amount.toFixed(2);
+
+        document.getElementById('discount_tk').value =
+            total_discount_tk.toFixed(2);
+
+        document.getElementById('tax_tk').value =
+            total_tax_tk.toFixed(2);
+
+        document.getElementById('grand_total').value =
+            grand_total.toFixed(2);
     }
 
-    $("#addItem").click(function(){ 
-        let newRow = $("#itemTable tbody tr:first").clone();
-        newRow.find("input").val('0');
-        newRow.find("select").val('');
-        let patient_discount = $('#patient_id').find(':selected').data('discount') || 0;
-        newRow.find('.item_discount').val(patient_discount);
-        $("#itemTable tbody").append(newRow); 
-    });
 
-    $(document).on('click', '.removeRow', function(){ 
-        if($("#itemTable tbody tr").length > 1){ 
-            $(this).closest('tr').remove(); 
-        } 
+    // Add Item
+    addItemBtn.addEventListener('click', function () {
+
+        const tbody = itemTable.querySelector('tbody');
+        const firstRow = tbody.querySelector('tr:first-child');
+
+        const newRow = firstRow.cloneNode(true);
+
+        // সব input reset
+        newRow.querySelectorAll('input').forEach(function (input) {
+            input.value = '0';
+        });
+
+        // সব select reset
+        newRow.querySelectorAll('select').forEach(function (select) {
+            select.value = '';
+        });
+
+
+        // Current patient discount
+        const selectedOption =
+            patientId.options[patientId.selectedIndex];
+
+        const patientDiscount = parseFloat(
+            selectedOption.getAttribute('data-discount')
+        ) || 0;
+
+        const discountInput =
+            newRow.querySelector('.item_discount');
+
+        if (discountInput) {
+            discountInput.value = patientDiscount;
+        }
+
+
+        tbody.appendChild(newRow);
+
         calculateTotal();
     });
 
-    $(document).on('keyup change', '.calc', function(){ calculateTotal(); });
-    
+
+    // Remove Item
+    itemTable.addEventListener('click', function (e) {
+
+        const removeButton = e.target.closest('.removeRow');
+
+        if (!removeButton) {
+            return;
+        }
+
+        const rows = itemTable.querySelectorAll('tbody tr');
+
+        if (rows.length > 1) {
+            removeButton.closest('tr').remove();
+        }
+
+        calculateTotal();
+    });
+
+
+    // Input change / keyup
+    itemTable.addEventListener('input', function (e) {
+
+        if (e.target.classList.contains('calc')) {
+            calculateTotal();
+        }
+    });
+
+
+    itemTable.addEventListener('change', function (e) {
+
+        if (e.target.classList.contains('calc')) {
+            calculateTotal();
+        }
+    });
+
+
+    // Initial calculation
+    calculateTotal();
+
 });
 </script>
 
