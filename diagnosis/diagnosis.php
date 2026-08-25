@@ -22,7 +22,7 @@ if (isset($_POST['add_test'])) {
         $insert = $crud->common_insert("patient_lab_test", $insert_data);
 
         if ($insert["status"]) {
-            header("Location: diagnosis.php?id=" . $admission_id);
+            header("Location: store_diagnosis.php?id=" . $admission_id);
             exit;
         }
     }
@@ -41,7 +41,7 @@ if (isset($_GET['delete_test'])) {
         "admission_id" => $admission_id
     ]);
 
-    header("Location: diagnosis.php?id=" . $admission_id);
+    header("Location:store_diagnosis.php?id=" . $admission_id);
     exit;
 }
 
