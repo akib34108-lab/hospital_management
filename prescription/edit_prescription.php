@@ -189,32 +189,64 @@
     </div>
 </div>
 
-<!-- jQuery CDN -->
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
-$(function(){
-    // Notun row add
-    $("#addMedicine").on('click', function(){
-        var newRow = `<tr>
-            <td><input type="text" name="medicine_name[]" class="form-control" required></td>
-            <td><input type="text" name="dosage[]" class="form-control"></td>
-            <td><input type="text" name="frequency[]" class="form-control"></td>
-            <td><input type="text" name="duration[]" class="form-control"></td>
-            <td><input type="text" name="instructions[]" class="form-control"></td>
-            <td class="text-center"><button type="button" class="btn btn-danger btn-sm removeRow"><i class="fa fa-trash"></i></button></td>
-        </tr>`;
-        $("#medicineTable tbody").append(newRow);
+document.addEventListener('DOMContentLoaded', function () {
+
+    const addMedicineBtn = document.getElementById('addMedicine');
+    const medicineTableBody = document.querySelector('#medicineTable tbody');
+
+    // Add new medicine row
+    addMedicineBtn.addEventListener('click', function () {
+
+        const newRow = document.createElement('tr');
+
+        newRow.innerHTML = `
+            <td>
+                <input type="text" name="medicine_name[]" class="form-control" required>
+            </td>
+            <td>
+                <input type="text" name="dosage[]" class="form-control">
+            </td>
+            <td>
+                <input type="text" name="frequency[]" class="form-control">
+            </td>
+            <td>
+                <input type="text" name="duration[]" class="form-control">
+            </td>
+            <td>
+                <input type="text" name="instructions[]" class="form-control">
+            </td>
+            <td class="text-center">
+                <button type="button" class="btn btn-danger btn-sm removeRow">
+                    <i class="fa fa-trash"></i>
+                </button>
+            </td>
+        `;
+
+        medicineTableBody.appendChild(newRow);
     });
 
-    // Row delete - dynamic row er jonno .on use
-    $(document).on('click', '.removeRow', function(){
-        if($("#medicineTable tbody tr").length > 1){
-            $(this).closest('tr').remove();
+
+    // Remove medicine row
+    medicineTableBody.addEventListener('click', function (event) {
+
+        const removeButton = event.target.closest('.removeRow');
+
+        if (!removeButton) {
+            return;
+        }
+
+        const rows = medicineTableBody.querySelectorAll('tr');
+
+        if (rows.length > 1) {
+            removeButton.closest('tr').remove();
         } else {
-            alert("Minimum 1 ta medicine thaktei hobe");
+            alert('Minimum 1 ta medicine thaktei hobe');
         }
     });
+
 });
 </script>
+
 
 <?php require_once "../component/footer.php" ?>

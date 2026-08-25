@@ -71,6 +71,9 @@
                         <li>
                             <a href="<?=$base_url; ?>lab/lab_category/lab.php"><i class="fa fa-flask" style="color: #fff;"></i> <span style="color: #fff;">Test Lab</span></a>
                         </li>
+                        <li>
+                            <a href="<?=$base_url; ?>diagnosis/diagnosis.php"><i class="fa fa-heartbeat" style="color: #fff;"></i> <span style="color: #fff;">Diagnosis</span></a>
+                        </li>
                         <li class="submenu">
 							<a href="#"><i class="fa fa-bed" style="color: #fff;"></i> <span style="color: #fff;"> Ward </span> <span class="menu-arrow" style="color: #fff;"></span></a>
 							<ul style="display: none;">
