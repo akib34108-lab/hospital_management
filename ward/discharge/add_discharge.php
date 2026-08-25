@@ -1,7 +1,10 @@
 <?php
 require_once "../../component/header.php";
 require_once "../../component/sidebar.php";
+<<<<<<< HEAD
+=======
 
+>>>>>>> 7fd0a0cfcb90434115992b8cedbb6b0eeb9530fa
 $error = "";
 if (isset($_POST['add_discharge'])) {
     $admission_id = $_POST['admission_id'];
@@ -122,13 +125,18 @@ $admissions = $crud->common_query("SELECT pa.id,pa.admission_no,pa.patient_id,pa
 <div class="col-md-4">
 <div class="form-group">
 <label>Room No <span class="text-danger">*</span></label>
-<input type="text" name="room_number" id="room_number" class="form-control" placeholder="Enter room no" required>
+<?php
+$rooms = $crud->common_select('rooms', '*');
+    if($rooms['status']){
+        foreach ($rooms['data'] as $room) { ?>
+<input type="text" value="<?= $room->room_number ?>" readonly>
 </div>
 </div>
 <div class="col-md-4">
 <div class="form-group">
 <label>Room Charge / Day <span class="text-danger">*</span></label>
-<input type="number" name="room_charge" id="room_charge" class="form-control" placeholder="Enter daily charge" min="1" step="0.01" oninput="calculateRoomCharge()" required>
+<input type="text" value="<?= $room->room_charge ?>" readonly oninput="calculateRoomCharge()">
+<?php }} ?>
 </div>
 </div>
 <div class="col-md-4">
