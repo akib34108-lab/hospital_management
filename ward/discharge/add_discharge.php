@@ -1,5 +1,6 @@
 <?php
-require_once "../../component/connection.php";
+require_once "../../component/header.php";
+require_once "../../component/sidebar.php";
 $error = "";
 if (isset($_POST['add_discharge'])) {
     $admission_id = $_POST['admission_id'];
@@ -60,8 +61,7 @@ if (isset($_POST['add_discharge'])) {
     }
 }
 $admissions = $crud->common_query("SELECT pa.id,pa.admission_no,pa.patient_id,pa.doctor_id,pa.room_id,pa.bed_id,pa.admission_date,pa.admission_time,p.name AS patient_name,p.phone AS patient_phone,d.name AS doctor_name FROM patient_admissions pa LEFT JOIN patients p ON p.id=pa.patient_id LEFT JOIN doctors d ON d.id=pa.doctor_id WHERE pa.deleted_at IS NULL AND pa.discharge_date IS NULL ORDER BY pa.id DESC");
-require_once "../../component/header.php";
-require_once "../../component/sidebar.php";
+
 ?>
 <div class="page-wrapper">
 <div class="content">
@@ -121,13 +121,18 @@ require_once "../../component/sidebar.php";
 <div class="col-md-4">
 <div class="form-group">
 <label>Room No <span class="text-danger">*</span></label>
-<input type="text" name="room_number" id="room_number" class="form-control" placeholder="Enter room no" required>
+<?php
+$rooms = $crud->common_select('rooms', '*');
+    if($rooms['status']){
+        foreach ($rooms['data'] as $room) { ?>
+<input type="text" value="<?= $room->room_number ?>" readonly>
 </div>
 </div>
 <div class="col-md-4">
 <div class="form-group">
 <label>Room Charge / Day <span class="text-danger">*</span></label>
-<input type="number" name="room_charge" id="room_charge" class="form-control" placeholder="Enter daily charge" min="1" step="0.01" oninput="calculateRoomCharge()" required>
+<input type="text" value="<?= $room->room_charge ?>" readonly oninput="calculateRoomCharge()">
+<?php }} ?>
 </div>
 </div>
 <div class="col-md-4">
