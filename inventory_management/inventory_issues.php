@@ -46,7 +46,7 @@
                                                     <td><?= $problem->quantity ?></td>            
                                                     <td><?= $problem->problem ?></td>              
                                                     <td class="text-center">
-                                                        <a href="<?= $base_url ?>inventory_management/delete_issue.php?id=<?= $problem->id ?>" class="btn btn-sm btn-danger float-right ">delete</a>
+                                                        <a href="<?= $base_url ?>inventory_management/delete_issue.php?id=<?= $problem->id ?>" class="btn btn-sm btn-success float-right ">problem soleve</a>
                                                     </td>
                                                 </tr>
                                                 <?php } } ?>

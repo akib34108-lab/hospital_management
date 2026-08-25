@@ -7,5 +7,5 @@
         } else {
             $_SESSION['message'] = array('danger','Error', $result['message']);
         }
-        echo "<script>window.location.href = '".$base_url."inventory_management/inventory_issue.php';</script>";
+        echo "<script>window.location.href = '".$base_url."inventory_management/inventory_issues.php';</script>";
     ?>  
