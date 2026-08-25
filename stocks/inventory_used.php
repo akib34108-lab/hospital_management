@@ -21,7 +21,7 @@
 									<tr>
                                         <th>ID</th>
 										<th>Name</th>
-										<th>Gender</th>
+										<th>Category</th>
 										<th class="text-right">Action</th>
 									</tr>
 								</thead>
