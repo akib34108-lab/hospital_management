@@ -1,6 +1,10 @@
 <?php
 require_once "../../component/header.php";
 require_once "../../component/sidebar.php";
+<<<<<<< HEAD
+=======
+
+>>>>>>> 7fd0a0cfcb90434115992b8cedbb6b0eeb9530fa
 $error = "";
 if (isset($_POST['add_discharge'])) {
     $admission_id = $_POST['admission_id'];

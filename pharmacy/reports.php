@@ -1,9 +1,6 @@
 <?php
 require_once "../component/header.php";
 require_once "../component/sidebar.php";
-require_once "../crud/crud_class.php";
-
-$crud = new crud_class();
 
 // ==================================================
 // DATE FILTER

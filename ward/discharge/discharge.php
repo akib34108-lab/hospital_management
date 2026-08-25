@@ -1,6 +1,6 @@
 <?php
 
-require_once "../../component/connection.php";
+
 require_once "../../component/header.php";
 require_once "../../component/sidebar.php";
 
