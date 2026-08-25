@@ -24,8 +24,7 @@
 										<th>Name</th>
 										<th>category</th>
 										<th>quantity</th>
-										<th>supplier info</th>
-										<th>supplier contact</th>
+										<th>Used Type</th>
 										<th>listing date</th>
                                         <th class="text-right">Action</th>
 									</tr>
@@ -47,8 +46,7 @@
                                         <td><?= $inventory->name ?></td>
                                         <td><?= $inventory->category ?></td>
                                         <td><?= $inventory->quantity ?></td>
-                                        <td><?= $inventory->supplier_info ?></td>
-                                        <td><?= $inventory->supplier_contact ?></td>
+                                        <td><?= $inventory->used_type == 1 ? 'Reusable' : 'One-time' ?></td>
                                         <td><?= $inventory->date ?></td>                    
                                         <td class="text-center">
                                             <a href="<?= $base_url ?>inventory_management/inventory_edit.php?id=<?= $inventory->id ?>" class="btn btn-sm btn-primary mb-2 mb-lg-0 me-0 me-lg-2">Edit</a>
