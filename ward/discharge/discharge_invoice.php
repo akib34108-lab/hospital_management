@@ -1,5 +1,6 @@
 <?php
-require_once "../../component/connection.php";
+require_once "../../component/header.php";
+require_once "../../component/sidebar.php";
 
 if (!isset($_GET['id']) || empty($_GET['id'])) {
     header("Location: discharge.php");
@@ -217,8 +218,7 @@ if (isset($_POST['save_payment']) && isset($invoice_id)) {
     }
 }
 
-require_once "../../component/header.php";
-require_once "../../component/sidebar.php";
+
 ?>
 
 <div class="page-wrapper">
