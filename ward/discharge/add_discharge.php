@@ -1,10 +1,6 @@
 <?php
 require_once "../../component/header.php";
 require_once "../../component/sidebar.php";
-<<<<<<< HEAD
-=======
-
->>>>>>> 7fd0a0cfcb90434115992b8cedbb6b0eeb9530fa
 $error = "";
 if (isset($_POST['add_discharge'])) {
     $admission_id = $_POST['admission_id'];
@@ -126,7 +122,7 @@ $admissions = $crud->common_query("SELECT pa.id,pa.admission_no,pa.patient_id,pa
 <div class="form-group">
 <label>Room No <span class="text-danger">*</span></label>
 <?php
-$rooms = $crud->common_select('rooms', '*');
+$rooms = $crud->common_query("SELECT patient_admissions.*,rooms.room_number, rooms.room_charge from patient_admissions left join rooms on patient_admissions.room_id = rooms.id");
     if($rooms['status']){
         foreach ($rooms['data'] as $room) { ?>
 <input type="text" value="<?= $room->room_number ?>" readonly>
