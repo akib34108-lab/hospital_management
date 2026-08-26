@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Aug 23, 2026 at 08:07 PM
+-- Generation Time: Aug 26, 2026 at 05:45 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -282,12 +282,10 @@ CREATE TABLE `discharges` (
 
 INSERT INTO `discharges` (`discharge_id`, `patient_id`, `admission_id`, `doctor_id`, `discharge_date`, `discharge_type`, `diagnosis`, `treatment_summary`, `discharge_condition`, `advice`, `follow_up_date`, `notes`, `created_at`, `updated_at`, `deleted_at`) VALUES
 (1, 5, 2, 3, '2026-08-16 19:06:00', 'Normal', 'weakness', 'good', 'Stable', 'rest', '2026-09-16', 'rest', '2026-08-16 23:07:46', '2026-08-16 23:17:03', NULL),
-(1, 5, 2, 3, '2026-08-16 19:06:00', 'Normal', 'weakness', 'good', 'Stable', 'rest', '2026-09-16', 'rest', '2026-08-16 23:07:46', '2026-08-16 23:17:03', NULL),
-(1, 5, 2, 3, '2026-08-16 19:06:00', 'Normal', 'weakness', 'good', 'Stable', 'rest', '2026-09-16', 'rest', '2026-08-16 23:07:46', '2026-08-16 23:17:03', NULL),
-(1, 5, 2, 3, '2026-08-16 19:06:00', 'Normal', 'weakness', 'good', 'Stable', 'rest', '2026-09-16', 'rest', '2026-08-16 23:07:46', '2026-08-16 23:17:03', NULL),
 (2, 6, 3, 10, '2026-08-19 15:28:00', 'Normal', 'jygyty', 'gtygv', 'Stable', 'yugu', '2026-09-19', 'ygyug', '2026-08-19 19:29:26', NULL, NULL),
 (6, 9, 4, 3, '2026-08-22 15:03:00', 'Normal', 'fgjkgngn', 'nfjhcbgjh', 'Critical', 'bgfhbg', '2026-09-22', 'gbnghnhvgbh', '2026-08-22 19:04:38', NULL, NULL),
-(1, 5, 2, 3, '2026-08-16 19:06:00', 'Normal', 'weakness', 'good', 'Stable', 'rest', '2026-09-16', 'rest', '2026-08-16 23:07:46', '2026-08-16 23:17:03', NULL);
+(7, 10, 5, 10, '2026-08-24 15:54:00', 'Normal', 'good', 'good', 'Stable', 'rest', '2026-09-24', 'rest', '2026-08-24 19:55:09', NULL, NULL),
+(8, 13, 8, 2, '2026-08-25 22:15:00', 'Normal', 'good', 'stable', 'Stable', 'rest', '2026-09-26', 'rest', '2026-08-26 02:16:00', NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -322,35 +320,13 @@ CREATE TABLE `discharge_invoices` (
 --
 
 INSERT INTO `discharge_invoices` (`invoice_id`, `discharge_id`, `patient_id`, `invoice_no`, `bed_bill`, `doctor_fee`, `test_bill`, `medicine_bill`, `service_bill`, `other_bill`, `discount`, `total_amount`, `paid_amount`, `due_amount`, `payment_status`, `payment_method`, `created_at`, `updated_at`, `deleted_at`) VALUES
-(1, 1, 5, 'INV-20260816193037', 1500.72, 1000.00, 6800.00, 1500.00, 1000.00, 779.98, 375.00, 12205.70, 12205.70, 0.00, 'Paid', 'Card', '2026-08-16 23:30:37', '2026-08-17 22:07:04', NULL),
-(2, 1, 5, 'DIN-20260816195225', 1500.72, 1000.00, 6800.00, 1500.00, 1000.00, 779.98, 375.00, 12205.70, 12205.70, 0.00, 'Paid', 'Card', '2026-08-16 23:52:25', NULL, NULL),
-(3, 1, 5, 'DIN-20260816195535', 1500.72, 1000.00, 6800.00, 1500.00, 1000.00, 779.98, 375.00, 12205.70, 0.00, 12205.70, 'Unpaid', 'Card', '2026-08-16 23:55:35', NULL, NULL),
-(4, 1, 5, 'DIN-20260817171531', 1500.72, 1000.00, 6800.00, 1500.00, 1000.00, 779.98, 375.00, 12205.70, 0.00, 12205.70, 'Unpaid', 'Card', '2026-08-17 21:15:31', NULL, NULL),
-(5, 1, 5, 'DIN-20260817171622', 1500.72, 1000.00, 6800.00, 1500.00, 1000.00, 779.98, 375.00, 12205.70, 12205.70, 0.00, 'Paid', 'Card', '2026-08-17 21:16:22', NULL, NULL),
-(6, 1, 5, 'DIN-20260817174630', 1500.72, 1000.00, 6800.00, 1500.00, 1000.00, 779.98, 375.00, 12205.70, 0.00, 12205.70, 'Unpaid', 'Card', '2026-08-17 21:46:30', NULL, NULL),
-(7, 1, 5, 'DIN-20260817174653', 1500.72, 1000.00, 6800.00, 1500.00, 1000.00, 779.98, 375.00, 12205.70, 12205.70, 0.00, 'Paid', 'Card', '2026-08-17 21:46:53', NULL, NULL),
-(8, 1, 5, 'DIN-20260817175849', 1500.72, 1000.00, 6800.00, 1500.00, 1000.00, 779.98, 375.00, 12205.70, 0.00, 12205.70, 'Unpaid', 'Card', '2026-08-17 21:58:49', NULL, NULL),
-(9, 1, 5, 'DIN-20260817175911', 1500.72, 1000.00, 6800.00, 1500.00, 1000.00, 779.98, 375.00, 12205.70, 12205.70, 0.00, 'Paid', 'Cash', '2026-08-17 21:59:11', NULL, NULL),
-(1, 1, 5, 'INV-20260816193037', 1500.00, 1000.00, 6800.00, 1500.00, 1000.00, 779.98, 375.00, 12204.98, 0.00, 12204.98, 'Unpaid', 'Card', '2026-08-16 23:30:37', NULL, NULL),
-(2, 1, 5, 'DIN-20260816195225', 1500.72, 1000.00, 6800.00, 1500.00, 1000.00, 779.98, 375.00, 12205.70, 12205.70, 0.00, 'Paid', 'Card', '2026-08-16 23:52:25', NULL, NULL),
-(3, 1, 5, 'DIN-20260816195535', 1500.72, 1000.00, 6800.00, 1500.00, 1000.00, 779.98, 375.00, 12205.70, 0.00, 12205.70, 'Unpaid', 'Card', '2026-08-16 23:55:35', NULL, NULL),
-(1, 1, 5, 'INV-20260816193037', 1500.00, 1000.00, 6800.00, 1500.00, 1000.00, 779.98, 375.00, 12204.98, 0.00, 12204.98, 'Unpaid', 'Card', '2026-08-16 23:30:37', NULL, NULL),
-(2, 1, 5, 'DIN-20260816195225', 1500.72, 1000.00, 6800.00, 1500.00, 1000.00, 779.98, 375.00, 12205.70, 12205.70, 0.00, 'Paid', 'Card', '2026-08-16 23:52:25', NULL, NULL),
-(3, 1, 5, 'DIN-20260816195535', 1500.72, 1000.00, 6800.00, 1500.00, 1000.00, 779.98, 375.00, 12205.70, 0.00, 12205.70, 'Unpaid', 'Card', '2026-08-16 23:55:35', NULL, NULL),
 (1, 1, 5, 'INV-20260816193037', 1500.00, 1000.00, 6800.00, 1500.00, 1000.00, 779.98, 375.00, 12204.98, 0.00, 12204.98, 'Unpaid', 'Card', '2026-08-16 23:30:37', NULL, NULL),
 (2, 1, 5, 'DIN-20260816195225', 1500.72, 1000.00, 6800.00, 1500.00, 1000.00, 779.98, 375.00, 12205.70, 12205.70, 0.00, 'Paid', 'Card', '2026-08-16 23:52:25', NULL, NULL),
 (3, 1, 5, 'DIN-20260816195535', 1500.72, 1000.00, 6800.00, 1500.00, 1000.00, 779.98, 375.00, 12205.70, 0.00, 12205.70, 'Unpaid', 'Card', '2026-08-16 23:55:35', NULL, NULL),
 (5, 2, 6, 'DIS-20260821162727', 2400.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 2400.00, 0.00, 2400.00, 'Due', '', '2026-08-21 16:27:27', NULL, NULL),
 (6, 6, 9, 'DIS-20260822150610', 20000.00, 2200.00, 8200.00, 25000.00, 6000.00, 3500.00, 200.00, 64700.00, 0.00, 64700.00, 'Due', '', '2026-08-22 15:06:10', NULL, NULL),
-(1, 1, 5, 'INV-20260816193037', 1500.72, 1000.00, 6800.00, 1500.00, 1000.00, 779.98, 375.00, 12205.70, 12205.70, 0.00, 'Paid', 'Card', '2026-08-16 23:30:37', '2026-08-17 22:07:04', NULL),
-(2, 1, 5, 'DIN-20260816195225', 1500.72, 1000.00, 6800.00, 1500.00, 1000.00, 779.98, 375.00, 12205.70, 12205.70, 0.00, 'Paid', 'Card', '2026-08-16 23:52:25', NULL, NULL),
-(3, 1, 5, 'DIN-20260816195535', 1500.72, 1000.00, 6800.00, 1500.00, 1000.00, 779.98, 375.00, 12205.70, 0.00, 12205.70, 'Unpaid', 'Card', '2026-08-16 23:55:35', NULL, NULL),
-(4, 1, 5, 'DIN-20260817171531', 1500.72, 1000.00, 6800.00, 1500.00, 1000.00, 779.98, 375.00, 12205.70, 0.00, 12205.70, 'Unpaid', 'Card', '2026-08-17 21:15:31', NULL, NULL),
-(5, 1, 5, 'DIN-20260817171622', 1500.72, 1000.00, 6800.00, 1500.00, 1000.00, 779.98, 375.00, 12205.70, 12205.70, 0.00, 'Paid', 'Card', '2026-08-17 21:16:22', NULL, NULL),
-(6, 1, 5, 'DIN-20260817174630', 1500.72, 1000.00, 6800.00, 1500.00, 1000.00, 779.98, 375.00, 12205.70, 0.00, 12205.70, 'Unpaid', 'Card', '2026-08-17 21:46:30', NULL, NULL),
-(7, 1, 5, 'DIN-20260817174653', 1500.72, 1000.00, 6800.00, 1500.00, 1000.00, 779.98, 375.00, 12205.70, 12205.70, 0.00, 'Paid', 'Card', '2026-08-17 21:46:53', NULL, NULL),
-(8, 1, 5, 'DIN-20260817175849', 1500.72, 1000.00, 6800.00, 1500.00, 1000.00, 779.98, 375.00, 12205.70, 0.00, 12205.70, 'Unpaid', 'Card', '2026-08-17 21:58:49', NULL, NULL),
-(9, 1, 5, 'DIN-20260817175911', 1500.72, 1000.00, 6800.00, 1500.00, 1000.00, 779.98, 375.00, 12205.70, 12205.70, 0.00, 'Paid', 'Cash', '2026-08-17 21:59:11', NULL, NULL);
+(7, 7, 10, 'DIS-20260824155559', 17500.00, 1000.00, 8200.00, 6500.00, 2500.00, 3000.00, 1250.00, 37450.00, 37450.00, 0.00, 'Paid', 'Cash', '2026-08-24 15:55:59', '2026-08-24 19:57:10', NULL),
+(8, 8, 13, 'DIS-20260825221600', 7000.00, 1200.00, 3298.68, 2500.00, 2000.00, 1000.00, 500.00, 16498.68, 16498.68, 0.00, 'Paid', 'Cash', '2026-08-25 22:16:00', '2026-08-26 02:17:20', NULL);
 
 -- --------------------------------------------------------
 
@@ -558,6 +534,7 @@ CREATE TABLE `inventory_list` (
   `name` varchar(255) NOT NULL,
   `category` varchar(255) NOT NULL,
   `quantity` int(11) NOT NULL,
+  `used_type` int(2) DEFAULT NULL COMMENT '1=reusable, 2=one_time',
   `supplier_info` varchar(255) NOT NULL,
   `supplier_contact` varchar(255) NOT NULL,
   `date` date NOT NULL,
@@ -568,10 +545,11 @@ CREATE TABLE `inventory_list` (
 -- Dumping data for table `inventory_list`
 --
 
-INSERT INTO `inventory_list` (`id`, `name`, `category`, `quantity`, `supplier_info`, `supplier_contact`, `date`, `deleted_at`) VALUES
-(1, 'bed', 'tools', 5, 'zakaria ', '01889977088', '0000-00-00', NULL),
-(2, 'bed', 'tools', 5, 'zakaria ', '01889977088', '2020-08-09', NULL),
-(3, 'bed', 'tools', 5, 'zakaria ', '01889977088', '2020-08-09', NULL);
+INSERT INTO `inventory_list` (`id`, `name`, `category`, `quantity`, `used_type`, `supplier_info`, `supplier_contact`, `date`, `deleted_at`) VALUES
+(1, 'bed', 'tools', 5, NULL, 'zakaria ', '01889977088', '0000-00-00', NULL),
+(2, 'bed', 'tools', 5, NULL, 'zakaria ', '01889977088', '2020-08-09', NULL),
+(3, 'bed', 'tools', 5, NULL, 'zakaria ', '01889977088', '2020-08-09', NULL),
+(4, 'napa', 'med', 120, 1, '', '', '2026-02-12', NULL);
 
 -- --------------------------------------------------------
 
@@ -670,12 +648,40 @@ CREATE TABLE `inventory_suppliers` (
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `inventory_transaction`
+--
+
+CREATE TABLE `inventory_transaction` (
+  `id` int(11) NOT NULL,
+  `source_id` int(11) DEFAULT NULL,
+  `source_type` varchar(255) DEFAULT NULL,
+  `inventory_list_id` int(11) NOT NULL,
+  `qty` decimal(10,2) NOT NULL,
+  `issue_date` date NOT NULL,
+  `return_date` date DEFAULT NULL,
+  `actual_return_date` date DEFAULT NULL,
+  `deleted_at` datetime DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `inventory_transaction`
+--
+
+INSERT INTO `inventory_transaction` (`id`, `source_id`, `source_type`, `inventory_list_id`, `qty`, `issue_date`, `return_date`, `actual_return_date`, `deleted_at`) VALUES
+(1, 13, 'doctor', 4, 3.00, '2026-08-25', '2026-08-26', '2026-08-26', NULL),
+(2, 13, 'doctor', 1, 5.00, '2026-08-25', NULL, NULL, '0000-00-00 00:00:00');
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `invoices`
 --
 
 CREATE TABLE `invoices` (
   `id` int(11) NOT NULL,
   `patient_id` int(11) NOT NULL,
+  `invoice_type` varchar(20) NOT NULL DEFAULT 'OUTDOOR',
+  `admission_id` int(11) NOT NULL DEFAULT 0,
   `sub_amount` decimal(10,2) DEFAULT 0.00,
   `discount` decimal(10,2) DEFAULT 0.00,
   `tax` decimal(10,2) DEFAULT 0.00,
@@ -691,15 +697,24 @@ CREATE TABLE `invoices` (
 -- Dumping data for table `invoices`
 --
 
-INSERT INTO `invoices` (`id`, `patient_id`, `sub_amount`, `discount`, `tax`, `paid_amount`, `due_amount`, `payment_status`, `deleted_at`, `invoice_date`, `status`) VALUES
-(1, 2, 12240.00, 300.00, 10.00, 0.00, 0.00, 'Due', NULL, '2026-08-08', 1),
-(2, 5, 2266.00, 66.00, 10.00, 0.00, 0.00, 'Due', NULL, '2026-08-08', 1),
-(3, 2, 2208.00, 1000.00, 800.00, 0.00, 0.00, 'Due', NULL, '2026-08-09', 1),
-(4, 2, 2000.00, 100.00, 95.00, 0.00, 0.00, 'Due', NULL, '2026-08-09', 1),
-(5, 1, 6500.00, 1300.00, 0.00, 0.00, 0.00, 'Due', NULL, '2026-08-09', 1),
-(6, 2, 1700.00, 85.00, 242.25, 0.00, 0.00, 'Due', NULL, '2026-08-09', 1),
-(7, 3, 7800.00, 234.00, 226.98, 0.00, 0.00, 'Due', NULL, '2026-08-12', 1),
-(8, 2, 6500.00, 585.00, 1478.75, 0.00, 0.00, 'Due', NULL, '2026-08-12', 1);
+INSERT INTO `invoices` (`id`, `patient_id`, `invoice_type`, `admission_id`, `sub_amount`, `discount`, `tax`, `paid_amount`, `due_amount`, `payment_status`, `deleted_at`, `invoice_date`, `status`) VALUES
+(1, 2, 'OUTDOOR', 0, 12240.00, 300.00, 10.00, 0.00, 0.00, 'Due', NULL, '2026-08-08', 1),
+(2, 5, 'OUTDOOR', 0, 16600.00, 0.00, 0.00, 16600.00, 0.00, 'Paid', NULL, '2026-08-08', 1),
+(3, 2, 'OUTDOOR', 0, 2208.00, 1000.00, 800.00, 0.00, 0.00, 'Due', NULL, '2026-08-09', 1),
+(4, 2, 'OUTDOOR', 0, 2000.00, 100.00, 95.00, 0.00, 0.00, 'Due', NULL, '2026-08-09', 1),
+(5, 1, 'OUTDOOR', 0, 11200.00, 525.00, 375.00, 10000.00, 1050.00, 'Partial', NULL, '2026-08-09', 1),
+(6, 2, 'OUTDOOR', 0, 1700.00, 85.00, 242.25, 0.00, 0.00, 'Due', NULL, '2026-08-09', 1),
+(7, 3, 'OUTDOOR', 0, 7800.00, 234.00, 226.98, 0.00, 0.00, 'Due', NULL, '2026-08-12', 1),
+(8, 2, 'OUTDOOR', 0, 6500.00, 585.00, 1478.75, 0.00, 0.00, 'Due', NULL, '2026-08-12', 1),
+(9, 2, 'ADMITTED', 1, 1700.00, 170.00, 153.00, 0.00, 0.00, 'Due', NULL, '2026-08-25', 1),
+(10, 1, 'ADMITTED', 1, 1700.00, 0.00, 0.00, 0.00, 0.00, 'Due', NULL, '2026-08-25', 1),
+(11, 11, 'ADMITTED', 6, 8200.00, 1394.00, 518.75, 0.00, 0.00, 'Due', NULL, '2026-08-25', 1),
+(12, 11, 'ADMITTED', 6, 2000.00, 100.00, 95.00, 0.00, 0.00, 'Due', NULL, '2026-08-25', 1),
+(13, 9, 'ADMITTED', 4, 7800.00, 390.00, 518.70, 0.00, 0.00, 'Due', NULL, '2026-08-25', 1),
+(14, 9, 'ADMITTED', 4, 0.00, 0.00, 0.00, 0.00, 0.00, 'Due', NULL, '2026-08-25', 1),
+(15, 12, 'ADMITTED', 7, 2000.00, 40.00, 78.40, 0.00, 0.00, 'Due', NULL, '2026-08-25', 1),
+(16, 13, 'ADMITTED', 8, 3300.00, 66.00, 64.68, 0.00, 0.00, 'Due', NULL, '2026-08-25', 1),
+(17, 3, 'OUTDOOR', 0, 8200.00, 0.00, 0.00, 0.00, 0.00, 'Due', NULL, '2026-08-26', 1);
 
 -- --------------------------------------------------------
 
@@ -733,7 +748,18 @@ INSERT INTO `invoice_details` (`id`, `invoice_id`, `Name`, `price`, `discount`, 
 (13, 6, 'CBC', 1700.00, 5.00, 15.00, NULL),
 (14, 7, 'Colonscopy', 7800.00, 3.00, 3.00, NULL),
 (15, 4, 'Electrocardiogram(ECG)', 2000.00, 5.00, 0.00, NULL),
-(16, 8, 'Vitamin D test', 6500.00, 9.00, 25.00, NULL);
+(16, 8, 'Vitamin D test', 6500.00, 9.00, 25.00, NULL),
+(17, 9, 'CBC', 1700.00, 10.00, 10.00, NULL),
+(18, 10, 'CBC', 1700.00, 0.00, 0.00, NULL),
+(19, 11, 'CBC', 1700.00, 17.00, 10.00, NULL),
+(20, 11, 'Vitamin D test', 6500.00, 17.00, 7.00, NULL),
+(21, 12, 'Electrocardiogram(ECG)', 2000.00, 5.00, 5.00, NULL),
+(22, 13, 'Colonscopy', 7800.00, 5.00, 7.00, NULL),
+(23, 14, 'Colonscopy', 7800.00, 5.00, 7.00, NULL),
+(24, 15, 'Electrocardiogram(ECG)', 2000.00, 2.00, 4.00, NULL),
+(25, 16, 'Endoscopy', 3300.00, 2.00, 2.00, NULL),
+(26, 17, 'Vitamin D test', 6500.00, 0.00, 0.00, NULL),
+(27, 17, 'CBC', 1700.00, 0.00, 0.00, NULL);
 
 -- --------------------------------------------------------
 
@@ -904,6 +930,40 @@ INSERT INTO `patient_admissions` (`id`, `admission_no`, `patient_id`, `doctor_id
 (1, 'ADM-0001', 1, 8, '1', 3, '2026-08-16', NULL, NULL, NULL, ' health problem', NULL, NULL, NULL, NULL),
 (2, 'ADM-0002', 5, 3, '2', 5, '2026-08-15', NULL, NULL, NULL, 'mental problem', NULL, NULL, NULL, NULL),
 (3, 'ADM-0003', 6, 10, '1', 3, '2026-08-18', NULL, NULL, NULL, 'health issue', NULL, NULL, NULL, NULL);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `patient_lab_tests`
+--
+
+CREATE TABLE `patient_lab_tests` (
+  `id` int(11) NOT NULL,
+  `patient_id` int(11) NOT NULL,
+  `admission_id` int(11) DEFAULT NULL,
+  `test_id` int(11) NOT NULL,
+  `test_price` decimal(10,2) NOT NULL DEFAULT 0.00,
+  `test_date` date NOT NULL,
+  `status` varchar(30) NOT NULL DEFAULT 'Completed',
+  `created_at` timestamp NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NULL DEFAULT NULL,
+  `deleted_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `patient_lab_tests`
+--
+
+INSERT INTO `patient_lab_tests` (`id`, `patient_id`, `admission_id`, `test_id`, `test_price`, `test_date`, `status`, `created_at`, `updated_at`, `deleted_at`) VALUES
+(1, 1, 1, 1, 1700.00, '2026-08-21', 'Completed', '2026-08-21 12:16:23', NULL, NULL),
+(3, 5, 2, 2, 6500.00, '2026-08-21', 'Completed', '2026-08-21 14:06:06', NULL, NULL),
+(4, 5, 2, 1, 1700.00, '2026-08-21', 'Completed', '2026-08-21 14:06:11', NULL, NULL),
+(5, 9, 4, 2, 6500.00, '2026-08-22', 'Completed', '2026-08-22 13:05:05', NULL, NULL),
+(6, 9, 4, 1, 1700.00, '2026-08-22', 'Completed', '2026-08-22 13:05:11', NULL, NULL),
+(7, 10, 5, 1, 1700.00, '2026-08-24', 'Completed', '2026-08-24 13:55:22', NULL, NULL),
+(8, 10, 5, 2, 6500.00, '2026-08-24', 'Completed', '2026-08-24 13:55:26', NULL, NULL),
+(9, 9, 4, 3, 7800.00, '2026-08-25', '1', '2026-08-25 19:50:46', '2026-08-25 19:50:46', NULL),
+(10, 9, 4, 3, 7800.00, '2026-08-25', '1', '2026-08-25 19:51:52', '2026-08-25 19:51:52', NULL);
 
 -- --------------------------------------------------------
 
@@ -1293,6 +1353,18 @@ ALTER TABLE `designation`
   ADD PRIMARY KEY (`id`);
 
 --
+-- Indexes for table `discharges`
+--
+ALTER TABLE `discharges`
+  ADD PRIMARY KEY (`discharge_id`);
+
+--
+-- Indexes for table `discharge_invoices`
+--
+ALTER TABLE `discharge_invoices`
+  ADD PRIMARY KEY (`invoice_id`);
+
+--
 -- Indexes for table `doctors`
 --
 ALTER TABLE `doctors`
@@ -1387,6 +1459,12 @@ ALTER TABLE `inventory_suppliers`
   ADD PRIMARY KEY (`supplier_id`);
 
 --
+-- Indexes for table `inventory_transaction`
+--
+ALTER TABLE `inventory_transaction`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- Indexes for table `invoices`
 --
 ALTER TABLE `invoices`
@@ -1420,6 +1498,12 @@ ALTER TABLE `patients`
 -- Indexes for table `patient_admissions`
 --
 ALTER TABLE `patient_admissions`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `patient_lab_tests`
+--
+ALTER TABLE `patient_lab_tests`
   ADD PRIMARY KEY (`id`);
 
 --
@@ -1516,6 +1600,18 @@ ALTER TABLE `designation`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
+-- AUTO_INCREMENT for table `discharges`
+--
+ALTER TABLE `discharges`
+  MODIFY `discharge_id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+
+--
+-- AUTO_INCREMENT for table `discharge_invoices`
+--
+ALTER TABLE `discharge_invoices`
+  MODIFY `invoice_id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+
+--
 -- AUTO_INCREMENT for table `doctors`
 --
 ALTER TABLE `doctors`
@@ -1561,7 +1657,7 @@ ALTER TABLE `inventory_items`
 -- AUTO_INCREMENT for table `inventory_list`
 --
 ALTER TABLE `inventory_list`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT for table `inventory_locations`
@@ -1594,16 +1690,22 @@ ALTER TABLE `inventory_suppliers`
   MODIFY `supplier_id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
+-- AUTO_INCREMENT for table `inventory_transaction`
+--
+ALTER TABLE `inventory_transaction`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+
+--
 -- AUTO_INCREMENT for table `invoices`
 --
 ALTER TABLE `invoices`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
 
 --
 -- AUTO_INCREMENT for table `invoice_details`
 --
 ALTER TABLE `invoice_details`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=28;
 
 --
 -- AUTO_INCREMENT for table `issues`
@@ -1628,6 +1730,12 @@ ALTER TABLE `patients`
 --
 ALTER TABLE `patient_admissions`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+
+--
+-- AUTO_INCREMENT for table `patient_lab_tests`
+--
+ALTER TABLE `patient_lab_tests`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- AUTO_INCREMENT for table `payments`
