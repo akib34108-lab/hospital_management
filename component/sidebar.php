@@ -80,7 +80,6 @@
 								<li><a href="<?= $base_url; ?>ward/rooms/rooms.php">Rooms</a></li>
 								<li><a href="<?= $base_url; ?>ward/beds/beds.php">Beds</a></li>
 								<li><a href="<?= $base_url; ?>ward/patients_addmission/admitted_patient_list.php">Patient Admission</a></li>
-								<li><a href="<?= $base_url; ?>ward/discharge/discharge.php">Patient Discharge</a></li>
 							</ul>
 						</li>
                         
