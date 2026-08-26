@@ -1,37 +1,45 @@
-<?php require_once "../component/header.php"; ?>
-<?php require_once "../component/sidebar.php"; ?>
-<?php $conn = $crud->conn; ?>
-
 <?php
-$edit_id = isset($_GET['edit_id']) ? $conn->real_escape_string($_GET['edit_id']) : '';
+require_once "../component/header.php";
+require_once "../component/sidebar.php";
+
+$edit_id = isset($_GET['edit_id']) ? $_GET['edit_id'] : '';
 $edit_data = null;
 $edit_items = [];
 
-$lab_tests_result = $crud->common_select("lab_category","*");
-$lab_tests = ($lab_tests_result['status'] && !empty($lab_tests_result['data'])) ? $lab_tests_result['data'] : [];
+/* ================= LAB TESTS ================= */
 
-$patients_result = $crud->common_select("patients","*");
-$patients = ($patients_result['status'] && !empty($patients_result['data'])) ? $patients_result['data'] : [];
+$lab_tests_result = $crud->common_select("lab_category", "*");
+$lab_tests = ($lab_tests_result["status"]) ? $lab_tests_result["data"] : [];
+
+/* ================= PATIENTS ================= */
+
+$patients_result = $crud->common_select("patients", "*");
+$patients = ($patients_result["status"]) ? $patients_result["data"] : [];
+
+/* ================= EDIT DATA ================= */
 
 if($edit_id != ''){
 
-    $edit_data_result = $conn->query("SELECT * FROM invoices WHERE id='$edit_id' LIMIT 1");
+    $edit_result = $crud->common_query("
+        SELECT *
+        FROM invoices
+        WHERE id='$edit_id'
+        LIMIT 1
+    ");
 
-    if($edit_data_result && $edit_data_result->num_rows > 0){
-        $edit_data = $edit_data_result->fetch_object();
+    if($edit_result["status"] && !empty($edit_result["data"])){
+        $edit_data = $edit_result["data"][0];
     }
 
-    $edit_items_result = $conn->query("
+    $edit_items_result = $crud->common_query("
         SELECT *
         FROM invoice_details
         WHERE invoice_id='$edit_id'
         AND deleted_at IS NULL
     ");
 
-    if($edit_items_result){
-        while($row = $edit_items_result->fetch_object()){
-            $edit_items[] = $row;
-        }
+    if($edit_items_result["status"]){
+        $edit_items = $edit_items_result["data"];
     }
 }
 ?>
@@ -41,32 +49,29 @@ if($edit_id != ''){
 
 <?php
 
-/* ================= SAVE / UPDATE INVOICE ================= */
+/* =========================================================
+   SAVE / UPDATE INVOICE
+   ========================================================= */
 
-if(isset($_POST['save'])){
+if(isset($_POST["save"])){
 
-    $patient_id = $conn->real_escape_string($_POST['patient_id']);
-    $invoice_type = $conn->real_escape_string($_POST['invoice_type']);
+    $patient_id = $_POST["patient_id"];
+    $invoice_type = $_POST["invoice_type"];
+    $invoice_date = $_POST["invoice_date"];
 
-    $admission_id = !empty($_POST['admission_id'])
-        ? $conn->real_escape_string($_POST['admission_id'])
-        : NULL;
+    $admission_id = !empty($_POST["admission_id"])
+        ? $_POST["admission_id"]
+        : null;
 
-    $invoice_date = $conn->real_escape_string($_POST['invoice_date']);
+    $invoice_id_post = $_POST["invoice_id"] ?? '';
 
-    $status = 1;
-
-    $invoice_id_post = $conn->real_escape_string($_POST['invoice_id']);
-
-    $sub_amount = (float)($_POST['sub_amount'] ?? 0);
-    $discount_tk = (float)($_POST['discount_tk'] ?? 0);
-    $tax_tk = (float)($_POST['tax_tk'] ?? 0);
-    $grand_total = (float)($_POST['grand_total'] ?? 0);
-
+    $sub_amount = (float)($_POST["sub_amount"] ?? 0);
+    $discount_tk = (float)($_POST["discount_tk"] ?? 0);
+    $tax_tk = (float)($_POST["tax_tk"] ?? 0);
 
     /* ================= CHECK ADMISSION ================= */
 
-    if($invoice_type == 'ADMITTED'){
+    if($invoice_type == "ADMITTED"){
 
         if(empty($admission_id)){
             echo "<script>
@@ -76,7 +81,7 @@ if(isset($_POST['save'])){
             exit;
         }
 
-        $check_admission = $conn->query("
+        $check_admission = $crud->common_query("
             SELECT id
             FROM patient_admissions
             WHERE id='$admission_id'
@@ -85,7 +90,7 @@ if(isset($_POST['save'])){
             LIMIT 1
         ");
 
-        if(!$check_admission || $check_admission->num_rows == 0){
+        if(!$check_admission["status"]){
             echo "<script>
                 alert('Invalid admission for selected patient');
                 history.back();
@@ -95,313 +100,221 @@ if(isset($_POST['save'])){
 
     }else{
 
-        $admission_id = NULL;
-
+        $admission_id = null;
     }
 
-
-    /* ================= UPDATE ================= */
+    /* =========================================================
+       UPDATE
+       ========================================================= */
 
     if($invoice_id_post != ''){
 
-        if($admission_id === NULL){
+        $update_data = [
+            "patient_id" => $patient_id,
+            "invoice_type" => $invoice_type,
+            "sub_amount" => $sub_amount,
+            "discount" => $discount_tk,
+            "tax" => $tax_tk,
+            "invoice_date" => $invoice_date
+        ];
 
-            $sql = "
-                UPDATE invoices SET
-                patient_id='$patient_id',
-                invoice_type='$invoice_type',
-                admission_id=NULL,
-                sub_amount='$sub_amount',
-                discount='$discount_tk',
-                tax='$tax_tk',
-                invoice_date='$invoice_date'
-                WHERE id='$invoice_id_post'
-            ";
-
+        if($admission_id === null){
+            $update_data["admission_id"] = null;
         }else{
-
-            $sql = "
-                UPDATE invoices SET
-                patient_id='$patient_id',
-                invoice_type='$invoice_type',
-                admission_id='$admission_id',
-                sub_amount='$sub_amount',
-                discount='$discount_tk',
-                tax='$tax_tk',
-                invoice_date='$invoice_date'
-                WHERE id='$invoice_id_post'
-            ";
-
+            $update_data["admission_id"] = $admission_id;
         }
 
-        if(!$conn->query($sql)){
-            die("Invoice Update Error: ".$conn->error);
+        $update_result = $crud->common_update(
+            "invoices",
+            $update_data,
+            ["id" => $invoice_id_post]
+        );
+
+        if(!$update_result["status"]){
+            die("Invoice Update Error: ".$update_result["message"]);
         }
 
         $last_id = $invoice_id_post;
 
+        /* DELETE OLD DETAILS */
 
-        /* DELETE OLD INVOICE DETAILS */
-
-        $conn->query("
-            DELETE FROM invoice_details
-            WHERE invoice_id='$last_id'
-        ");
-
+        $crud->common_delete(
+            "invoice_details",
+            ["invoice_id" => $last_id]
+        );
 
         /* DELETE OLD PATIENT LAB TESTS */
 
-        if($invoice_type == 'ADMITTED' && !empty($admission_id)){
+        if($invoice_type == "ADMITTED" && !empty($admission_id)){
 
-            $conn->query("
-                DELETE FROM patient_lab_tests
-                WHERE patient_id='$patient_id'
-                AND admission_id='$admission_id'
-            ");
-
+            $crud->common_delete(
+                "patient_lab_tests",
+                [
+                    "patient_id" => $patient_id,
+                    "admission_id" => $admission_id
+                ]
+            );
         }
 
     }else{
 
+        /* =====================================================
+           INSERT
+           ===================================================== */
 
-        /* ================= INSERT INVOICE ================= */
+        $insert_data = [
+            "patient_id" => $patient_id,
+            "invoice_type" => $invoice_type,
+            "sub_amount" => $sub_amount,
+            "discount" => $discount_tk,
+            "tax" => $tax_tk,
+            "invoice_date" => $invoice_date,
+            "status" => 1
+        ];
 
-        if($admission_id === NULL){
-
-            $sql = "
-                INSERT INTO invoices
-                (
-                    patient_id,
-                    invoice_type,
-                    admission_id,
-                    sub_amount,
-                    discount,
-                    tax,
-                    invoice_date,
-                    status
-                )
-                VALUES
-                (
-                    '$patient_id',
-                    '$invoice_type',
-                    NULL,
-                    '$sub_amount',
-                    '$discount_tk',
-                    '$tax_tk',
-                    '$invoice_date',
-                    '$status'
-                )
-            ";
-
+        if($admission_id !== null){
+            $insert_data["admission_id"] = $admission_id;
         }else{
-
-            $sql = "
-                INSERT INTO invoices
-                (
-                    patient_id,
-                    invoice_type,
-                    admission_id,
-                    sub_amount,
-                    discount,
-                    tax,
-                    invoice_date,
-                    status
-                )
-                VALUES
-                (
-                    '$patient_id',
-                    '$invoice_type',
-                    '$admission_id',
-                    '$sub_amount',
-                    '$discount_tk',
-                    '$tax_tk',
-                    '$invoice_date',
-                    '$status'
-                )
-            ";
-
+            $insert_data["admission_id"] = null;
         }
 
-        if(!$conn->query($sql)){
-            die("Invoice Save Error: ".$conn->error);
+        $insert_result = $crud->common_insert(
+            "invoices",
+            $insert_data
+        );
+
+        if(!$insert_result["status"]){
+            die("Invoice Save Error: ".$insert_result["message"]);
         }
 
-        $last_id = $conn->insert_id;
+        $last_id = $insert_result["data"];
     }
 
-
     /* =========================================================
-       SAVE TEST DETAILS + PATIENT LAB TEST
+       SAVE INVOICE DETAILS
        ========================================================= */
 
-    if(isset($_POST['item_name']) && !empty($_POST['item_name'])){
+    if(isset($_POST["item_name"]) && !empty($_POST["item_name"])){
 
-        for($i=0; $i<count($_POST['item_name']); $i++){
+        for($i = 0; $i < count($_POST["item_name"]); $i++){
 
-            if(empty($_POST['item_name'][$i])){
+            if(empty($_POST["item_name"][$i])){
                 continue;
             }
 
+            $name = $_POST["item_name"][$i];
 
-            /* TEST NAME */
+            $price = (float)($_POST["item_price"][$i] ?? 0);
 
-            $name = $conn->real_escape_string($_POST['item_name'][$i]);
+            $dis = (float)($_POST["item_discount"][$i] ?? 0);
 
+            $item_tax = (float)($_POST["item_tax"][$i] ?? 0);
 
-            /* TEST PRICE */
+            /* ================= INVOICE DETAILS ================= */
 
-            $price = (float)($_POST['item_price'][$i] ?? 0);
+            $detail_data = [
+                "invoice_id" => $last_id,
+                "Name" => $name,
+                "price" => $price,
+                "discount" => $dis,
+                "tax" => $item_tax
+            ];
 
-
-            /* DISCOUNT */
-
-            $dis = (float)($_POST['item_discount'][$i] ?? 0);
-
-
-            /* TAX */
-
-            $item_tax = (float)($_POST['item_tax'][$i] ?? 0);
-
-
-            /* ================= SAVE INVOICE DETAILS ================= */
-
-            $invoice_detail_sql = "
-                INSERT INTO invoice_details
-                (
-                    invoice_id,
-                    Name,
-                    price,
-                    discount,
-                    tax
-                )
-                VALUES
-                (
-                    '$last_id',
-                    '$name',
-                    '$price',
-                    '$dis',
-                    '$item_tax'
-                )
-            ";
-
-            if(!$conn->query($invoice_detail_sql)){
-                die("Invoice Details Error: ".$conn->error);
-            }
-
-
-            /* ================= FIND TEST ID ================= */
-
-$test_name_safe = $conn->real_escape_string($name);
-
-$test_result = $conn->query("
-    SELECT id
-    FROM lab_category
-    WHERE test_name='$test_name_safe'
-    LIMIT 1
-");
-
-if($test_result && $test_result->num_rows > 0){
-
-    $test_data = $test_result->fetch_object();
-
-    $test_id = (int)$test_data->id;
-
-    /* ================= ONLY ADMITTED PATIENT ================= */
-
-    if(
-        $invoice_type === 'ADMITTED' &&
-        !empty($admission_id)
-    ){
-
-        $patient_lab_test_sql = "
-            INSERT INTO patient_lab_tests
-            (
-                patient_id,
-                admission_id,
-                test_id,
-                test_price,
-                test_date,
-                status,
-                created_at,
-                deleted_at,
-                updated_at
-            )
-            VALUES
-            (
-                '$patient_id',
-                '$admission_id',
-                '$test_id',
-                '$price',
-                '$invoice_date',
-                1,
-                NOW(),
-                NULL,
-                NOW()
-            )
-        ";
-
-        if(!$conn->query($patient_lab_test_sql)){
-            die(
-                'Patient Lab Test Save Error: '
-                .$conn->error
+            $detail_result = $crud->common_insert(
+                "invoice_details",
+                $detail_data
             );
-        }
 
-    }
-
-}
-
+            if(!$detail_result["status"]){
+                die("Invoice Details Error: ".$detail_result["message"]);
+            }
 
             /* =====================================================
-               SAVE PATIENT LAB TEST
-
-               ONLY FOR ADMITTED PATIENT
+               FIND TEST ID
                ===================================================== */
 
-            if($invoice_type == 'ADMITTED' && !empty($admission_id)){
+            $test_name = addslashes($name);
 
-                $patient_lab_test_sql = "
-                    INSERT INTO patient_lab_tests
-                    (
-                        patient_id,
-                        admission_id,
-                        test_id,
-                        test_price,
-                        test_date,
-                        status,
-                        created_at,
-                        deleted_at,
-                        updated_at
-                    )
-                    VALUES
-                    (
-                        '$patient_id',
-                        '$admission_id',
-                        '$test_id',
-                        '$price',
-                        '$invoice_date',
-                        1,
-                        NOW(),
-                        NULL,
-                        NOW()
-                    )
-                ";
+            $test_result = $crud->common_query("
+                SELECT id
+                FROM lab_category
+                WHERE test_name='$test_name'
+                LIMIT 1
+            ");
 
-                if(!$conn->query($patient_lab_test_sql)){
-                    die("Patient Lab Test Save Error: ".$conn->error);
+            if($test_result["status"] && !empty($test_result["data"])){
+
+                $test_id = $test_result["data"][0]->id;
+
+                /* =================================================
+                   PATIENT LAB TEST - INSERT 1
+                   ================================================= */
+
+                if(
+                    $invoice_type == "ADMITTED" &&
+                    !empty($admission_id)
+                ){
+
+                    $lab_data_1 = [
+                        "patient_id" => $patient_id,
+                        "admission_id" => $admission_id,
+                        "test_id" => $test_id,
+                        "test_price" => $price,
+                        "test_date" => $invoice_date,
+                        "status" => 1,
+                        "created_at" => date("Y-m-d H:i:s"),
+                        "deleted_at" => null,
+                        "updated_at" => date("Y-m-d H:i:s")
+                    ];
+
+                    $lab_result_1 = $crud->common_insert(
+                        "patient_lab_tests",
+                        $lab_data_1
+                    );
+
+                    if(!$lab_result_1["status"]){
+                        die(
+                            "Patient Lab Test Save Error: ".
+                            $lab_result_1["message"]
+                        );
+                    }
+
+                    /* =================================================
+                       PATIENT LAB TEST - INSERT 2
+                       ================================================= */
+
+                    $lab_data_2 = [
+                        "patient_id" => $patient_id,
+                        "admission_id" => $admission_id,
+                        "test_id" => $test_id,
+                        "test_price" => $price,
+                        "test_date" => $invoice_date,
+                        "status" => 1,
+                        "created_at" => date("Y-m-d H:i:s"),
+                        "deleted_at" => null,
+                        "updated_at" => date("Y-m-d H:i:s")
+                    ];
+
+                    $lab_result_2 = $crud->common_insert(
+                        "patient_lab_tests",
+                        $lab_data_2
+                    );
+
+                    if(!$lab_result_2["status"]){
+                        die(
+                            "Patient Lab Test Save Error: ".
+                            $lab_result_2["message"]
+                        );
+                    }
                 }
-
             }
-
         }
-
     }
-
 
     /* ================= SUCCESS ================= */
 
     echo "<script>
-        alert('Invoice Saved Successfully');
+        alert('Diagnosis Invoice Saved Successfully');
         window.location='diagnosis_invoice.php?id=$last_id';
     </script>";
 
@@ -409,24 +322,26 @@ if($test_result && $test_result->num_rows > 0){
 }
 
 
-/* ================= DELETE INVOICE ================= */
+/* =========================================================
+   DELETE INVOICE
+   ========================================================= */
 
-if(isset($_GET['delete_id'])){
+if(isset($_GET["delete_id"])){
 
-    $del_id = $conn->real_escape_string($_GET['delete_id']);
+    $delete_id = $_GET["delete_id"];
 
-    $conn->query("
-        DELETE FROM invoice_details
-        WHERE invoice_id='$del_id'
-    ");
+    $crud->common_delete(
+        "invoice_details",
+        ["invoice_id" => $delete_id]
+    );
 
-    $conn->query("
-        DELETE FROM invoices
-        WHERE id='$del_id'
-    ");
+    $delete_result = $crud->common_delete(
+        "invoices",
+        ["id" => $delete_id]
+    );
 
     echo "<script>
-        alert('Invoice Deleted');
+        alert('Invoice Deleted Successfully');
         window.location='invoices.php';
     </script>";
 
@@ -435,24 +350,27 @@ if(isset($_GET['delete_id'])){
 
 ?>
 
-
-<!-- ================= ADD / EDIT FORM ================= -->
+<!-- =========================================================
+     FORM
+     ========================================================= -->
 
 <div class="row">
 <div class="col-md-12">
 <div class="card-box">
 
 <h4 class="card-title">
-<?php echo $edit_id ? 'Edit Diagnosis Invoice' : 'Add Diagnosis Invoice'; ?>
+<?php
+echo $edit_id
+    ? "Edit Diagnosis Invoice"
+    : "Add Diagnosis Invoice";
+?>
 </h4>
-
 
 <form method="post" action="" id="invoiceForm">
 
 <input type="hidden"
        name="invoice_id"
-       value="<?php echo $edit_id; ?>">
-
+       value="<?php echo htmlspecialchars($edit_id); ?>">
 
 <!-- ================= INVOICE TYPE ================= -->
 
@@ -471,8 +389,11 @@ Invoice Type *
 
 <option value="OUTDOOR"
 <?php
-if($edit_data && $edit_data->invoice_type == 'OUTDOOR'){
-    echo 'selected';
+if(
+    !$edit_data ||
+    $edit_data->invoice_type == "OUTDOOR"
+){
+    echo "selected";
 }
 ?>>
 Outdoor / Diagnostic
@@ -480,8 +401,11 @@ Outdoor / Diagnostic
 
 <option value="ADMITTED"
 <?php
-if($edit_data && $edit_data->invoice_type == 'ADMITTED'){
-    echo 'selected';
+if(
+    $edit_data &&
+    $edit_data->invoice_type == "ADMITTED"
+){
+    echo "selected";
 }
 ?>>
 Admitted Patient
@@ -491,7 +415,6 @@ Admitted Patient
 
 </div>
 
-
 <label class="col-form-label col-md-2">
 Invoice Date *
 </label>
@@ -500,18 +423,17 @@ Invoice Date *
 
 <input type="date"
        name="invoice_date"
+       class="form-control"
+       required
        value="<?php
        echo $edit_data
-       ? $edit_data->invoice_date
-       : date('Y-m-d');
-       ?>"
-       class="form-control"
-       required>
+           ? $edit_data->invoice_date
+           : date("Y-m-d");
+       ?>">
 
 </div>
 
 </div>
-
 
 <!-- ================= PATIENT ================= -->
 
@@ -532,19 +454,18 @@ Patient *
 -- Select Patient --
 </option>
 
-<?php foreach($patients as $p){
+<?php foreach($patients as $p){ ?>
 
-$selected =
-($edit_data && $edit_data->patient_id == $p->id)
-? 'selected'
-: '';
-
-?>
-
-<option
-value="<?php echo $p->id; ?>"
-data-discount="<?php echo $p->discount_percent; ?>"
-<?php echo $selected; ?>>
+<option value="<?php echo $p->id; ?>"
+data-discount="<?php echo $p->discount_percent ?? 0; ?>"
+<?php
+if(
+    $edit_data &&
+    $edit_data->patient_id == $p->id
+){
+    echo "selected";
+}
+?>>
 
 <?php echo htmlspecialchars($p->name); ?>
 
@@ -555,7 +476,6 @@ data-discount="<?php echo $p->discount_percent; ?>"
 </select>
 
 </div>
-
 
 <!-- ================= ADMISSION ================= -->
 
@@ -579,39 +499,39 @@ Admission
 
 <?php
 
-$admissions = $conn->query("
+$admission_result = $crud->common_query("
     SELECT id, admission_no, patient_id
     FROM patient_admissions
     WHERE deleted_at IS NULL
     ORDER BY id DESC
 ");
 
-if($admissions){
-
-while($a = $admissions->fetch_object()){
-
-$selected = '';
-
 if(
-$edit_data &&
-$edit_data->admission_id == $a->id
+    $admission_result["status"] &&
+    !empty($admission_result["data"])
 ){
-$selected = 'selected';
-}
+
+    foreach($admission_result["data"] as $a){
 
 ?>
 
-<option
-value="<?php echo $a->id; ?>"
+<option value="<?php echo $a->id; ?>"
 data-patient="<?php echo $a->patient_id; ?>"
-<?php echo $selected; ?>>
+<?php
+if(
+    $edit_data &&
+    $edit_data->admission_id == $a->id
+){
+    echo "selected";
+}
+?>>
 
 <?php echo htmlspecialchars($a->admission_no); ?>
 
 </option>
 
 <?php
-}
+    }
 }
 ?>
 
@@ -625,7 +545,6 @@ Admission will be selected automatically.
 
 </div>
 
-
 <!-- ================= TESTS ================= -->
 
 <div class="card-box">
@@ -634,15 +553,11 @@ Admission will be selected automatically.
 Lab / Diagnostic Tests
 </h4>
 
-<button
-type="button"
-id="addItem"
-class="btn btn-primary mb-3">
-
+<button type="button"
+        id="addItem"
+        class="btn btn-primary mb-3">
 + Add Test
-
 </button>
-
 
 <div class="table-responsive">
 
@@ -652,14 +567,12 @@ class="btn btn-primary mb-3">
 <thead class="bg-light">
 
 <tr>
-
 <th>Test Name</th>
 <th>Price</th>
 <th>Discount %</th>
 <th>Tax %</th>
 <th>Total</th>
 <th width="80">Action</th>
-
 </tr>
 
 </thead>
@@ -681,19 +594,16 @@ class="btn btn-primary mb-3">
 -- Select Test --
 </option>
 
-<?php foreach($lab_tests as $t){
-
-$selected =
-($item->Name == $t->test_name)
-? 'selected'
-: '';
-
-?>
+<?php foreach($lab_tests as $t){ ?>
 
 <option
 value="<?php echo htmlspecialchars($t->test_name); ?>"
 data-price="<?php echo $t->price; ?>"
-<?php echo $selected; ?>>
+<?php
+if($item->Name == $t->test_name){
+    echo "selected";
+}
+?>>
 
 <?php echo htmlspecialchars($t->test_name); ?>
 
@@ -707,52 +617,45 @@ data-price="<?php echo $t->price; ?>"
 
 <td>
 
-<input
-type="number"
-name="item_price[]"
-value="<?php echo $item->price; ?>"
-class="form-control calc item_price">
+<input type="number"
+       name="item_price[]"
+       value="<?php echo $item->price; ?>"
+       class="form-control calc item_price">
 
 </td>
 
 <td>
 
-<input
-type="number"
-name="item_discount[]"
-value="<?php echo $item->discount; ?>"
-class="form-control calc item_discount">
+<input type="number"
+       name="item_discount[]"
+       value="<?php echo $item->discount; ?>"
+       class="form-control calc item_discount">
 
 </td>
 
 <td>
 
-<input
-type="number"
-name="item_tax[]"
-value="<?php echo $item->tax; ?>"
-class="form-control calc item_tax">
+<input type="number"
+       name="item_tax[]"
+       value="<?php echo $item->tax; ?>"
+       class="form-control calc item_tax">
 
 </td>
 
 <td>
 
-<input
-type="number"
-name="item_total[]"
-class="form-control item_total"
-readonly>
+<input type="number"
+       name="item_total[]"
+       class="form-control item_total"
+       readonly>
 
 </td>
 
 <td>
 
-<button
-type="button"
-class="btn btn-danger btn-sm removeRow">
-
+<button type="button"
+        class="btn btn-danger btn-sm removeRow">
 X
-
 </button>
 
 </td>
@@ -792,52 +695,46 @@ data-price="<?php echo $t->price; ?>">
 
 <td>
 
-<input
-type="number"
-name="item_price[]"
-class="form-control calc item_price"
-value="0">
+<input type="number"
+       name="item_price[]"
+       value="0"
+       class="form-control calc item_price">
 
 </td>
 
 <td>
 
-<input
-type="number"
-name="item_discount[]"
-value="0"
-class="form-control calc item_discount">
+<input type="number"
+       name="item_discount[]"
+       value="0"
+       class="form-control calc item_discount">
 
 </td>
 
 <td>
 
-<input
-type="number"
-name="item_tax[]"
-value="0"
-class="form-control calc item_tax">
+<input type="number"
+       name="item_tax[]"
+       value="0"
+       class="form-control calc item_tax">
 
 </td>
 
 <td>
 
-<input
-type="number"
-name="item_total[]"
-class="form-control item_total"
-readonly>
+<input type="number"
+       name="item_total[]"
+       value="0"
+       class="form-control item_total"
+       readonly>
 
 </td>
 
 <td>
 
-<button
-type="button"
-class="btn btn-danger btn-sm removeRow">
-
+<button type="button"
+        class="btn btn-danger btn-sm removeRow">
 X
-
 </button>
 
 </td>
@@ -854,7 +751,6 @@ X
 
 </div>
 
-
 <!-- ================= TOTAL ================= -->
 
 <div class="row">
@@ -869,12 +765,11 @@ X
 
 <td>
 
-<input
-type="number"
-id="sub_amount"
-name="sub_amount"
-class="form-control"
-readonly>
+<input type="number"
+       id="sub_amount"
+       name="sub_amount"
+       class="form-control"
+       readonly>
 
 </td>
 
@@ -886,12 +781,11 @@ readonly>
 
 <td>
 
-<input
-type="number"
-id="discount_tk"
-name="discount_tk"
-class="form-control"
-readonly>
+<input type="number"
+       id="discount_tk"
+       name="discount_tk"
+       class="form-control"
+       readonly>
 
 </td>
 
@@ -899,16 +793,15 @@ readonly>
 
 <tr>
 
-<td>TAX TK</td>
+<td>Tax TK</td>
 
 <td>
 
-<input
-type="number"
-id="tax_tk"
-name="tax_tk"
-class="form-control"
-readonly>
+<input type="number"
+       id="tax_tk"
+       name="tax_tk"
+       class="form-control"
+       readonly>
 
 </td>
 
@@ -922,12 +815,11 @@ readonly>
 
 <td>
 
-<input
-type="number"
-id="grand_total"
-name="grand_total"
-class="form-control"
-readonly>
+<input type="number"
+       id="grand_total"
+       name="grand_total"
+       class="form-control"
+       readonly>
 
 </td>
 
@@ -939,19 +831,21 @@ readonly>
 
 </div>
 
-
 <!-- ================= SAVE ================= -->
 
 <div class="form-group row">
 
 <div class="col-md-12 text-right">
 
-<button
-type="submit"
-name="save"
-class="btn btn-success btn-lg">
+<button type="submit"
+        name="save"
+        class="btn btn-success btn-lg">
 
-<?php echo $edit_id ? 'Update Invoice' : 'Save Invoice'; ?>
+<?php
+echo $edit_id
+    ? "Update Invoice"
+    : "Save Invoice";
+?>
 
 </button>
 
@@ -968,294 +862,292 @@ class="btn btn-success btn-lg">
 </div>
 </div>
 
-
 <script>
 
-document.addEventListener('DOMContentLoaded',function(){
+document.addEventListener("DOMContentLoaded", function(){
 
-const patientId=document.getElementById('patient_id');
-const invoiceType=document.getElementById('invoice_type');
-const admissionId=document.getElementById('admission_id');
-const itemTable=document.getElementById('itemTable');
-const addItemBtn=document.getElementById('addItem');
-
+const patientId = document.getElementById("patient_id");
+const invoiceType = document.getElementById("invoice_type");
+const admissionId = document.getElementById("admission_id");
+const itemTable = document.getElementById("itemTable");
+const addItemBtn = document.getElementById("addItem");
 
 /* ================= INVOICE TYPE ================= */
 
 function checkInvoiceType(){
 
-    const fields=document.querySelectorAll('.admitted-field');
+    const fields =
+        document.querySelectorAll(".admitted-field");
 
-    if(invoiceType.value === 'ADMITTED'){
+    if(invoiceType.value == "ADMITTED"){
 
         fields.forEach(function(field){
-            field.style.display='';
+            field.style.display = "";
         });
 
-        admissionId.required=true;
+        admissionId.required = true;
 
         selectPatientAdmission();
 
     }else{
 
         fields.forEach(function(field){
-            field.style.display='none';
+            field.style.display = "none";
         });
 
-        admissionId.required=false;
-        admissionId.value='';
-
+        admissionId.required = false;
+        admissionId.value = "";
     }
-
 }
-
 
 /* ================= AUTO ADMISSION ================= */
 
 function selectPatientAdmission(){
 
-    const selectedPatient=patientId.value;
+    const selectedPatient = patientId.value;
 
     if(!selectedPatient){
-        admissionId.value='';
+        admissionId.value = "";
         return;
     }
 
-    let found=false;
+    let found = false;
 
-    admissionId.querySelectorAll('option').forEach(function(option){
+    admissionId.querySelectorAll("option")
+    .forEach(function(option){
 
-        const optionPatient=option.getAttribute('data-patient');
+        const optionPatient =
+            option.getAttribute("data-patient");
 
-        if(!found && optionPatient == selectedPatient){
+        if(
+            !found &&
+            optionPatient == selectedPatient
+        ){
 
-            admissionId.value=option.value;
-            found=true;
-
+            admissionId.value = option.value;
+            found = true;
         }
-
     });
-
 }
-
 
 /* ================= PATIENT CHANGE ================= */
 
-patientId.addEventListener('change',function(){
+patientId.addEventListener("change", function(){
 
     selectPatientAdmission();
 
-    const selectedOption=this.options[this.selectedIndex];
+    const selectedOption =
+        this.options[this.selectedIndex];
 
-    const patientDiscount=
-    parseFloat(
-        selectedOption.getAttribute('data-discount')
-    ) || 0;
+    const patientDiscount =
+        parseFloat(
+            selectedOption.getAttribute("data-discount")
+        ) || 0;
 
-    document.querySelectorAll('.item_discount')
+    document.querySelectorAll(".item_discount")
     .forEach(function(input){
 
-        input.value=patientDiscount;
+        input.value = patientDiscount;
 
     });
 
     calculateTotal();
-
 });
 
+/* ================= TYPE CHANGE ================= */
 
 invoiceType.addEventListener(
-    'change',
+    "change",
     checkInvoiceType
 );
 
 checkInvoiceType();
 
+/* ================= TEST CHANGE ================= */
 
-/* ================= TEST SELECT ================= */
+itemTable.addEventListener("change", function(e){
 
-itemTable.addEventListener('change',function(e){
+    if(
+        e.target.classList.contains("item_name")
+    ){
 
-    if(e.target.classList.contains('item_name')){
+        const select = e.target;
 
-        const select=e.target;
-        const option=select.options[select.selectedIndex];
+        const option =
+            select.options[select.selectedIndex];
 
-        const price=
-        parseFloat(
-            option.getAttribute('data-price')
-        ) || 0;
+        const price =
+            parseFloat(
+                option.getAttribute("data-price")
+            ) || 0;
 
-        const row=select.closest('tr');
+        const row =
+            select.closest("tr");
 
-        row.querySelector('.item_price').value=price;
+        row.querySelector(".item_price").value =
+            price;
 
         calculateTotal();
-
     }
 
 });
-
 
 /* ================= CALCULATE ================= */
 
 function calculateTotal(){
 
-    let sub_amount=0;
-    let total_discount_tk=0;
-    let total_tax_tk=0;
+    let sub_amount = 0;
+    let total_discount_tk = 0;
+    let total_tax_tk = 0;
 
-    const rows=itemTable.querySelectorAll('tbody tr');
+    const rows =
+        itemTable.querySelectorAll("tbody tr");
 
     rows.forEach(function(row){
 
-        const priceInput=row.querySelector('.item_price');
-        const discountInput=row.querySelector('.item_discount');
-        const taxInput=row.querySelector('.item_tax');
-        const totalInput=row.querySelector('.item_total');
+        const priceInput =
+            row.querySelector(".item_price");
 
-        const price=
-        parseFloat(priceInput?.value) || 0;
+        const discountInput =
+            row.querySelector(".item_discount");
 
-        const dis_per=
-        parseFloat(discountInput?.value) || 0;
+        const taxInput =
+            row.querySelector(".item_tax");
 
-        const tax_per=
-        parseFloat(taxInput?.value) || 0;
+        const totalInput =
+            row.querySelector(".item_total");
 
-        const dis_tk=
-        (price * dis_per) / 100;
+        const price =
+            parseFloat(priceInput.value) || 0;
 
-        const tax_tk=
-        ((price - dis_tk) * tax_per) / 100;
+        const discountPercent =
+            parseFloat(discountInput.value) || 0;
 
-        const total=
-        (price - dis_tk) + tax_tk;
+        const taxPercent =
+            parseFloat(taxInput.value) || 0;
 
-        if(totalInput){
-            totalInput.value=total.toFixed(2);
-        }
+        const discountTk =
+            (price * discountPercent) / 100;
+
+        const taxTk =
+            ((price - discountTk) * taxPercent) / 100;
+
+        const total =
+            (price - discountTk) + taxTk;
+
+        totalInput.value =
+            total.toFixed(2);
 
         sub_amount += price;
-        total_discount_tk += dis_tk;
-        total_tax_tk += tax_tk;
+        total_discount_tk += discountTk;
+        total_tax_tk += taxTk;
 
     });
 
+    const grand_total =
+        sub_amount -
+        total_discount_tk +
+        total_tax_tk;
 
-    const grand_total=
-    sub_amount -
-    total_discount_tk +
-    total_tax_tk;
+    document.getElementById("sub_amount").value =
+        sub_amount.toFixed(2);
 
+    document.getElementById("discount_tk").value =
+        total_discount_tk.toFixed(2);
 
-    document.getElementById('sub_amount').value=
-    sub_amount.toFixed(2);
+    document.getElementById("tax_tk").value =
+        total_tax_tk.toFixed(2);
 
-    document.getElementById('discount_tk').value=
-    total_discount_tk.toFixed(2);
-
-    document.getElementById('tax_tk').value=
-    total_tax_tk.toFixed(2);
-
-    document.getElementById('grand_total').value=
-    grand_total.toFixed(2);
-
+    document.getElementById("grand_total").value =
+        grand_total.toFixed(2);
 }
-
 
 /* ================= ADD TEST ================= */
 
-addItemBtn.addEventListener('click',function(){
+addItemBtn.addEventListener("click", function(){
 
-    const tbody=itemTable.querySelector('tbody');
+    const tbody =
+        itemTable.querySelector("tbody");
 
-    const firstRow=tbody.querySelector('tr:first-child');
+    const firstRow =
+        tbody.querySelector("tr");
 
-    const newRow=firstRow.cloneNode(true);
+    const newRow =
+        firstRow.cloneNode(true);
 
-
-    newRow.querySelectorAll('input')
+    newRow.querySelectorAll("input")
     .forEach(function(input){
 
-        if(input.classList.contains('item_discount')){
+        if(
+            input.classList.contains(
+                "item_discount"
+            )
+        ){
 
-            const selectedOption=
-            patientId.options[patientId.selectedIndex];
+            const selectedOption =
+                patientId.options[
+                    patientId.selectedIndex
+                ];
 
-            const discount=
-            parseFloat(
-                selectedOption?.getAttribute('data-discount')
-            ) || 0;
+            const discount =
+                parseFloat(
+                    selectedOption?.getAttribute(
+                        "data-discount"
+                    )
+                ) || 0;
 
-            input.value=discount;
+            input.value = discount;
 
         }else{
 
-            input.value='0';
-
+            input.value = "0";
         }
-
     });
 
-
-    newRow.querySelectorAll('select')
+    newRow.querySelectorAll("select")
     .forEach(function(select){
 
-        select.value='';
-
+        select.value = "";
     });
-
 
     tbody.appendChild(newRow);
 
     calculateTotal();
-
 });
-
 
 /* ================= REMOVE TEST ================= */
 
-itemTable.addEventListener('click',function(e){
+itemTable.addEventListener("click", function(e){
 
-    const removeButton=e.target.closest('.removeRow');
+    const removeButton =
+        e.target.closest(".removeRow");
 
     if(!removeButton){
         return;
     }
 
-    const rows=itemTable.querySelectorAll('tbody tr');
+    const rows =
+        itemTable.querySelectorAll("tbody tr");
 
     if(rows.length > 1){
 
-        removeButton.closest('tr').remove();
-
+        removeButton.closest("tr").remove();
     }
 
     calculateTotal();
-
 });
-
 
 /* ================= INPUT ================= */
 
-itemTable.addEventListener('input',function(e){
+itemTable.addEventListener("input", function(e){
 
-    if(e.target.classList.contains('calc')){
+    if(
+        e.target.classList.contains("calc")
+    ){
+
         calculateTotal();
     }
-
 });
-
-
-itemTable.addEventListener('change',function(e){
-
-    if(e.target.classList.contains('calc')){
-        calculateTotal();
-    }
-
-});
-
 
 calculateTotal();
 
