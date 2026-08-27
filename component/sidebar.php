@@ -71,6 +71,9 @@
                         <li>
                             <a href="<?=$base_url; ?>lab/lab_category/lab.php"><i class="fa fa-flask" style="color: #fff;"></i> <span style="color: #fff;">Test Lab</span></a>
                         </li>
+                        <li>
+                            <a href="<?=$base_url; ?>diagnosis/diagnosis.php"><i class="fa fa-heartbeat" style="color: #fff;"></i> <span style="color: #fff;">Diagnosis</span></a>
+                        </li>
                         <li class="submenu">
 							<a href="#"><i class="fa fa-bed" style="color: #fff;"></i> <span style="color: #fff;"> Ward </span> <span class="menu-arrow" style="color: #fff;"></span></a>
 							<ul style="display: none;">
@@ -80,14 +83,13 @@
 								<li><a href="<?= $base_url; ?>ward/discharge/discharge.php">Patient Discharge</a></li>
 							</ul>
 						</li>
-                        <li>
-                            <a href="<?= $base_url; ?>inventory_management/inventory.php"><i class="fa fa-cube" style="color: #fff;"></i> <span style="color: #fff;">stocks</span></a>
-                        </li>
+                        
                         <li class="submenu">
                             <a href="#"><i class="fa fa-line-chart" style="color: #fff;"></i> <span style="color: #fff;">Inventory</span> <span class="menu-arrow" style="color: #fff;"></span></a>
                             <ul style="display: none;">
-								<li><a href="<?= $base_url; ?>stocks/inventory_rest.php">rest inventory</a></li>
-								<li><a href="<?= $base_url; ?>stocks/inventory_used.php">used inventory</a></li>
+								<li><a href="<?= $base_url; ?>inventory_management/inventory.php"> Inventory Item</a></li>
+								<li><a href="<?= $base_url; ?>stocks/inventory_allocation_entry.php">Allocation Inventory</a></li>
+								<li><a href="<?= $base_url; ?>stocks/inventory_transactions.php">used inventory</a></li>
                             </ul>
                         </li>
                         <li>

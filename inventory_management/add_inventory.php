@@ -34,21 +34,19 @@
                         </div>
                         <div class="col-sm-12">
                             <div class="form-group">
-                                <label>supplier info</label>
-                                <input class="form-control" name="supplier_info" type="text">
+                                <label>Type</label>
+                                <select class="form-control" name="used_type">
+                                    <option value="1">Reusable</option>
+                                    <option value="2">One-time</option>
+                                </select>
                             </div>
                         </div>
-                        <div class="col-sm-12">
-                            <div class="form-group">
-                                <label>supplier contact</label>
-                                <input class="form-control" name="supplier_contact" type="text">
-                            </div>
-                        </div>
+                        
                         <div class="col-sm-12">
                             <div class="form-group">
                                 <label>Date</label>
                                 <div class="cal-icon">
-                                    <input onblur="getDoctorSchedule(this.value)" type="date" name="date"  class="form-control">
+                                    <input type="date" name="date"  class="form-control">
                                 </div>
                             </div>
                         </div>
